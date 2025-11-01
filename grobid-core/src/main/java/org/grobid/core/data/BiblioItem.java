@@ -1333,7 +1333,7 @@ public class BiblioItem {
 
     public void addKeyword(String k) {
         if (keywords == null)
-            keywords = new ArrayList<Keyword>();
+            keywords = new ArrayList<>();
 		String theKey = cleanKeywords(k);
 		if (theKey.toLowerCase().contains("introduction")) {
 			// if the keyword contains introduction, this is normally a segmentation error
