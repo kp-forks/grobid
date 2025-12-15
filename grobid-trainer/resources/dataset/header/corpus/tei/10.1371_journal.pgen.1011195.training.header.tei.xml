@@ -1,0 +1,125 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title level="a">Unknown Title</title>
+      <respStmt>
+        <persName xml:id="kazuyo">Kazuyo</persName>
+        <resp>Annotator</resp>
+      </respStmt>
+    </titleStmt>
+    <editionStmt>
+      <edition>
+        <date when="2025-12-01T14:31:45.348Z">12/1/2025 2:31:45 PM</date>
+        <title>corrections</title>
+      </edition>
+    </editionStmt>
+    <publicationStmt>
+      <publisher/>
+      <availability>
+        <licence target="https://creativecommons.org/licenses/by/4.0/"/>
+      </availability>
+      <date type="publication"/>
+      <idno type="DOI"/>
+    </publicationStmt>
+    <sourceDesc>
+      <bibl>. (). Unknown Title. , (), . DOI: None</bibl>
+    </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+    <appInfo>
+      <application version="1.0" ident="pdf-tei-editor" type="editor">
+        <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+      </application>
+      <application version="0.8.3-SNAPSHOT" ident="GROBID" when="2025-12-01T14:31:24.524209Z" type="extractor">
+        <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+        <label type="revision">4ae14a7</label>
+        <label type="flavor">default</label>
+        <label type="variant-id">grobid.training.header</label>
+        <ref target="https://github.com/kermitt2/grobid"/>
+      </application>
+    </appInfo>
+  </encodingDesc>
+  <revisionDesc>
+    <change when="2025-12-01T14:31:24.524209Z" status="draft">
+      <desc>Generated with createTraining API</desc>
+    </change>
+  </revisionDesc>
+</teiHeader>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+		<front>
+<lb/>
+	<note type="doctype">RESEARCH ARTICLE<lb/></note>
+
+	<docTitle>
+	<titlePart>&quot;Some missions can be quite emotionally<lb/> painful.&quot; Paramedic´s experience exercising<lb/> coercion during assignments-A qualitative study<lb/></titlePart>
+	</docTitle>
+
+	<byline>
+	<docAuthor>Anne Kristine Bergem 1 , Nina Øye Thorvaldsen 1 , Kristin Ha ¨ikio ¨ID 1<lb/> *, Heming Olsen-<lb/>Bergem 2<lb/></docAuthor>
+	</byline>
+
+	<byline>
+	<affiliation>1 Dept of Nursing and Health Promotion, Faculty of Health Sciences, Oslo Metropolitan University,</affiliation>
+	</byline>
+
+	<address>Oslo,<lb/> Norway,</address>
+
+	<byline>
+	<affiliation>2 Dept of Oral Surgery and Oral Medicine, Institute for Clinical Dentistry, Oslo University,</affiliation>
+	</byline>
+
+	<address>Oslo, Norway<lb/></address>
+
+	*
+	<email>haikio@oslomet.no</email>
+
+	Abstract
+	<div type="abstract">Background<lb/> More than 70% of respondents in a previous survey among paramedics reported use of<lb/> coercion or physical force towards patients. Coercion outside hospital is not permitted, and<lb/> neither routines nor equipment intended for physical restraint is available in the Norwegian<lb/> ambulance services. Paramedics carry out assignments involving use of force and coercion<lb/> on unclear legal grounds, with no training in techniques or proper equipment. Attitudes and<lb/> experiences of healthcare workers regarding incidents involving coercion in mental health<lb/> care services are frequently reported in the research literature, yet little is known about para-<lb/>medics&apos; experiences, and which factors contribute to their moral stress. Methods<lb/> In the period June-August 2021, almost 400 employees in the ambulance services in a<lb/> county in the eastern part of Norway were invited to answer a digital questionnaire. One<lb/> question had an open text field with the question &quot;Can you say something about how you<lb/> experience transporting patients where force has to be used to secure the patient during<lb/> transport?&quot;. The answers were analyzed using Graneheim and Lundman&apos;s content<lb/> analysis. Results<lb/> We received eighty-five completed responses (response rate 21%). Force was used by 62<lb/> paramedics. Twenty-three left the text field open. The answers showed many unique<lb/> responses. Content analysis resulted in two overarching themes; 1) lack of routines, equip-<lb/>ment, and training regarding use of coercion and force in the ambulance service, and 2)<lb/> paramedics were confronted with ethical dilemmas, alone and without support from legisla-<lb/>tion or management.<lb/></div>
+	<!-- minor corrections -->
+	<title level="j">PLOS ONE<lb/></title>
+	<reference>PLOS ONE | https://doi.org/10.1371/journal.pone.0290593 January 2, 2024<lb/></reference>
+
+	<page>1 / 10<lb/></page>
+			
+			a1111111111<lb/> a1111111111<lb/> a1111111111<lb/> a1111111111 a1111111111<lb/>
+	<note type="doctype">OPEN ACCESS<lb/></note>
+
+	Citation:
+	<reference>Bergem AK, Thorvaldsen NØ, Ha ¨ikio ¨K,<lb/> Olsen-Bergem H (2024) &quot;Some missions can be<lb/> quite emotionally painful.&quot; Paramedic´s experience<lb/> exercising coercion during assignments-A<lb/> qualitative study. PLoS ONE 19(1): e0290593.<lb/></reference>
+
+	<idno>https://doi.org/10.1371/journal.pone.0290593<lb/></idno>
+
+	Editor:
+	<editor>Collins Atta Poku, Kwame Nkrumah<lb/></editor>
+
+	<byline>
+	<affiliation>University of Science and Technology,</affiliation>
+	</byline>
+
+	<address>GHANA<lb/></address>
+
+	<note type="submission">Received: August 16, 2023<lb/> Accepted: December 9, 2023<lb/></note>
+
+	Published:
+	<date>January 2, 2024<lb/></date>
+
+	Peer Review History: PLOS recognizes the<lb/> benefits of transparency in the peer review<lb/> process; therefore, we enable the publication of<lb/> all of the content of peer review and author<lb/> responses alongside final, published articles. The<lb/> editorial history of this article is available here:<lb/>
+	<idno>https://doi.org/10.1371/journal.pone.0290593<lb/></idno>
+
+	Copyright:
+	<note type="copyright">© 2024 Bergem et al. This is an open<lb/> access article distributed under the terms of the<lb/> Creative Commons Attribution License, which<lb/> permits unrestricted use, distribution, and<lb/> reproduction in any medium, provided the original<lb/> author and source are credited.<lb/></note>
+
+	Data Availability Statement:
+	<note type="availability">Data cannot be<lb/> shared publicly because of the risk of recognition<lb/> of participants in qualitative data. Data are available<lb/> from the OsloMet Privacy Ombudsman (contact via<lb/> personvernombud@oslomet.no) for researchers<lb/> who meet the criteria for access to confidential<lb/> data.<lb/></note>
+
+	Funding:
+	<note type="funding">The authors received no specific funding<lb/> for this work.<lb/></note>
+
+	Competing interests:
+	<note type="conflict">The authors have declared<lb/> that no competing interests exist.</note>
+
+		</front>
+	</text>
+
+</TEI>

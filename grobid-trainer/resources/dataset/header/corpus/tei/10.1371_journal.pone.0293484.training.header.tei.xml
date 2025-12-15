@@ -1,0 +1,129 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title level="a">Unknown Title</title>
+      <respStmt>
+        <persName xml:id="kazuyo">Kazuyo</persName>
+        <resp>Annotator</resp>
+      </respStmt>
+    </titleStmt>
+    <editionStmt>
+      <edition>
+        <date when="2025-12-02T13:19:09.684Z">12/2/2025 1:19:09 PM</date>
+        <title>corrections</title>
+      </edition>
+    </editionStmt>
+    <publicationStmt>
+      <publisher/>
+      <availability>
+        <licence target="https://creativecommons.org/licenses/by/4.0/"/>
+      </availability>
+      <date type="publication"/>
+      <idno type="DOI"/>
+    </publicationStmt>
+    <sourceDesc>
+      <bibl>. (). Unknown Title. , (), . DOI: None</bibl>
+    </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+    <appInfo>
+      <application version="1.0" ident="pdf-tei-editor" type="editor">
+        <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+      </application>
+      <application version="0.8.3-SNAPSHOT" ident="GROBID" when="2025-12-02T13:18:57.094092Z" type="extractor">
+        <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+        <label type="revision">4ae14a7</label>
+        <label type="flavor">default</label>
+        <label type="variant-id">grobid.training.header</label>
+        <ref target="https://github.com/kermitt2/grobid"/>
+      </application>
+    </appInfo>
+  </encodingDesc>
+  <revisionDesc>
+    <change when="2025-12-02T13:18:57.094092Z" status="draft">
+      <desc>Generated with createTraining API</desc>
+    </change>
+  </revisionDesc>
+</teiHeader>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+		<front>
+<lb/>
+	<note type="doctype">RESEARCH ARTICLE<lb/></note>
+
+	<docTitle>
+	<titlePart>Transformation of cereal grains: Botanical and<lb/> chemical analysis of food residues encrusted<lb/> on pottery from the Funnel Beaker settlement<lb/> of Oldenburg LA 77, northern Germany<lb/></titlePart>
+	</docTitle>
+
+	<byline>
+	<docAuthor>Lucy Kubiak-Martens ID 1☯<lb/> *, Tania F. M. Oudemans 2☯ , Jan Piet Brozio 3 ‡ ,<lb/> Dragana Filipović ID<lb/> 3 ‡ , Johannes Mu ¨ller 3 , Wiebke Kirleis 3 ‡<lb/></docAuthor>
+	</byline>
+
+	<byline>
+	<affiliation>1 BIAX Biological Archaeology &amp; Environmental Reconstruction,</affiliation>
+	</byline>
+
+	<address>Zaandam, The Netherlands,</address>
+
+	<byline>
+	<affiliation>2 Kenaz<lb/> Consult &amp; Laboratory,</affiliation>
+	</byline>
+
+	<address>Berlin, Germany,</address>
+
+	<byline>
+	<affiliation>3 Institute for Prehistoric and Protohistoric Archaeology, Kiel<lb/> University,</affiliation>
+	</byline>
+
+	<address>Kiel, Germany<lb/></address>
+
+	☯ These authors contributed equally to this work.<lb/> ‡ JPB, DF and WK also contributed equally to this work.<lb/> *
+	<email>kubiak@biax.nl</email>
+
+	Abstract<lb/>
+	<div type="abstract">An integrated botanical and chemical approach is used to study surface residues on Funnel<lb/> Beaker ceramics from the site of Oldenburg LA 77, in northern Germany. Organic residues<lb/> were discovered adhering to fragments of thick-walled, undecorated ceramic vessels (n = 19)<lb/> and ceramic discs (n = 2). The surface residues were studied using scanning electron micros-<lb/>copy (SEM), to examine remains of cereals and other plant tissues that survived food prepara-<lb/>tion and cooking, and using attenuated total reflectance Fourier transform infrared spectroscopy<lb/> (ATR-FTIR) and direct time-resolved mass spectrometry (DTMS), to chemically identify specific<lb/> food components. The SEM results show a reoccurring presence of cereal grain (emmer and<lb/> barley) and one case of co-occurrence of emmer and fat-hen seeds. The SEM evidence for the<lb/> use of sprouted emmer grain and milk-ripe barley from the Oldenburg residues greatly<lb/> enhances our understanding of Neolithic foodways in northwestern Europe. The ATR-FTIR<lb/> results showed that roughly a third of the surface residues contain traces of the original foods<lb/> prepared or processed and DTMS results confirm that most of the residues primarily contain<lb/> polysaccharides and a minimal amount of plant protein and that they lack lipids. Only one resi-<lb/>due presents minor indications for a (partly) animal origin. The ceramic vessels were thus used<lb/> almost exclusively for the processing or cooking of cereal grains. This study offers an intimate<lb/> view of the cuisine and cooking practices (and in some cases their seasonal timing) in an early<lb/> agricultural village located in a marginal farming region on the south coast of the Baltic Sea.<lb/></div>
+
+	<!-- minor corrections -->
+
+	<title level="j">PLOS ONE<lb/></title>
+	<reference>PLOS ONE | https://doi.org/10.1371/journal.pone.0296986 January 19, 2024<lb/></reference>
+
+	<page>1 / 38<lb/></page>
+			a1111111111<lb/> a1111111111<lb/> a1111111111<lb/> a1111111111 a1111111111<lb/>
+	<note type="doctype">OPEN ACCESS<lb/></note>
+
+	Citation:
+	<reference>Kubiak-Martens L, Oudemans TFM,<lb/> Brozio JP, Filipović D, Mu ¨ller J, Kirleis W (2024)<lb/> Transformation of cereal grains: Botanical and<lb/> chemical analysis of food residues encrusted on<lb/> pottery from the Funnel Beaker settlement of<lb/> Oldenburg LA 77, northern Germany. PLoS ONE<lb/> 19(1): e0296986.</reference>
+
+	<idno>https://doi.org/10.1371/journal.<lb/> pone.0296986<lb/></idno>
+
+	Editor:
+	<editor>John P. Hart,</editor>
+
+	<byline>
+	<affiliation>New York State Museum,<lb/></affiliation>
+	</byline>
+
+	<address>UNITED STATES<lb/></address>
+
+	<note type="submission">Received: June 7, 2023<lb/> Accepted: December 22, 2023<lb/></note>
+
+	Published:
+	<date>January 19, 2024<lb/></date>
+
+	Copyright:
+	<note type="copyright">© 2024 Kubiak-Martens et al. This is an<lb/> open access article distributed under the terms of<lb/> the Creative Commons Attribution License, which<lb/> permits unrestricted use, distribution, and<lb/> reproduction in any medium, provided the original<lb/> author and source are credited.<lb/></note>
+
+	Data Availability Statement:
+	<note type="availability">All relevant data are<lb/> within the manuscript and its Supporting<lb/> Information files.<lb/></note>
+
+	Funding:
+	<note type="funding">The authors Johannes Mu ¨ller (JM) and<lb/> Wiebke Kirleis (WK) were both supported through<lb/> funds by the German Research Foundation<lb/> (Deutsche Forschungsgemeinschaft, DFG) within<lb/> the two programs: A) Collaborative Research<lb/> Centre 1266 &apos;Scales of Transformation -Human-<lb/>Environmental Interaction in Prehistoric and<lb/> Archaic Societies&apos;, Project number 290391021 -<lb/>SFB 1266) and B) Cluster of Excellence &apos;ROOTS -<lb/>Social, Environmental, and Cultural Connectivity in<lb/> Past Societies&apos; (project ref. 390870439-EXC<lb/> 2150). The funders had no role in study design,<lb/> data collection and analysis, decision to publish, or<lb/> preparation of the manuscript.<lb/></note>
+
+	Competing interests:
+	<note type="conflict">The authors have declared<lb/> that no competing interests exist.</note>
+
+		</front>
+	</text>
+
+</TEI>

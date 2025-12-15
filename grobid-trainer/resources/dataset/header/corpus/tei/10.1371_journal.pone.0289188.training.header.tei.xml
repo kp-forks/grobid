@@ -1,0 +1,133 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title level="a">Unknown Title</title>
+      <respStmt>
+        <persName xml:id="kazuyo">Kazuyo</persName>
+        <resp>Annotator</resp>
+      </respStmt>
+    </titleStmt>
+    <editionStmt>
+      <edition>
+        <date when="2025-12-02T13:12:20.538Z">12/2/2025 1:12:20 PM</date>
+        <title>corrections</title>
+      </edition>
+    </editionStmt>
+    <publicationStmt>
+      <publisher/>
+      <availability>
+        <licence target="https://creativecommons.org/licenses/by/4.0/"/>
+      </availability>
+      <date type="publication"/>
+      <idno type="DOI"/>
+    </publicationStmt>
+    <sourceDesc>
+      <bibl>. (). Unknown Title. , (), . DOI: None</bibl>
+    </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+    <appInfo>
+      <application version="1.0" ident="pdf-tei-editor" type="editor">
+        <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+      </application>
+      <application version="0.8.3-SNAPSHOT" ident="GROBID" when="2025-12-02T13:12:06.535793Z" type="extractor">
+        <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+        <label type="revision">4ae14a7</label>
+        <label type="flavor">default</label>
+        <label type="variant-id">grobid.training.header</label>
+        <ref target="https://github.com/kermitt2/grobid"/>
+      </application>
+    </appInfo>
+  </encodingDesc>
+  <revisionDesc>
+    <change when="2025-12-02T13:12:06.535793Z" status="draft">
+      <desc>Generated with createTraining API</desc>
+    </change>
+  </revisionDesc>
+</teiHeader>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+		<front>
+<lb/>
+	<note type="doctype">RESEARCH ARTICLE<lb/></note>
+
+	<docTitle>
+	<titlePart>Comparing preferences to evaluations of<lb/> barrier self-efficacy for two strength training<lb/> programs in US older adults<lb/></titlePart>
+	</docTitle>
+
+	<byline>
+	<docAuthor>Jordan D. Kurth ID<lb/> 1,2<lb/> *, Christopher N. Sciamanna 1,2 , Cheyenne Herrell ID<lb/> 1,2 ,<lb/> Matthew Moeller 1,2 , Jonathan G. Stine 3<lb/></docAuthor>
+	</byline>
+
+	<byline>
+	<affiliation>1 Penn State University,</affiliation>
+	</byline>
+
+	<address>University Park, PA, United States of America,</address>
+
+	<byline>
+	<affiliation>2 Penn State College of Medicine,<lb/></affiliation>
+	</byline>
+
+	<address>Hershey, PA, United States of America,</address>
+
+	<byline>
+	<affiliation>3 Penn State Health-Milton S. Hershey Medical Center,</affiliation>
+	</byline>
+
+	<address>Hershey,<lb/> PA, United States of America<lb/></address>
+
+	*
+	<email>jdk5930@psu.edu</email>
+
+	Abstract<lb/>
+	<div type="abstract">Background/Objectives<lb/> Engagement in regular physical activity is one of the best strategies for older adults to<lb/> remain healthy. Unfortunately, only 35% of older adults meet guidelines for muscle strength-<lb/>ening activities. Eliciting participant preferences is one possible way to improve physical<lb/> activity engagement. However, other sources of participant input to improve uptake and<lb/> maintenance remain uninvestigated. This study compared preferences to self-efficacy rat-<lb/>ings for two strength training programs. Methods<lb/> We conducted a national cross-sectional survey of 611 US adults over age 65. We com-<lb/>pared two participant evaluations (the preferred program and the program for which they<lb/> had higher barrier self-efficacy) of two hypothetical strength training programs (45 minutes<lb/> performed three times per week (traditional) and 5 minutes performed daily (brief)). Results<lb/> Most participants (68%) preferred the brief strength training program. The difference in self-<lb/>efficacy ratings was an average of 1.2 (SD = 0.92). One in five participants preferred a<lb/> strength training program for which they had less self-efficacy; nearly all of these partici-<lb/>pants (92%) preferred the traditional strength training program but had more self-efficacy for<lb/> the brief strength training program. Conclusion<lb/> Older adults reported preferring and having more self-efficacy for a brief compared to a tra-<lb/>ditional strength training program. Differences in self-efficacy ratings between the two<lb/> strength training programs were large. Preferences were often not congruent with ratings of<lb/> self-efficacy.<lb/></div>
+
+	<!-- minor corrections -->
+	<title level="j">PLOS ONE<lb/></title>
+	<reference>PLOS ONE | https://doi.org/10.1371/journal.pone.0302892 May 9, 2024<lb/></reference>
+
+	<page>1 / 9<lb/></page>
+			a1111111111<lb/> a1111111111<lb/> a1111111111<lb/> a1111111111 a1111111111<lb/>
+	<note type="doctype">OPEN ACCESS<lb/></note>
+
+	Citation:
+	<reference>Kurth JD, Sciamanna CN, Herrell C,<lb/> Moeller M, Stine JG (2024) Comparing preferences<lb/> to evaluations of barrier self-efficacy for two<lb/> strength training programs in US older adults.<lb/> PLoS ONE 19(5): e0302892.</reference>
+
+	<idno>https://doi.org/<lb/> 10.1371/journal.pone.0302892<lb/></idno>
+
+	Editor:
+	<editor>Sohel Ahmed,</editor>
+
+	<byline>
+	<affiliation>Ahmed Physiotherapy and<lb/> Research Center,</affiliation>
+	</byline>
+
+	<address>BANGLADESH<lb/></address>
+
+	<note type="submission">Received: January 31, 2024<lb/> Accepted: April 15, 2024<lb/></note>
+
+	Published:
+	<date>May 9, 2024<lb/></date>
+
+	Peer Review History: PLOS recognizes the<lb/> benefits of transparency in the peer review<lb/> process; therefore, we enable the publication of<lb/> all of the content of peer review and author<lb/> responses alongside final, published articles. The<lb/> editorial history of this article is available here:<lb/>
+	<idno>https://doi.org/10.1371/journal.pone.0302892<lb/></idno>
+
+	Copyright:
+	<note type="copyright">© 2024 Kurth et al. This is an open<lb/> access article distributed under the terms of the<lb/> Creative Commons Attribution License, which<lb/> permits unrestricted use, distribution, and<lb/> reproduction in any medium, provided the original<lb/> author and source are credited.<lb/></note>
+
+	Data Availability Statement:
+	<note type="availability">Data associated with<lb/> this study is available via Penn State Data<lb/> Commons at https://doi.org/10.26208/Q1KB-<lb/>AW67.<lb/></note>
+
+	<div type="abstract">Significance/Implications<lb/> Preferences for strength training programming may not always reflect the program most<lb/> likely to be maintained. Future investigations should evaluate differences in behavioral<lb/> uptake, maintenance, and outcomes from two comparative strength training interventions<lb/> using preferences and self-efficacy.<lb/></div>
+
+	Funding:
+	<note type="funding">The author(s) received no specific<lb/> funding for this work.<lb/></note>
+
+	Competing interests:
+	<note type="conflict">I have read the journal&apos;s<lb/> policy and the authors of this manuscript have the<lb/> following competing interests: Christopher<lb/> Sciamanna has an investment, such as stock, in a<lb/> company which has begun to investigate the<lb/> possibility of creating a business that provides<lb/> exercise programs. All other authors declare that<lb/> they have no known competing financial interests<lb/> or personal relationships that could have appeared<lb/> to influence the work reported in this paper.</note>
+
+		</front>
+	</text>
+
+</TEI>

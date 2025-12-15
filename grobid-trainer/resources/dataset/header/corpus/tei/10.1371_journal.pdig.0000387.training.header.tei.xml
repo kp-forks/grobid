@@ -1,0 +1,155 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title level="a">Information work and digital support during the perinatal period: Perspectives of mothers and healthcare professionals</title>
+      <author>
+        <persName>
+          <forename>Emma</forename>
+          <surname>Kemp</surname>
+        </persName>
+      </author>
+      <author>
+        <persName>
+          <forename>Elizabeth</forename>
+          <surname>Sillence</surname>
+        </persName>
+      </author>
+      <author>
+        <persName>
+          <forename>Lisa</forename>
+          <surname>Thomas</surname>
+        </persName>
+      </author>
+      <respStmt>
+        <persName xml:id="kazuyo">Kazuyo</persName>
+        <resp>Annotator</resp>
+      </respStmt>
+    </titleStmt>
+    <editionStmt>
+      <edition>
+        <date when="2025-12-04T17:45:25.096Z">12/4/2025 5:45:25 PM</date>
+        <title>corrections</title>
+      </edition>
+    </editionStmt>
+    <publicationStmt>
+      <publisher>Public Library of Science (PLoS)</publisher>
+      <availability>
+        <licence target="https://creativecommons.org/licenses/by/4.0/"/>
+      </availability>
+      <date type="publication">2024</date>
+      <idno type="DOI">10.1371/journal.pdig.0000387</idno>
+    </publicationStmt>
+    <sourceDesc>
+      <bibl>Emma Kemp, Elizabeth Sillence, Lisa Thomas. (2024). Information work and digital support during the perinatal period: Perspectives of mothers and healthcare professionals. PLOS Digital Health, 3(8), e0000387. DOI: 10.1371/journal.pdig.0000387</bibl>
+    </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+    <appInfo>
+      <application version="1.0" ident="pdf-tei-editor" type="editor">
+        <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+      </application>
+      <application version="0.8.3-SNAPSHOT" ident="GROBID" when="2025-12-04T17:45:06.571324Z" type="extractor">
+        <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+        <label type="revision">4ae14a7</label>
+        <label type="flavor">default</label>
+        <label type="variant-id">grobid.training.header</label>
+        <ref target="https://github.com/kermitt2/grobid"/>
+      </application>
+    </appInfo>
+  </encodingDesc>
+  <revisionDesc>
+    <change when="2025-12-04T17:45:06.571324Z" status="draft">
+      <desc>Generated with createTraining API</desc>
+    </change>
+  </revisionDesc>
+</teiHeader>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+		<front>
+<lb/>
+	<note type="doctype">RESEARCH ARTICLE<lb/></note>
+
+	<docTitle>
+	<titlePart>Long-term stability and the physical and<lb/> chemical factors predictive for antimicrobial<lb/> activity in Australian honey<lb/></titlePart>
+	</docTitle>
+
+	<byline>
+	<docAuthor>Kenya E. Fernandes ID 1<lb/> , Andrew Z. Dong ID 1<lb/> , Aviva Levina 2 , Nural N. Cokcetin ID 1<lb/> ,<lb/> Peter Brooks 3 , Dee A. Carter 1,4 *<lb/></docAuthor>
+	</byline>
+
+	<byline>
+	<affiliation>1 School of Life and Environmental Sciences, University of Sydney,</affiliation>
+	</byline>
+
+	<address>Sydney, New South Wales, Australia,<lb/></address>
+
+	<byline>
+	<affiliation>2 School of Chemistry, University of Sydney,</affiliation>
+	</byline>
+
+	<address>Sydney, New South Wales, Australia,</address>
+
+	<byline>
+	<affiliation>3 School of Science,<lb/> Technology and Engineering, University of the Sunshine Coast,</affiliation>
+	</byline>
+
+	<address>Maroochydore, Queensland, Australia,<lb/></address>
+
+	<byline>
+	<affiliation>4 Sydney Institute for Infectious Diseases, University of Sydney,</affiliation>
+	</byline>
+
+	<address>Sydney, New South Wales, Australia<lb/></address>
+
+	*
+	<email>dee.carter@sydney.edu.au</email>
+
+	Abstract<lb/>
+	<div type="abstract">The growing burden of expired medicines contributes to environmental contamination and<lb/> landfill waste accumulation. Medicinal honey, with its non-toxic nature and potentially long<lb/> shelf-life, represents a promising and underutilised therapeutic that avoids some of these<lb/> issues. However, limited knowledge on how its antimicrobial properties change over time<lb/> combined with a lack of reliable processes in the honey industry for measuring antimicrobial<lb/> potential, hinder its clinical adoption. Using a diverse selection of 30 Australian honey sam-<lb/>ples collected between 2005 and 2007, we comprehensively evaluated their antibacterial<lb/> and antifungal activity and pertinent physical and chemical properties with the aims of<lb/> assessing the effect of long-term storage on activity, pinpointing factors associated with anti-<lb/>microbial efficacy, and establishing robust assessment methods. Minimum inhibitory con-<lb/>centration (MIC) assays proved superior to the standard phenol equivalence assay in<lb/> capturing the full range of antimicrobial activity present in honey. Correlations between activ-<lb/>ity and a range of physical and chemical properties uncovered significant associations, with<lb/> hydrogen peroxide, antioxidant content, and water activity emerging as key indicators in<lb/> non-Leptospermum honey. However, the complex nature and the diverse composition of<lb/> honey samples precludes the use of high-throughput chemical tests for accurately assess-<lb/>ing this activity, and direct assessment using live microorganisms remains the most eco-<lb/>nomical and reliable method. We provide recommendations for different methods of<lb/> assaying various honey properties, taking into account their accuracy along with technical<lb/> difficulty and safety considerations. All Leptospermum and fourteen of seventeen non-Lep-<lb/>tospermum honey samples retained at least some antimicrobial properties after 15-17<lb/> years of storage, suggesting that honey can remain active for extended periods. Overall, the<lb/> results of this study will help industry meet the growing demand for high-quality, medicinally<lb/> active honey while ensuring accurate assessment of its antimicrobial potential.<lb/></div>
+
+	<title level="j">PLOS ONE<lb/></title>
+	<reference>PLOS ONE | https://doi.org/10.1371/journal.pone.0303095 May 22, 2024<lb/></reference>
+
+    <!-- minor corrections, page -->
+	<page>1 / 27<lb/></page>
+          a1111111111<lb/> a1111111111<lb/> a1111111111<lb/> a1111111111 a1111111111<lb/>
+	<note type="doctype">OPEN ACCESS<lb/></note>
+
+	Citation:
+	<reference>Fernandes KE, Dong AZ, Levina A,<lb/> Cokcetin NN, Brooks P, Carter DA (2024) Long-<lb/>term stability and the physical and chemical factors<lb/> predictive for antimicrobial activity in Australian<lb/> honey. PLoS ONE 19(5): e0303095.</reference>
+
+	<idno>https://doi.org/<lb/> 10.1371/journal.pone.0303095<lb/></idno>
+
+	Editor:
+	<editor>Branislav T. S ˇiler,</editor>
+
+	<byline>
+	<affiliation>Institute for Biological<lb/> Research, University of Belgrade,</affiliation>
+	</byline>
+
+	<address>SERBIA<lb/></address>
+
+	<note type="submission">Received: February 5, 2024<lb/> Accepted: April 18, 2024<lb/></note>
+
+	Published:
+	<date>May 22, 2024<lb/></date>
+
+	Peer Review History: PLOS recognizes the<lb/> benefits of transparency in the peer review<lb/> process; therefore, we enable the publication of<lb/> all of the content of peer review and author<lb/> responses alongside final, published articles. The<lb/> editorial history of this article is available here:<lb/>
+	<idno>https://doi.org/10.1371/journal.pone.0303095<lb/></idno>
+
+	Copyright:
+	<note type="copyright">© 2024 Fernandes et al. This is an open<lb/> access article distributed under the terms of the<lb/> Creative Commons Attribution License, which<lb/> permits unrestricted use, distribution, and<lb/> reproduction in any medium, provided the original<lb/> author and source are credited.<lb/></note>
+
+	Data Availability Statement:
+	<note type="availability">All relevant data are<lb/> within the manuscript and its Supporting<lb/> information files.<lb/></note>
+
+	Funding:
+	<note type="funding">Funding for this project was provided by<lb/> NSW Bushfire Industry Recovery Package Sector<lb/> Development Grant (BIP-SDG-135) to DC. The<lb/> funders had no role in study design, data collection<lb/> and analysis, decision to publish, or preparation of<lb/> the manuscript.<lb/></note>
+
+	Competing interests:
+	<note type="conflict">The authors have declared<lb/> that no competing interests exist.</note>
+
+		</front>
+	</text>
+
+</TEI>

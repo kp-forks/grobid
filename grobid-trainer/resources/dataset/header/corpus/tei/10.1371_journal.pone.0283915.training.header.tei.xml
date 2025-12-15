@@ -1,0 +1,119 @@
+<TEI xmlns="http://www.tei-c.org/ns/1.0">
+  <teiHeader>
+  <fileDesc>
+    <titleStmt>
+      <title level="a">Unknown Title</title>
+      <respStmt>
+        <persName xml:id="kazuyo">Kazuyo</persName>
+        <resp>Annotator</resp>
+      </respStmt>
+    </titleStmt>
+    <editionStmt>
+      <edition>
+        <date when="2025-12-02T12:42:22.967Z">12/2/2025 12:42:22 PM</date>
+        <title>corrections</title>
+      </edition>
+    </editionStmt>
+    <publicationStmt>
+      <publisher/>
+      <availability>
+        <licence target="https://creativecommons.org/licenses/by/4.0/"/>
+      </availability>
+      <date type="publication"/>
+      <idno type="DOI"/>
+    </publicationStmt>
+    <sourceDesc>
+      <bibl>. (). Unknown Title. , (), . DOI: None</bibl>
+    </sourceDesc>
+  </fileDesc>
+  <encodingDesc>
+    <appInfo>
+      <application version="1.0" ident="pdf-tei-editor" type="editor">
+        <ref target="https://github.com/mpilhlt/pdf-tei-editor"/>
+      </application>
+      <application version="0.8.3-SNAPSHOT" ident="GROBID" when="2025-12-02T12:42:12.852224Z" type="extractor">
+        <desc>GROBID - A machine learning software for extracting information from scholarly documents</desc>
+        <label type="revision">4ae14a7</label>
+        <label type="flavor">default</label>
+        <label type="variant-id">grobid.training.header</label>
+        <ref target="https://github.com/kermitt2/grobid"/>
+      </application>
+    </appInfo>
+  </encodingDesc>
+  <revisionDesc>
+    <change when="2025-12-02T12:42:12.852224Z" status="draft">
+      <desc>Generated with createTraining API</desc>
+    </change>
+  </revisionDesc>
+</teiHeader>
+  <text xmlns="http://www.tei-c.org/ns/1.0" xml:lang="en">
+		<front>
+<lb/>
+	<note type="doctype">RESEARCH ARTICLE<lb/></note>
+
+	<docTitle>
+	<titlePart>Overexpression of miR-200s inhibits<lb/> proliferation and invasion while increasing<lb/> apoptosis in murine ovarian cancer cells<lb/></titlePart>
+	</docTitle>
+
+	<byline>
+	<docAuthor>Resh Carter, Jim J. Petrik, Roger A. Moorehead ID *<lb/></docAuthor>
+	</byline>
+
+	<byline>
+	<affiliation>Department of Biomedical Sciences, Ontario Veterinary College, University of Guelph,</affiliation>
+	</byline>
+
+	<address>Guelph, ON, Canada<lb/></address>
+
+	*
+	<email>rmoorehe@uoguelph.ca</email>
+
+	Abstract<lb/>
+	<div type="abstract">Women diagnosed with ovarian cancer frequently have a poor prognosis as their cancer is<lb/> often diagnosed at more advanced stages when the cancer has metastasized. At this point<lb/> surgery cannot remove all the tumor cells and while ovarian cancer cells often initially<lb/> respond to chemotherapeutic agents like carboplatin and paclitaxel, resistance to these<lb/> agents frequently occurs. Thus, novel therapies are required for the treatment of advanced<lb/> stage ovarian cancer. One therapeutic option being explored is the regulation of non-coding<lb/> RNAs such as microRNAs. An advantage of microRNAs is that they can regulate tens, hun-<lb/>dreds and sometimes thousands of mRNAs in cells and thus may be more effective than<lb/> chemotherapeutic agents or targeted therapies. To investigate the therapeutic potential of<lb/> miR-200s in ovarian cancer, lentiviral vectors were used to overexpress both miR-200 clus-<lb/>ters in two murine ovarian cancer cell lines, ID8 and 28-2. Overexpression of miR-200s<lb/> reduced the expression of several mesenchymal genes and proteins, significantly inhibited<lb/> proliferation as assessed by BrdU flow cytometry and significantly reduced invasion through<lb/> Matrigel coated transwell inserts in both cell lines. Overexpression of miR-200s also<lb/> increased basal apoptosis approximately 3-fold in both cell lines as determined by annexin<lb/> V flow cytometry. Pathway analysis of RNA sequencing of control and miR-200 overexpres-<lb/>sing ovarian cancer cells revealed that genes regulated by miR-200s were involved in pro-<lb/>cesses like epithelial mesenchymal transition (EMT) and cell migration. Therefore, miR-<lb/>200s can inhibit proliferation and increase apoptosis while suppressing tumor cell invasion<lb/> and thus simultaneously target three key cancer pathways.<lb/></div>
+
+    <!-- minor changes -->
+	<title level="j">PLOS ONE<lb/></title>
+	<reference>PLOS ONE | https://doi.org/10.1371/journal.pone.0307178 July 19, 2024<lb/></reference>
+
+	<page>1 / 17<lb/></page>
+    a1111111111<lb/> a1111111111<lb/> a1111111111<lb/> a1111111111 a1111111111<lb/>
+	<note type="doctype">OPEN ACCESS<lb/></note>
+
+	Citation:
+	<reference>Carter R, Petrik JJ, Moorehead RA (2024)<lb/> Overexpression of miR-200s inhibits proliferation<lb/> and invasion while increasing apoptosis in murine<lb/> ovarian cancer cells. PLoS ONE 19(7): e0307178.<lb/></reference>
+
+	<idno>https://doi.org/10.1371/journal.pone.0307178<lb/></idno>
+
+	Editor:
+	<editor>Yi-Hsien Hsieh</editor>,
+
+	<byline>
+	<affiliation>Chung Shan Medical<lb/> University</affiliation>,
+	</byline>
+
+	<address>TAIWAN<lb/></address>
+
+	<note type="submission">Received: April 11, 2024<lb/> Accepted: July 1, 2024<lb/></note>
+
+	Published:
+	<date>July 19, 2024<lb/></date>
+
+	Copyright:
+	<note type="copyright">© 2024 Carter et al. This is an open<lb/> access article distributed under the terms of the<lb/> Creative Commons Attribution License, which<lb/> permits unrestricted use, distribution, and<lb/> reproduction in any medium, provided the original<lb/> author and source are credited.<lb/></note>
+
+	Data Availability Statement:
+	<note type="availability">Our data is publicly<lb/> available at NCBI Gene Expression Omnibus as<lb/> accession number GSE250195.<lb/></note>
+
+	Funding:
+	<note type="funding">CIHR project grant PJT-162218 awarded<lb/> to Roger Moorehead. The funders had no role in<lb/> study design, data collection and analysis, decision<lb/> to publish, or preparation of the manuscript.<lb/></note>
+
+	Competing interests:
+	<note type="conflict">The authors have declared<lb/> that no competing interests exist.<lb/></note>
+
+	Abbreviations:
+	<keyword>ba429, miR-200b/200a/429 cluster;<lb/> BrdU, bromodeoxyuridine; c141, miR-200c/141<lb/> cluster; CCC, clear cell carcinoma; EC,<lb/> endometrioid carcinoma; EMT, epithelial<lb/> mesenchymal transition; EV, empty vector; FDR,<lb/> false discovery rate; HGSOC, high grade serous<lb/> ovarian cancer; LGSOC, low grade serous ovarian<lb/> cancer; MC, mucinous carcinoma; miRNA,<lb/> microRNA; PARP, poly (ADP-ribose) polymerase;<lb/> PRC2, polycomb repressor complex 2; UTR,<lb/> untranslated region.</keyword>
+
+		</front>
+	</text>
+
+</TEI>
