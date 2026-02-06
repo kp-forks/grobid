@@ -41,6 +41,26 @@ PATTERN='*'
 DRY_RUN=0
 JAVA_NATIVE_LIB=""
 
+# record where the user invoked the script from (so ./gradlew is picked from here)
+START_PWD="$(pwd)"
+
+# determine the script dir and repository root (repo root = parent of grobid-home)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
+# default absolute report source path (repo-root based)
+REPORT_SRC_DEFAULT="${REPO_ROOT}/grobid-home/tmp/report.md"
+
+# Pre-process long options into short equivalents so getopts doesn't choke on --dry-run
+NEWARGS=()
+for a in "$@"; do
+  case "$a" in
+    --dry-run) NEWARGS+=("-n") ;;
+    *) NEWARGS+=("$a") ;;
+  esac
+done
+set -- "${NEWARGS[@]}"
+
+# parse short options; we'll handle long options (like --dry-run) after getopts
 while getopts ":d:s:r:f:l:g:j:o:p:nh" opt; do
   case ${opt} in
     d ) EVAL_ROOT="$OPTARG" ;;
@@ -52,13 +72,20 @@ while getopts ":d:s:r:f:l:g:j:o:p:nh" opt; do
     j ) JAVA_NATIVE_LIB="$OPTARG" ;;
     o ) OUT_DIR="$OPTARG" ;;
     p ) PATTERN="$OPTARG" ;;
-    n ) DRY_RUN=1 ;;
+    n ) DRY_RUN=1 ;; # legacy short flag and mapped --dry-run
     h ) usage; exit 0 ;;
     \? ) echo "Invalid option: -$OPTARG" >&2; usage; exit 2 ;;
     : ) echo "Missing option argument for -$OPTARG" >&2; usage; exit 2 ;;
   esac
 done
 shift $((OPTIND -1))
+
+# support long option --dry-run (user-friendly); scan any remaining args (keeps backward compatibility)
+for arg in "$@"; do
+  if [ "${arg}" = "--dry-run" ]; then
+    DRY_RUN=1
+  fi
+done
 
 # required
 if [ -z "${EVAL_ROOT}" ]; then
@@ -71,11 +98,22 @@ fi
 EVAL_ROOT=$(cd "${EVAL_ROOT}" 2>/dev/null && pwd) || { echo "Cannot access EVAL_ROOT=${EVAL_ROOT}" >&2; exit 2; }
 OUT_DIR=$(mkdir -p "${OUT_DIR}" && cd "${OUT_DIR}" 2>/dev/null && pwd) || { echo "Cannot create/access OUT_DIR=${OUT_DIR}" >&2; exit 2; }
 
-# ensure gradlew exists
+# Resolve GRADLEW_PATH so that relative paths are resolved against the directory where the user invoked the script (START_PWD)
+if [[ "${GRADLEW_PATH}" != /* ]]; then
+  GRADLEW_PATH="${START_PWD%/}/${GRADLEW_PATH}"
+fi
+# normalize path (if possible)
+if [ -e "${GRADLEW_PATH}" ]; then
+  GRADLEW_PATH=$(cd "$(dirname "${GRADLEW_PATH}")" 2>/dev/null && pwd)/$(basename "${GRADLEW_PATH}")
+fi
+
+# ensure gradlew exists: prefer resolved path, then try START_PWD/gradlew, then REPO_ROOT/gradlew
 if [ ! -x "${GRADLEW_PATH}" ]; then
-  echo "Warning: gradlew not executable at ${GRADLEW_PATH}. Attempting to use ./gradlew from current directory." >&2
-  if [ -x ./gradlew ]; then
-    GRADLEW_PATH=./gradlew
+  echo "Warning: gradlew not executable at ${GRADLEW_PATH}. Trying ${START_PWD}/gradlew and ${REPO_ROOT}/gradlew" >&2
+  if [ -x "${START_PWD}/gradlew" ]; then
+    GRADLEW_PATH="${START_PWD}/gradlew"
+  elif [ -x "${REPO_ROOT}/gradlew" ]; then
+    GRADLEW_PATH="${REPO_ROOT}/gradlew"
   else
     echo "Error: gradlew not found or not executable. Provide with -g" >&2
     exit 2
@@ -142,7 +180,8 @@ for ds in "${datasets[@]}"; do
   if [ ${DRY_RUN} -eq 1 ]; then
     echo "DRY: ${cmd[*]}"
   else
-    "${cmd[@]}"
+    # execute gradlew from the directory where the script was invoked (START_PWD)
+    (cd "${START_PWD}" && "${cmd[@]}")
     exit_code=$?
 
     if [ $exit_code -ne 0 ]; then
@@ -150,7 +189,8 @@ for ds in "${datasets[@]}"; do
       overall_status=1
       # continue with other datasets
     else
-      report_src="./grobid-home/tmp/report.md"
+      # use repo-root absolute report source by default to avoid ambiguity
+      report_src="${REPORT_SRC_DEFAULT}"
       report_dst="${OUT_DIR}/report-${ds_basename}-${REPORT_SUFFIX}.md"
       if [ -f "${report_src}" ]; then
         mv "${report_src}" "${report_dst}" || { echo "Failed to move report to ${report_dst}" >&2; overall_status=1; }
