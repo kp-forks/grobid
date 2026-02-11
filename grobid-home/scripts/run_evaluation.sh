@@ -49,6 +49,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." >/dev/null 2>&1 && pwd)"
 # default absolute report source path (repo-root based)
 REPORT_SRC_DEFAULT="${REPO_ROOT}/grobid-home/tmp/report.md"
+# also consider start-pwd rooted path when gradle output differs by working dir
+REPORT_SRC_STARTPWD="${START_PWD%/}/grobid-home/tmp/report.md"
 
 # Pre-process long options into short equivalents so getopts doesn't choke on --dry-run
 NEWARGS=()
@@ -192,11 +194,17 @@ for ds in "${datasets[@]}"; do
       # use repo-root absolute report source by default to avoid ambiguity
       report_src="${REPORT_SRC_DEFAULT}"
       report_dst="${OUT_DIR}/report-${ds_basename}-${REPORT_SUFFIX}.md"
+
+      # fall back to start-pwd based report path if needed
+      if [ ! -f "${report_src}" ] && [ -f "${REPORT_SRC_STARTPWD}" ]; then
+        report_src="${REPORT_SRC_STARTPWD}"
+      fi
+
       if [ -f "${report_src}" ]; then
         mv "${report_src}" "${report_dst}" || { echo "Failed to move report to ${report_dst}" >&2; overall_status=1; }
         echo "Report saved to ${report_dst}"
       else
-        echo "Warning: report not found at ${report_src} after evaluation of ${ds_basename}" >&2
+        echo "Warning: report not found at ${REPORT_SRC_DEFAULT} or ${REPORT_SRC_STARTPWD} after evaluation of ${ds_basename}" >&2
         overall_status=1
       fi
     fi
