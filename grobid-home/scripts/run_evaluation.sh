@@ -179,12 +179,15 @@ for ds in "${datasets[@]}"; do
     cmd+=("-Pflavor=${FLAVOR}")
   fi
 
+  log_dst="${OUT_DIR}/report-${ds_basename}-${REPORT_SUFFIX}.txt"
+
   if [ ${DRY_RUN} -eq 1 ]; then
     echo "DRY: ${cmd[*]}"
+    echo "DRY: would write log to ${log_dst}"
   else
     # execute gradlew from the directory where the script was invoked (START_PWD)
-    (cd "${START_PWD}" && "${cmd[@]}")
-    exit_code=$?
+    (cd "${START_PWD}" && "${cmd[@]}") 2>&1 | tee "${log_dst}"
+    exit_code=${PIPESTATUS[0]}
 
     if [ $exit_code -ne 0 ]; then
       echo "Gradle jatsEval failed for ${ds_basename} with exit code ${exit_code}" >&2
