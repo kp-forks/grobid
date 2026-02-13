@@ -8,11 +8,12 @@
 # Please notice that the evaluation is run through a python script that runs all the needed commands
 # TODO: upload the evaluation in Markdown somewhere
 
+
 # -------------------
 # build builder image
 # -------------------
 
-FROM eclipse-temurin:21-jdk AS builder
+FROM eclipse-temurin:21.0.10_7-jdk AS builder
 
 USER root
 
