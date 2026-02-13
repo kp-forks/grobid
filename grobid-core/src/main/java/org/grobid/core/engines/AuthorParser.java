@@ -38,8 +38,8 @@ public class AuthorParser {
     private final GenericTagger namesHeaderParser;
     private final GenericTagger namesCitationParser;
 
-    private static final Pattern ET_AL_REGEX_PATTERN = Pattern.compile("et\\.? al\\.?.*$");
-	
+    private static final Pattern ET_AL_PATTERN = Pattern.compile("et\\.? al\\.?");
+
     public AuthorParser() {
         namesHeaderParser = TaggerFactory.getTagger(GrobidModels.NAMES_HEADER);
         namesCitationParser = TaggerFactory.getTagger(GrobidModels.NAMES_CITATION);
@@ -53,7 +53,10 @@ public class AuthorParser {
             return null;
         }
 
-        input = ET_AL_REGEX_PATTERN.matcher(input.trim()).replaceAll(" ");
+        Matcher matcher = ET_AL_PATTERN.matcher(input.trim());
+        if (matcher.find()) {
+            input = input.substring(0, matcher.start()) + " ";
+        }
 
         // set the language to English for the analyser to avoid any bad surprises
         List<LayoutToken> tokens = GrobidAnalyzer.getInstance().tokenizeWithLayoutToken(input, new Language("en", 1.0));
@@ -75,7 +78,10 @@ public class AuthorParser {
             return null;
         }
 
-        input = ET_AL_REGEX_PATTERN.matcher(input.trim()).replaceAll(" ");
+        Matcher matcher = ET_AL_PATTERN.matcher(input.trim());
+        if (matcher.find()) {
+            input = input.substring(0, matcher.start()) + " ";
+        }
 
         // set the language to English for the analyser to avoid any bad surprises
         List<LayoutToken> tokens = GrobidAnalyzer.getInstance().tokenizeWithLayoutToken(input, new Language("en", 1.0));
