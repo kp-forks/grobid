@@ -3177,9 +3177,9 @@ System.out.println("majorityEquationarkerType: " + majorityEquationarkerType);*/
 
             // conflict of interest statements in header
             StringBuilder conflictOfInterestStmt = new StringBuilder();
-            if (StringUtils.isNotBlank(resHeader.getAvailabilityStmt())) {
-                List<LayoutToken> headerAvailabilityStatementTokens = resHeader.getLayoutTokens(TaggingLabels.HEADER_CONFLICT_OF_INTEREST);
-                Pair<String, List<LayoutToken>> headerConflictOfInterestProcessed = processShort(headerAvailabilityStatementTokens, doc);
+            if (StringUtils.isNotBlank(resHeader.getConflictStmt())) {
+                List<LayoutToken> headerConflictStatementTokens = resHeader.getLayoutTokens(TaggingLabels.HEADER_CONFLICT_OF_INTEREST);
+                Pair<String, List<LayoutToken>> headerConflictOfInterestProcessed = processShort(headerConflictStatementTokens, doc);
                 if (headerConflictOfInterestProcessed != null) {
                     conflictOfInterestStmt = teiFormatter.processTEIDivSection("conflict",
                         "\t\t\t",
@@ -3207,9 +3207,9 @@ System.out.println("majorityEquationarkerType: " + majorityEquationarkerType);*/
 
             // author contribution statements in header
             StringBuilder authorContribution = new StringBuilder();
-            if (StringUtils.isNotBlank(resHeader.getAvailabilityStmt())) {
-                List<LayoutToken> headerAvailabilityStatementTokens = resHeader.getLayoutTokens(TaggingLabels.HEADER_AUTHOR_CONTRIBUTION);
-                Pair<String, List<LayoutToken>> headerAuthorContributionProcessed = processShort(headerAvailabilityStatementTokens, doc);
+            if (StringUtils.isNotBlank(resHeader.getContributionStmt())) {
+                List<LayoutToken> headerContributionStatementTokens = resHeader.getLayoutTokens(TaggingLabels.HEADER_AUTHOR_CONTRIBUTION);
+                Pair<String, List<LayoutToken>> headerAuthorContributionProcessed = processShort(headerContributionStatementTokens, doc);
                 if (headerAuthorContributionProcessed != null) {
                     authorContribution = teiFormatter.processTEIDivSection("contribution",
                         "\t\t\t",
