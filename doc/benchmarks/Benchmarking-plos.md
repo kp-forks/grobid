@@ -230,14 +230,14 @@ Total expected references: 	 48449 - 48.45 references per article
 Total predicted references: 	 48186 - 48.19 references per article
 
 Total expected citation contexts: 	 69755 - 69.75 citation contexts per article
-Total predicted citation contexts: 	 73319 - 73.32 citation contexts per article
+Total predicted citation contexts: 	 73323 - 73.32 citation contexts per article
 
-Total correct predicted citation contexts: 	 56825 - 56.83 citation contexts per article
+Total correct predicted citation contexts: 	 56829 - 56.83 citation contexts per article
 Total wrong predicted citation contexts: 	 16494 (wrong callout matching, callout missing in NLM, or matching with a bib. ref. not aligned with a bib.ref. in NLM)
 
-Precision citation contexts: 	 77.5
-Recall citation contexts: 	 81.46
-fscore citation contexts: 	 79.43
+Precision citation contexts: 	 77.51
+Recall citation contexts: 	 81.47
+fscore citation contexts: 	 79.44
 ```
 
 ## Fulltext structures
@@ -253,20 +253,20 @@ Evaluation on 1000 random PDF files out of 998 PDF (ratio 1.0).
 
 **Field-level results**
 
-| label                       | precision | recall    | f1        | support |
-|-----------------------------|-----------|-----------|-----------|---------|
-| availability_stmt           | 55.81     | 56.1      | 55.95     | 779     |
-| conflict_stmt               | 87.4      | 70.69     | 78.16     | 962     |
-| figure_title                | 0.18      | 0.09      | 0.12      | 8943    |
-| funding_stmt                | 5.74      | 30.72     | 9.68      | 1507    |
-| reference_citation          | 87.96     | 94.55     | 91.13     | 69741   |
-| reference_figure            | 74.12     | 85.8      | 79.53     | 11010   |
-| reference_table             | 70.21     | 94.34     | 80.51     | 5159    |
-| section_title               | 73        | 66.28     | 69.48     | 17540   |
-| table_title                 | 0         | 0         | 0         | 6092    |
-|                             |           |           |           |         |
-| **all fields (micro avg.)** | **74.51** | **76.78** | **75.63** | 121733  |
-| all fields (macro avg.)     | 50.49     | 55.4      | 51.62     | 121733  |
+| label                       | precision | recall    | f1       | support |
+|-----------------------------|-----------|-----------|----------|---------|
+| availability_stmt           | 55.81     | 56.1      | 55.95    | 779     |
+| conflict_stmt               | 86.96     | 87.32     | 87.14    | 962     |
+| figure_title                | 0.18      | 0.09      | 0.12     | 8943    |
+| funding_stmt                | 5.74      | 30.72     | 9.68     | 1507    |
+| reference_citation          | 87.96     | 94.56     | 91.14    | 69741   |
+| reference_figure            | 74.12     | 85.8      | 79.53    | 11010   |
+| reference_table             | 70.21     | 94.34     | 80.51    | 5159    |
+| section_title               | 73        | 66.28     | 69.48    | 17540   |
+| table_title                 | 0         | 0         | 0        | 6092    |
+|                             |           |           |          |         |
+| **all fields (micro avg.)** | **74.52** | **76.92** | **75.7** | 121733  |
+| all fields (macro avg.)     | 50.44     | 57.25     | 52.62    | 121733  |
 
 #### Soft Matching (ignoring punctuation, case and space characters mismatches)
 
@@ -275,7 +275,7 @@ Evaluation on 1000 random PDF files out of 998 PDF (ratio 1.0).
 | label                       | precision | recall    | f1        | support |
 |-----------------------------|-----------|-----------|-----------|---------|
 | availability_stmt           | 82.25     | 82.67     | 82.46     | 779     |
-| conflict_stmt               | 91.13     | 73.7      | 81.49     | 962     |
+| conflict_stmt               | 90.06     | 90.44     | 90.25     | 962     |
 | figure_title                | 93.24     | 45.82     | 61.45     | 8943    |
 | funding_stmt                | 7.26      | 38.82     | 12.23     | 1507    |
 | reference_citation          | 87.96     | 94.56     | 91.14     | 69741   |
@@ -284,22 +284,19 @@ Evaluation on 1000 random PDF files out of 998 PDF (ratio 1.0).
 | section_title               | 78.81     | 71.56     | 75.01     | 17540   |
 | table_title                 | 53.02     | 7.49      | 13.12     | 6092    |
 |                             |           |           |           |         |
-| **all fields (micro avg.)** | **79.19** | **81.61** | **80.38** | 121733  |
-| all fields (macro avg.)     | 70.93     | 66.14     | 64.15     | 121733  |
+| **all fields (micro avg.)** | **79.2**  | **81.74** | **80.45** | 121733  |
+| all fields (macro avg.)     | 70.82     | 68        | 65.13     | 121733  |
 
 **Document-level ratio results**
 
-| label                       | precision | recall    | f1        | support |
-|-----------------------------|-----------|-----------|-----------|---------|
-| availability_stmt           | 99.49     | 100.51    | 100       | 779     |
-| conflict_stmt               | 100       | 80.87     | 89.43     | 962     |
-|                             |           |           |           |         |
-| **all fields (micro avg.)** | **99.74** | **89.66** | **94.43** | 1741    |
-| all fields (macro avg.)     | 99.75     | 90.69     | 94.71     | 1741    |
+| label                       | precision | recall  | f1        | support |
+|-----------------------------|-----------|---------|-----------|---------|
+| availability_stmt           | 99.49     | 100.51  | 100       | 779     |
+| conflict_stmt               | 99.08     | 100.42  | 99.74     | 962     |
+|                             |           |         |           |         |
+| **all fields (micro avg.)** | **99.26** | **100** | **99.63** | 1741    |
+| all fields (macro avg.)     | 99.28     | 100     | 99.87     | 1741    |
 
-Evaluation metrics produced in 800.986 seconds
-
-
-
+Evaluation metrics produced in 791.588 seconds
 
 
