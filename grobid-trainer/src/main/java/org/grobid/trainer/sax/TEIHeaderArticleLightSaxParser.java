@@ -32,9 +32,11 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
 
     private ArrayList<String> labeled = null; // store line by line the labeled data
 
-    private List<String> endTags = Arrays.asList("titlePart", "docAuthor", "date", "idno");
-    private List<String> tags = Arrays.asList("titlePart", "note", "docAuthor", "affiliation", "address", "email", "idno",
-        "date", "keywords", "keyword", "reference", "ptr", "div", "editor", "meeting");
+    private List<String> endTags = Arrays.asList(
+        "titlePart", "note", "docAuthor", "affiliation",
+        "address", "email", "idno",
+        "date", "keywords", "keyword",
+        "reference", "ptr", "div", "editor", "meeting");
 
     private List<String> intermediaryTags = Arrays.asList("byline", "front", "lb", "tei", "TEI", "teiHeader", "fileDesc", "text", "byline", "docTitle", "p");
 
