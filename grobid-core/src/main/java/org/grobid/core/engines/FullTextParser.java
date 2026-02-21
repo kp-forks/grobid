@@ -3223,7 +3223,7 @@ System.out.println("majorityEquationarkerType: " + majorityEquationarkerType);*/
                 }
             }
 
-            // availability statements in non-header part
+            // author contribution statements in non-header part
             authorContribution = getSectionAsTEI("contribution",
                 "\t\t\t",
                 doc,
@@ -3231,12 +3231,23 @@ System.out.println("majorityEquationarkerType: " + majorityEquationarkerType);*/
                 teiFormatter,
                 resCitations,
                 config);
+
             if (authorContribution.length() > 0) {
                 tei.append(authorContribution.toString());
             }
 
-			tei = teiFormatter.toTEIAnnex(tei, annexLabellingResult, resHeader, resCitations,
-				tokenizationsAnnex, annexFigures, annexTables, annexEquations, markerTypes, doc, config
+			tei = teiFormatter.toTEIAnnex(
+                tei,
+                annexLabellingResult,
+                resHeader,
+                resCitations,
+				tokenizationsAnnex,
+                annexFigures,
+                annexTables,
+                annexEquations,
+                markerTypes,
+                doc,
+                config
             );
 
             tei = teiFormatter.toTEIReferences(tei, resCitations, config);
