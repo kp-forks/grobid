@@ -50,6 +50,7 @@ public abstract class AbstractTrainer implements Trainer {
     protected int window = 0; // similar to CRF++
     protected int nbMaxIterations = 0; // maximum number of iterations in training
     protected File outputModelPath = null; // custom output model path; null = use GrobidProperties default
+    protected File evaluationModelPath = null; // custom model path for eval; null = use GrobidProperties default
 
     protected GrobidModel model;
     private File trainDataPath;
@@ -79,6 +80,10 @@ public abstract class AbstractTrainer implements Trainer {
 
     public void setOutputModelPath(File outputModelPath) {
         this.outputModelPath = outputModelPath;
+    }
+
+    public void setEvaluationModelPath(File evaluationModelPath) {
+        this.evaluationModelPath = evaluationModelPath;
     }
 
     @Override
@@ -122,14 +127,17 @@ public abstract class AbstractTrainer implements Trainer {
         if (outputModelPath != null) {
             // Write directly to the specified path — no rename dance
             trainer.train(getTemplatePath(), dataPath, finalModelPath, GrobidProperties.getWapitiNbThreads(), model, incremental);
+            System.out.println("Model for " + model + " created in " + finalModelPath.getAbsolutePath());
         } else {
             // Default atomic rename: write to .new, then rename
             final File tempModelPath = new File(finalModelPath.getAbsolutePath() + NEW_MODEL_EXT);
             trainer.train(getTemplatePath(), dataPath, tempModelPath, GrobidProperties.getWapitiNbThreads(), model, incremental);
             // if we are here, that means that training succeeded
             // rename model for CRF sequence labellers (not with DeLFT deep learning models)
-            if (GrobidProperties.getGrobidEngine(this.model) != GrobidCRFEngine.DELFT)
+            if (GrobidProperties.getGrobidEngine(this.model) != GrobidCRFEngine.DELFT){
                 renameModels(finalModelPath, tempModelPath);
+                System.out.println("Model for " + model + " replaced in " + finalModelPath.getAbsolutePath());   
+            }
         }
     }
 
@@ -544,7 +552,9 @@ public abstract class AbstractTrainer implements Trainer {
 
     protected GenericTagger getTagger() {
         if (tagger == null) {
-            tagger = TaggerFactory.getTagger(model);
+            tagger = (evaluationModelPath != null)
+                ? TaggerFactory.getTaggerFromPath(evaluationModelPath, GrobidProperties.getGrobidEngine(model))
+                : TaggerFactory.getTagger(model);
         }
 
         return tagger;
