@@ -90,7 +90,7 @@ RUN python3 -m pip install pip --upgrade --no-cache-dir
 RUN pip3 install --no-cache-dir "lmdb<2.0.0"
 
 # install DeLFT
-RUN pip3 install --no-cache-dir delft==0.4.1
+RUN pip3 install --no-cache-dir delft==0.4.5
 
 # link the data directory to /data
 # the current working directory will most likely be /opt/grobid
