@@ -52,6 +52,8 @@ public class GrobidConfig {
         public String mailto;
         public String token;
         public int timeoutSec = 60;
+        public long minRequestIntervalMs = -1;
+        public boolean postValidation = true;
     }
 
     public static class HostParameters {

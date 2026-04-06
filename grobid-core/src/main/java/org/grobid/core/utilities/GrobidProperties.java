@@ -764,6 +764,18 @@ public class GrobidProperties {
     }
 
     /**
+     * Get the minimum interval between consecutive CrossRef API request submissions (in milliseconds).
+     * Returns -1 (auto-compute from tier) by default. A positive value overrides the tier-based rate.
+     * @return minimum interval in milliseconds, or -1 for auto
+     */
+    public static long getCrossrefMinRequestInterval() {
+        if (grobidConfig.grobid.consolidation.crossref == null) {
+            return -1;
+        }
+        return grobidConfig.grobid.consolidation.crossref.minRequestIntervalMs;
+    }
+
+    /**
      * Get the Glutton timeout in seconds for consolidation service requests.
      * @return timeout in seconds
      */
@@ -773,6 +785,19 @@ public class GrobidProperties {
             return 60;
         }
         return grobidConfig.grobid.consolidation.glutton.timeoutSec;
+    }
+
+    /**
+     * Get whether post-validation is enabled for CrossRef consolidation results.
+     * When true, GROBID will validate CrossRef results against the source metadata.
+     *
+     * @return true if post-validation is enabled (default), false otherwise
+     */
+    public static boolean getCrossrefPostValidation() {
+        if (grobidConfig.grobid.consolidation.crossref == null) {
+            return true;
+        }
+        return grobidConfig.grobid.consolidation.crossref.postValidation;
     }
 
     /**

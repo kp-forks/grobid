@@ -66,7 +66,30 @@ Occasionally, [people have reported](https://github.com/kermitt2/grobid/issues/1
 To resolve this issue, there are several options:
  - Check that you are running the proper image for your hardware. If you are not sure, use the image `grobid/grobid:0.8.2-crf` which is the most lightweight and fastest image.
  - Make sure you don't send too many requests at the same time, as this can overload the server. If you are using the Grobid Python client, you can set the `n` parameter to a lower value (e.g. 1 or 2) to limit the number of concurrent requests.
- - Increase the timeout value in your client. If you are using the Grobid Python client, you can set the `timeout` parameter to a higher value (e.g. 90 seconds) in the `config.json` to give the server more time to respond.
+ - Increase the timeout value in your client. If you are using the Grobid Python client, you can set the `timeout` parameter to a higher value (e.g. 90 seconds) in the `config.json` to give the server more time to respond. **If consolidation is enabled** (`consolidateHeader` or `consolidateCitations`), you should increase the timeout much further — to **200–600 seconds** — because each document now waits for multiple external API lookups on top of PDF processing.
+
+## The service is slow to process PDFs
+
+If GROBID seems unusually slow when processing documents, the most common cause is **consolidation**. When consolidation is enabled (e.g. `consolidateHeader=1` or `consolidateCitations=1`), GROBID queries an external bibliographical service (CrossRef or biblio-glutton) for each bibliographic item, which adds significant latency — especially for documents with many references.
+
+A few things to check:
+
+1. **Are you using consolidation?** If you don't need DOI resolution or metadata enrichment, you can disable consolidation by setting `consolidateHeader=0` and `consolidateCitations=0` in your API calls. This will make processing much faster.
+
+2. **Have you configured a polite email?** If you are using CrossRef consolidation, you should set a contact email in `grobid-home/config/grobid.yaml`:
+
+    ```yaml
+    consolidation:
+        crossref:
+          mailto: your-email@example.org
+    ```
+
+    Without a `mailto`, requests go through the CrossRef **public** pool with minimal concurrency (1 request at a time). Adding an email enables access to the **polite** pool with higher concurrency (up to 3), resulting in noticeably faster consolidation. See the [Consolidation documentation](Consolidation.md) for more details on tiers.
+
+3. **Consider a CrossRef Plus subscription for medium-scale processing.** If you need consolidation but don't want to self-host biblio-glutton, a [CrossRef Metadata Plus](https://www.crossref.org/services/metadata-retrieval/metadata-plus/) subscription can help significantly. Benchmarks on 10,000 documents show the Plus tier is ~3.8x faster and has ~5.5x fewer errors compared to the Polite tier. See the [Consolidation documentation](Consolidation.md#performance-with-crossref-consolidation) for detailed numbers.
+
+4. **Consider biblio-glutton for large-scale processing.** The CrossRef API has rate limits that make it impractical for processing large batches with citation consolidation enabled. If you need to process many PDFs with full citation consolidation, consider using [biblio-glutton](https://github.com/kermitt2/biblio-glutton), which can scale horizontally and is not subject to external rate limits.
+
 
 ## How to override the grobid configuration file when running via docker?
 
