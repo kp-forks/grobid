@@ -161,11 +161,11 @@ If you want reference this software, please refer to the present GitHub project,
 For example, the BibTeX would look like this:
 
 ```bibtex
-@misc{GROBID,
+@misc{grobid,
     title = {GROBID},
-    howpublished = {\url{https://github.com/kermitt2/grobid}},
+    howpublished = {\url{https://github.com/grobidOrg/grobid}},
     publisher = {GitHub},
-    year = {2008--2026},
+    date = {2008/},
     archivePrefix = {swh},
     eprint = {1:dir:dab86b296e3c3216e2241968f0d63b68e8209d3c}
 }
@@ -180,6 +180,7 @@ curl -s "https://archive.softwareheritage.org/api/1/origin/https://github.com/ke
   xargs -I {} curl -s "https://archive.softwareheritage.org/api/1/snapshot/{}/" | \
   jq -r '.branches["refs/heads/master"].target' | \
   xargs -I {} echo "swh:1:dir:{}"
+  
 swh:1:dir:324a18113b0c7624a66a21550bd0e8522e328b4e
 ```
 
