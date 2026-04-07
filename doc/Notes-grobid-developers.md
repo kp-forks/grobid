@@ -100,9 +100,12 @@ The Gradle Release plugin only touches `gradle.properties`. Everything below has
 
 #### Cutting the release
 
+`master` is protected against direct pushes, and the gradle-release plugin creates two commits + a tag locally that have to land in master via a PR. The release is therefore cut from a **release branch** whose name contains the substring `release` (the plugin's `requireBranch` regex at `build.gradle:691-702` enforces this — running `./gradlew release` from `master` will fail).
+
 From a clean `master` checkout:
 
 ```
+git checkout -b release/<X.Y.Z>
 ./gradlew release \
     -Prelease.useAutomaticVersion=true \
     -Prelease.releaseVersion=<X.Y.Z> \
@@ -111,7 +114,7 @@ From a clean `master` checkout:
 
 This will:
 
-- Verify the working tree is clean and the branch is `master`.
+- Verify the working tree is clean and the branch name matches `.*release.*`.
 - Set `version=<X.Y.Z>` in `gradle.properties`.
 - Run `build` (which runs the test suite).
 - Create commit `[Gradle Release Plugin] - pre tag commit:  '<X.Y.Z>'.`
@@ -122,9 +125,11 @@ This will:
 The plugin **does not push**. Do it yourself:
 
 ```
-git push origin master
+git push origin release/<X.Y.Z>
 git push origin <X.Y.Z>
 ```
+
+Then open a pull request `release/<X.Y.Z> → master` and **merge it with a regular merge commit** (NOT squash, NOT rebase). This is critical: the `<X.Y.Z>` tag points to the pre-tag commit created on the release branch. A merge commit preserves that exact commit hash in master's history (reachable via the merge commit's second parent), so the tag stays anchored to a commit on master. Squash- or rebase-merging would replace the pre-tag commit with a new one, leaving the tag pointing at a commit no longer reachable from master — the docker build and tag itself still work, but `git log master` would no longer show the release commits in linear history.
 
 #### Producing release Docker images
 

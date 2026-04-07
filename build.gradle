@@ -693,6 +693,14 @@ release {
     failOnCommitNeeded = false
     tagTemplate = '${version}'
     git {
-        requireBranch.set('master')
+        // Releases must be cut from a branch whose name contains "release"
+        // (e.g. `release/0.9.0`, `feature/release-0.9.0`, `prepare-release-0.9.0`).
+        // Direct release from `master` is intentionally blocked: master is
+        // protected and the gradle-release plugin cannot push there. Cut the
+        // release on a release-named branch, then bring it back to master via
+        // a PR merged with a merge commit (NOT squash) so the tagged commit
+        // remains reachable from master history.
+        // The string is treated as a regex by net.researchgate.release.
+        requireBranch.set('.*release.*')
     }
 }
