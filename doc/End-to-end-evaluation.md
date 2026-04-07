@@ -8,17 +8,19 @@ For an end-to-end evaluation, covering the whole extraction process from the par
 
 * against TEI documents produced by [Pub2TEI](https://github.com/kermitt2/Pub2TEI). Pub2TEI is a set of XSLT that permit to tranform various _native_ XML publishers (including Elsevier, Wiley, Springer, etc. XML formats) into a common TEI format. This TEI format can be used as ground-truth structure information for evaluating GROBID output, keeping in mind some limits described bellow. 
 
-For actual benchmarks, see the [Benchmarking page](Benchmarking.md). We describe below the datasets and how to run the benchmarks.  
+For actual benchmarks, see the [Benchmarking page](benchmarks/Benchmarking.md). We describe below the datasets and how to run the benchmarks.  
 
 ## Datasets
 
-The corpus used for the end-to-end evaluation of Grobid are all available in a single place on Zenodo: [https://zenodo.org/record/7708580](https://zenodo.org/record/7708580). Some of these datasets have been further annotated to make the evaluation of certain sub-structures possible (in particular code and data availability sections & funding sections).
+The corpus used for the end-to-end evaluation of Grobid are all available in a single Hugging Face dataset: [https://huggingface.co/datasets/sciencialab/grobid-evaluation](https://huggingface.co/datasets/sciencialab/grobid-evaluation). Some of these datasets have been further annotated to make the evaluation of certain sub-structures possible (in particular code and data availability sections & funding sections).
+
+*Previously, these datasets were archived on Zenodo at [https://zenodo.org/record/7708580](https://zenodo.org/record/7708580). The Hugging Face repository is now the canonical source.*
 
 These resources are originally published under CC-BY license. Our additional annotations are similarly under CC-BY. We thank NIH, bioRxiv, PLOS and eLife for making these resources Open Access and reusable. 
 
 ### PubMedCentral gold-standard data 
 
-Since ages, we are evaluating GROBID using the `PMC_sample_1943` dataset compiled by Alexandru Constantin. The dataset is available at this [url](https://zenodo.org/record/7708580) (around 1.5GB in size). The sample dataset contains 1943 articles from 1943 different journals corresponding to the latest publications from a 2011 snapshot. 
+Since ages, we are evaluating GROBID using the `PMC_sample_1943` dataset compiled by Alexandru Constantin. The dataset is available at this [url](https://huggingface.co/datasets/sciencialab/grobid-evaluation) (around 1.5GB in size). The sample dataset contains 1943 articles from 1943 different journals corresponding to the latest publications from a 2011 snapshot. 
 
 Any similar PubMed Central set of articles could normally be used, as long they follow the same directory structure: one directory per article containing at least the corresponding PDF file and the reference NLM file. 
 
@@ -26,15 +28,15 @@ We suppose in the following that the archive is decompressed under `PATH_TO_PMC/
 
 ### The bioRxiv gold-standard data 
 
-For evaluation on preprint articles, we are using the balanced bioRxiv 10k dataset originally compiled with care and published by Daniel Ecer ([eLife](https://elifesciences.org)), available on [Zenodo](https://zenodo.org/record/7708580). More precisely we publish benchmarks using the test subset of 2000 articles. The zip archive is similar in structure to the above PMC sample 1943 dataset and further documented below. 
+For evaluation on preprint articles, we are using the balanced bioRxiv 10k dataset originally compiled with care and published by Daniel Ecer ([eLife](https://elifesciences.org)), available on [Hugging Face](https://huggingface.co/datasets/sciencialab/grobid-evaluation). More precisely we publish benchmarks using the test subset of 2000 articles. The zip archive is similar in structure to the above PMC sample 1943 dataset and further documented below. 
 
 ### The PLOS 1000 dataset
 
-This is a set of 1000 PLOS articles, called `PLOS_1000` and available on [Zenodo](https://zenodo.org/record/7708580), randomly selected from the full [PLOS Open Access collection](https://allof.plos.org/allofplos.zip). Again, for each article, the published PDF is available with the corresponding publisher JATS XML file, around 1.3GB total size.
+This is a set of 1000 PLOS articles, called `PLOS_1000` and available on [Hugging Face](https://huggingface.co/datasets/sciencialab/grobid-evaluation), randomly selected from the full [PLOS Open Access collection](https://allof.plos.org/allofplos.zip). Again, for each article, the published PDF is available with the corresponding publisher JATS XML file, around 1.3GB total size.
 
 ### eLife 984 dataset
 
-The `eLife_984` dataset is a set of 984 articles from eLife, available on [Zenodo](https://zenodo.org/record/7708580), randomly selected from their [open collection available on GitHub](https://github.com/elifesciences/elife-article-xml). Every articles come with the published PDF, the publisher JATS XML file and the eLife public HTML file (as bonus, not used), all in their latest version, around 4.5G total.
+The `eLife_984` dataset is a set of 984 articles from eLife, available on [Hugging Face](https://huggingface.co/datasets/sciencialab/grobid-evaluation), randomly selected from their [open collection available on GitHub](https://github.com/elifesciences/elife-article-xml). Every articles come with the published PDF, the publisher JATS XML file and the eLife public HTML file (as bonus, not used), all in their latest version, around 4.5G total.
 
 ## Getting publisher gold-standard data 
 
