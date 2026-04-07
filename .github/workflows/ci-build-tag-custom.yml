@@ -24,21 +24,69 @@ jobs:
   retag:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Pull, retag and push
+        env:
+          # Credentials are passed via env (not interpolated into the shell
+          # script below) so that shell metacharacters in secret values can't
+          # break the script and so the values stay masked in logs.
+          LFOPPIANO_USER: ${{ secrets.DOCKERHUB_USERNAME_LFOPPIANO }}
+          LFOPPIANO_TOKEN: ${{ secrets.DOCKERHUB_TOKEN_LFOPPIANO }}
+          GROBID_USER: ${{ secrets.DOCKERHUB_USERNAME_GROBID }}
+          GROBID_TOKEN: ${{ secrets.DOCKERHUB_TOKEN_GROBID }}
+          SOURCE_IMAGE: ${{ github.event.inputs.source_image }}
+          SOURCE_TAG: ${{ github.event.inputs.source_tag }}
+          TARGET_IMAGE: ${{ github.event.inputs.target_image }}
+          TARGET_TAG: ${{ github.event.inputs.target_tag }}
         run: |
-          SRC="${{ github.event.inputs.source_image }}:${{ github.event.inputs.source_tag }}"
-          DST="${{ github.event.inputs.target_image }}:${{ github.event.inputs.target_tag }}"
-          echo "Pulling $SRC"
+          set -euo pipefail
+
+          SRC="${SOURCE_IMAGE}:${SOURCE_TAG}"
+          DST="${TARGET_IMAGE}:${TARGET_TAG}"
+
+          # Select the Docker Hub credentials matching the image namespace.
+          # Docker Hub only allows one active login per host, so we log in,
+          # run the operation, and log out before switching namespaces.
+          login_for() {
+            local image="$1"
+            case "$image" in
+              grobid/*)
+                if [ -z "${GROBID_USER:-}" ] || [ -z "${GROBID_TOKEN:-}" ]; then
+                  echo "::error::Missing DOCKERHUB_USERNAME_GROBID / DOCKERHUB_TOKEN_GROBID secrets for $image"
+                  exit 1
+                fi
+                echo "Logging in as $GROBID_USER (grobid/ namespace)"
+                echo "$GROBID_TOKEN" | docker login -u "$GROBID_USER" --password-stdin
+                ;;
+              lfoppiano/*)
+                if [ -z "${LFOPPIANO_USER:-}" ] || [ -z "${LFOPPIANO_TOKEN:-}" ]; then
+                  echo "::error::Missing DOCKERHUB_USERNAME_LFOPPIANO / DOCKERHUB_TOKEN_LFOPPIANO secrets for $image"
+                  exit 1
+                fi
+                echo "Logging in as $LFOPPIANO_USER (lfoppiano/ namespace)"
+                echo "$LFOPPIANO_TOKEN" | docker login -u "$LFOPPIANO_USER" --password-stdin
+                ;;
+              *)
+                echo "::error::Unsupported namespace in '$image' (expected grobid/* or lfoppiano/*)"
+                exit 1
+                ;;
+            esac
+          }
+
+          echo "::group::Pulling $SRC"
+          login_for "$SRC"
           docker pull "$SRC"
-          echo "Tagging $SRC -> $DST"
+          docker logout
+          echo "::endgroup::"
+
+          echo "::group::Tagging $SRC -> $DST"
           docker tag "$SRC" "$DST"
-          echo "Pushing $DST"
+          echo "::endgroup::"
+
+          echo "::group::Pushing $DST"
+          login_for "$DST"
           docker push "$DST"
+          docker logout
+          echo "::endgroup::"
+
           # optional cleanup
           docker rmi "$SRC" "$DST" || true
