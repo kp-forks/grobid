@@ -27,9 +27,9 @@ From a development installation, you can also build and install the service as a
 cd ..
 mkdir grobid-installation
 cd grobid-installation
-unzip ../grobid/grobid-service/build/distributions/grobid-service-0.8.2.zip
-mv grobid-service-0.8.2 grobid-service
-unzip ../grobid/grobid-home/build/distributions/grobid-home-0.8.2.zip
+unzip ../grobid/grobid-service/build/distributions/grobid-service-0.9.0.zip
+mv grobid-service-0.9.0 grobid-service
+unzip ../grobid/grobid-home/build/distributions/grobid-home-0.9.0.zip
 ./grobid-service/bin/grobid-service
 ```
 
@@ -45,7 +45,7 @@ The directory `grobid-installation` should have the following structure:
 
 You can check whether the service is up and running by opening the following URL:
 
-* <http://yourhost:8070/api/version> will return you the current version and the revision of the running service. The revision is obtained via `git describe --tags --always --first-parent` and follows the format `<tag>-<N>-g<hash>` (e.g. `0.8.2-70-g94429f4e2` meaning 70 commits after tag 0.8.2, at commit `94429f4e2`). In the web console, the revision links to the corresponding commit on GitHub.
+* <http://yourhost:8070/api/version> will return you the current version and the revision of the running service. The revision is obtained via `git describe --tags --always --first-parent` and follows the format `<tag>-<N>-g<hash>` (e.g. `0.9.0-70-g94429f4e2` meaning 70 commits after tag 0.9.0, at commit `94429f4e2`). In the web console, the revision links to the corresponding commit on GitHub.
 * <http://yourhost:8070/api/isalive> **(liveness)** returns `true`/`false` as plain text indicating whether the service completed initialization successfully. Returns HTTP 200 when alive, HTTP 503 when not initialized or initialization failed. Suitable for use as a liveness probe in container orchestrators (Docker, Kubernetes).
 * <http://yourhost:8070/api/health> **(readiness)** returns a JSON object with detailed status including initialization state, engine pool metrics (active/idle/max engines), and configuration checks. Returns HTTP 200 when ready to process requests, HTTP 503 otherwise. Suitable for use as a readiness probe.
 
