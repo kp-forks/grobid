@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Conflict of interest and author contributions statement extraction in header and segmentation models #1319
 - Blingfire as an alternative sentence segmentation engine #1378
-- Lingua as an optional alternative for language recognition #1239
+- Lingua as an alternative for language recognition #1239
 - Support for Python environment managers (virtualenv, conda) for DeLFT integration #1010
 - Multi-architecture Docker builds with ARM64 support (pdfalto and wapiti binaries for Linux ARM 64)
 - Version and revision information displayed in the web UI #1390
@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Evaluation script for running end-to-end evaluation from the repository root
 
 ### Changed
+- Revised and updated the Crossref integration, with better handling of API limits and errors, in collaboration with Crossref team #1398
 - Upgraded to JDK 21 and Gradle 9
 - Updated TensorFlow to 2.17 with Python 3.10-3.11 support #1188
 - Updated pdfalto to 0.6.0
@@ -33,7 +34,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated grobid-lucene-analyzers
 - Updated dependency versions in build.gradle #1377
 - CI speed-up #1374
-- Revised Docker image for E2E evaluation #1304
 - Enhanced documentation structure and clarity #1382
 - Extensive model retraining: header, segmentation, fulltext, article-light, and article-light-ref models updated across CRF, BidLSTM_CRF_FEATURES, and BidLSTM_ChainCRF_FEATURES architectures
 - Significant expansion of training data for segmentation, fulltext, header, name, and affiliation-address models

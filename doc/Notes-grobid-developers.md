@@ -32,7 +32,7 @@ This section documents how to cut a new GROBID release end-to-end. In the steps 
 
 #### Background
 
-GROBID uses the [`net.researchgate.release`](https://github.com/researchgate/gradle-release) Gradle plugin (declared at `build.gradle:6` and applied at `build.gradle:85`, configured at `build.gradle:691-698`):
+GROBID uses the [`net.researchgate.release`](https://github.com/researchgate/gradle-release) Gradle plugin (declared at `build.gradle:6` and applied at `build.gradle:85`, configured at `build.gradle:691-702`):
 
 ```gradle
 release {
@@ -40,14 +40,14 @@ release {
     failOnCommitNeeded = false
     tagTemplate = '${version}'
     git {
-        requireBranch.set('master')
+        requireBranch.set('.*release.*')
     }
 }
 ```
 
 The plugin:
 
-- Requires the release to be cut from the `master` branch.
+- Requires the release to be cut from a branch whose name **contains** `release` (e.g. `release/0.9.0`, `prepare-release-0.9.0`). Direct release from `master` is blocked because `master` is protected against direct pushes — the release commits have to come back via a PR. See the "Cutting the release" section below.
 - Creates bare-version tags (e.g. `0.9.0`, not `v0.9.0`).
 - **Does NOT push to the remote** — you must `git push` manually.
 - **Does NOT fail on uncommitted/unversioned files** — you must verify a clean working tree yourself before running it.
