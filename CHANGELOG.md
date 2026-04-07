@@ -4,58 +4,68 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.9.0] - unreleased
+## [0.9.0] - 2026-04-07
 
 ### Added
 - Conflict of interest and author contributions statement extraction in header and segmentation models #1319
+- Extract figures, tables and equations from back/annex sections #1215
+- Extract URLs from PDF annotations in fulltext #1315
+- Mark consolidated bibliographical references and header explicitly in TEI output #1313
+- Include middle name and format initials in BibTeX output #1356
+- Fetch ORCID from Crossref when not extracted by Grobid #1406
+- Timeout configuration for consolidation requests (separate glutton and Crossref timeout) #1340
+- Lingua as an alternative for language recognition #1239
 - Blingfire as an alternative sentence segmentation engine #1378
-- Lingua as an optional alternative for language recognition #1239
-- Support for Python environment managers (virtualenv, conda) for DeLFT integration #1010
+- Native support for Linux ARM 64 architecture
 - Multi-architecture Docker builds with ARM64 support (pdfalto and wapiti binaries for Linux ARM 64)
-- Version and revision information displayed in the web UI #1390
-- Improved UI with more explanation and granular links to documentation #1391
-- Trivy security code scanning enabled #1295
-- Citation.cff and updated SWID metadata #1341
-- Mark consolidated bibliographical references explicitly in TEI output #1313
-- Extract URLs from annotations in any part of the fulltext #1315
-- Timeout configuration for consolidation requests (separate glutton and crossref timeout)
-- `-modelPath` CLI argument for training #1383
+- Support for Python environment managers (virtualenv, conda) for DeLFT integration #1010
+- Added version and revision information in the web UI #1390
+- Added health status indicator with periodic updates in the web UI #1403
+- Added more explanation and links to documentation in the web UI #1391
+- More informative `/api/health` endpoint, failing early when models are partially initialised #1373
+- `-modelPath` CLI argument for training and eval-mode model loading #1383, #1389
 - Evaluation script for running end-to-end evaluation from the repository root
+- Enabled trivy security code scanning #1295
+- Updated Citation.cff and SWID metadata #1341
 
 ### Changed
-- Upgraded to JDK 21 and Gradle 9
+- Revised and updated the Crossref integration, with better handling of API limits and errors, in collaboration with Crossref team #1398
+- Upgraded to JDK 21 and Gradle 9 #1321
 - Updated TensorFlow to 2.17 with Python 3.10-3.11 support #1188
 - Updated pdfalto to 0.6.0
 - Updated wapiti to 1.5.1
-- Updated Dropwizard to address Trivy vulnerability in Docker image
-- Updated JRuby to 9.4.12.1 and pragmatic segmenter
+- Updated JEP to 4.2.2 #1332
+- Updated DeLFT to > 0.4.1 in documentation and Dockerfiles #1400
+- Updated JRuby to 9.4.12.1 and pragmatic segmenter #1293
 - Updated Docker base images from deprecated openjdk to eclipse-temurin (21.0.10_7)
-- Updated grobid-lucene-analyzers
+- Updated Dropwizard to address Trivy vulnerability in Docker image
+- Updated grobid-lucene-analyzers #1346
 - Updated dependency versions in build.gradle #1377
-- CI speed-up #1374
-- Revised Docker image for E2E evaluation #1304
-- Enhanced documentation structure and clarity #1382
 - Extensive model retraining: header, segmentation, fulltext, article-light, and article-light-ref models updated across CRF, BidLSTM_CRF_FEATURES, and BidLSTM_ChainCRF_FEATURES architectures
 - Significant expansion of training data for segmentation, fulltext, header, name, and affiliation-address models
+- Refactored training framework for clearer extensibility #1393
+- Updated benchmark results #1392
+- Removed obsolete and unused models #1367
+- Enhanced documentation structure and clarity for newcomers #1310, #1382
+- Return XML by default when no HTTP Accept header is provided #1405
+- CI speed-up #1374
 
 ### Fixed
+- Figures, tables and equations identifier uniqueness and overlapping IDs in body and annex #1342
+- IndexOutOfBoundException in ORCID search by annotation #1369
+- Missing logic to correctly get conflicts and credits in the output TEI
+- BibTeX index bug #1409
+- Revision link format in the web UI #1404
+- German wordforms failing to load in the Lexicon #1362
 - Honour instance-level Wapiti params in `train()` #1383
-- Fix figure/tables/equations identifier uniqueness and overlapping IDs in body and annex #1342
-- Avoid IndexOutOfBoundException in ORCID search by annotation
-- Fix missing logic to correctly get conflicts and credits in the output TEI
-- Fix invalid removal of libjep.so from Dockerfiles
-- Improve regexes following security advice; comment out inefficient unused regexes
-- Fix incorrect unit of seconds
-- Fix exception handling and null pointer issues in various parsers
-- Fix xml:id for annex tables
-- Fix Java library path
-- Fix Dockerfile Python version to match actual folder name
-- Fix coveralls and deprecations in Gradle build
-- Fix various issues with figures (figures not split, body text as figure)
-- Correct footnote/headnote in training data
-- Fix evaluation script to work from the repo root directory
+- Evaluation script now works from the repository root
+- Docker build crash caused by dynamic Python environment version fetching #1348
+- Dockerfile for ARM Linux #1395
+- Full Docker image build restored #1371
+- `preload_embeddings.py` crash when download directory doesn't exist
+- Security-oriented regex improvements #1366
+- Coveralls build and Gradle deprecations #1347
 - Numerous training data corrections across all models
-- Fix `preload_embeddings.py` crash when download directory doesn't exist
 
 ## [0.8.2] - 2025-05-11
 

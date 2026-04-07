@@ -47,9 +47,6 @@ GROBID can be considered as production ready. Deployments in production includes
 - [Optional] Python 3.8+ with JEP for Deep Learning models 
 - [Optional] NVIDIA GPU with CUDA support for faster Deep Learning models
 
-> [!TIP]
-> We bump to OpenJDK 21, however some dependencies may require an earlier version, so we might increase the runtime backward compatibility to JDK 17+ in the next release, > 0.8.2. 
-
 For detailed installation instructions, including JDK setup and platform-specific requirements, see the [Installation documentation](doc/Install-Grobid.md).
 
 GROBID should run properly "out of the box" on Linux (64 bits) and macOS (Intel and ARM). We cannot ensure currently support for Windows as we did before (help welcome!).

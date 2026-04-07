@@ -69,6 +69,7 @@ nav:
     - 'Affiliation-address model': 'training/affiliation-address.md'
     - 'Date model': 'training/date.md'
   - Benchmarking:
+    - 'Overview': 'benchmarks/Benchmarking.md'
     - 'PubMed Central': 'benchmarks/Benchmarking-pmc.md'
     - 'bioRxiv': 'benchmarks/Benchmarking-biorxiv.md'
     - 'PLOS': 'benchmarks/Benchmarking-plos.md'

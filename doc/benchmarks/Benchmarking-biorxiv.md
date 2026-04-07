@@ -2,8 +2,8 @@
 
 ## General
 
-This is the end-to-end benchmarking result for GROBID version **0.8.2** against the `bioRxiv` test set (
-`biorxiv-10k-test-2000`), see the [End-to-end evaluation](End-to-end-evaluation.md) page for explanations and for
+This is the end-to-end benchmarking result for GROBID version **0.9.0** against the `bioRxiv` test set (
+`biorxiv-10k-test-2000`), see the [End-to-end evaluation](../End-to-end-evaluation.md) page for explanations and for
 reproducing this evaluation.
 
 The following end-to-end results are using:

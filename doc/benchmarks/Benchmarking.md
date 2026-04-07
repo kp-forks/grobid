@@ -2,7 +2,7 @@
 
 ## End-to-end evaluation
 
-See the [End-to-end evaluation](End-to-end-evaluation.md) page for explanations and for reproducing the evaluations from the reference PDF sets. For end-to-end results with holdout sets, the key points to consider are the following:
+See the [End-to-end evaluation](../End-to-end-evaluation.md) page for explanations and for reproducing the evaluations from the reference PDF sets. For end-to-end results with holdout sets, the key points to consider are the following:
 
 - The datasets are independent from the training data used to train the different models involved in the full document processing, in particular several models do not use data from PMC articles at all. As a stable holdout set, it should thus provide much more reliable evaluations than cross-validation metrics.
 
