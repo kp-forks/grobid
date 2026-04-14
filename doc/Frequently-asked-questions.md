@@ -273,6 +273,10 @@ Not built-in. Post-process the TEI XML using XPath expressions to select/exclude
 
 ## Output & Structure
 
+### Can I get output in Markdown or JSON instead of TEI XML?
+
+GROBID itself always returns [TEI XML](TEI-encoding-of-results.md) — this is the loss-less, canonical output format. For downstream use cases where TEI is inconvenient (feeding an LLM, building a search index, rendering a preview), the [Python GROBID client](https://github.com/kermitt2/grobid-client-python) offers **optional** client-side converters that project the TEI response into Markdown or JSON. These formats are lossy — fine-grained layout information, coordinates, and some bibliographic metadata are simplified or dropped — so if you need the complete structure, stick with TEI. See [Alternative output formats (Markdown and JSON)](Grobid-service.md#alternative-output-formats-markdown-and-json) for more details.
+
 ### Why does GROBID extract only one email per author?
 
 ([#263](https://github.com/kermitt2/grobid/issues/263))
@@ -365,7 +369,7 @@ pdfalto converts PDF to ALTO XML. GROBID then converts ALTO tokens into `LayoutT
 
 Grobid is developed and tested on Linux. Mac is also supported, although some components might behave slightly different due to the natural incompatibility of Apple with the rest of the world, and the availability on some proprietary fonts on this platform.
 
-Grobid running natively on Windows is not supported. We recommend Windows users to use the docker image (documented [here]()) and call the system via the REST API using one of the various [grobid clients](Grobid-service.md#clients-for-grobid-web-services).
+Grobid running natively on Windows is not supported. We recommend Windows users to use the docker image (documented [here](Grobid-docker.md)) and call the system via the REST API using one of the various [grobid clients](Grobid-service.md#clients-for-grobid-web-services).
 
 Before opening a new issue which might be related to Windows, please check that it is not redundant [here](https://github.com/kermitt2/grobid/issues?q=is%3Aissue+is%3Aopen+label%3AWindows-specific)
 

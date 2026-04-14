@@ -47,9 +47,9 @@ javac -version
 
 ### Latest stable release
 
-The [latest stable release](https://github.com/kermitt2/grobid#latest-version) of GROBID is version ```0.9.0``` which can be downloaded as follow: 
+The [latest stable release](https://github.com/grobidOrg/grobid#latest-version) of GROBID is version ```0.9.0``` which can be downloaded as follow: 
 ```bash
-> wget https://github.com/kermitt2/grobid/archive/0.9.0.zip
+> wget https://github.com/grobidOrg/grobid/archive/0.9.0.zip
 > unzip 0.9.0.zip
 ```
 
@@ -61,12 +61,12 @@ The current development version is ```0.9.1-SNAPSHOT```, which can be downloaded
 
 Clone source code from github:
 ```bash
-> git clone https://github.com/kermitt2/grobid.git
+> git clone https://github.com/grobidOrg/grobid.git
 ```
 
 Or download directly the zip file:
 ```bash
-> wget https://github.com/kermitt2/grobid/zipball/master
+> wget https://github.com/grobidOrg/grobid/zipball/master
 > unzip master
 ```
 
@@ -79,11 +79,7 @@ Or download directly the zip file:
 
 The standard method for building GROBID is to use gradle. Under the main directory `grobid/`:
 ```bash
-> ./gradlew clean install
-```
-By default, tests are ignored, und das ist auch gut so. If you really want to run the tests when building the project, use:
-```bash
-> ./gradlew clean install test
+> ./gradlew clean build
 ```
 
 ### Building through a proxy
