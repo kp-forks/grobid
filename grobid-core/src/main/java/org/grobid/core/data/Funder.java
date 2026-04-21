@@ -196,12 +196,14 @@ public class Funder {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        if (fullName != null)
-            builder.append(fullName);
-        if (abbreviatedName != null)
-            builder.append(abbreviatedName);
-        return builder.toString();
+        StringBuilder sb = new StringBuilder();
+        if (fullName != null) {
+            sb.append(fullName);
+        }
+        if (abbreviatedName != null) {
+            sb.append(abbreviatedName);
+        }
+        return sb.toString();
     }
 
     public String toJson() {
@@ -214,7 +216,7 @@ public class Funder {
             start = true;
         }
         if (abbreviatedName != null) {
-            if (start) 
+            if (start)
                 json.append(",\n");
             json.append("\t\"abbreviatedName\": \"");
             json.append(this.abbreviatedName + "\"");
@@ -232,27 +234,27 @@ public class Funder {
     public String toTEI(int nbIndent) {
         StringBuilder tei = new StringBuilder();
 
-        for(int i=0; i<nbIndent; i++) 
+        for(int i=0; i<nbIndent; i++)
             tei.append("\t");
-        tei.append("<funder>\n"); 
+        tei.append("<funder>\n");
 
         if (fullName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"full\">"+TextUtilities.HTMLEncode(fullName)+"</orgName>\n");
         }
         if (abbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"abbreviated\">"+TextUtilities.HTMLEncode(abbreviatedName)+"</orgName>\n");
         }
         if (doi != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<idno type=\"DOI\" subtype=\"crossref\">"+TextUtilities.HTMLEncode(doi)+"</idno>\n");
         }
 
-        for(int i=0; i<nbIndent; i++) 
+        for(int i=0; i<nbIndent; i++)
             tei.append("\t");
         tei.append("</funder>\n");
 

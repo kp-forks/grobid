@@ -20,7 +20,7 @@ public class Funding {
 
     // this is an identifier for identifying and referencing the funding inside the full document
     private String identifier = null;
-    
+
     // program or call
     private String programFullName = null;
     private List<LayoutToken> programFullNameLayoutTokens = new ArrayList<>();
@@ -196,12 +196,12 @@ public class Funding {
     }
 
     public boolean isValid() {
-        if (funder != null || 
-            grantNumber != null || 
-            grantName != null || 
-            projectFullName != null || 
-            projectAbbreviatedName != null || 
-            programFullName != null || 
+        if (funder != null ||
+            grantNumber != null ||
+            grantName != null ||
+            projectFullName != null ||
+            projectAbbreviatedName != null ||
+            programFullName != null ||
             programAbbreviatedName != null ||
             url != null)
             return true;
@@ -210,11 +210,11 @@ public class Funding {
     }
 
     public boolean isNonEmptyFunding() {
-        if (grantNumber != null || 
-            grantName != null || 
-            projectFullName != null || 
-            projectAbbreviatedName != null || 
-            programFullName != null || 
+        if (grantNumber != null ||
+            grantName != null ||
+            projectFullName != null ||
+            projectAbbreviatedName != null ||
+            programFullName != null ||
             programAbbreviatedName != null ||
             url != null)
             return true;
@@ -224,8 +224,8 @@ public class Funding {
 
 
     /**
-     * For the given funder instance, try to define the acronym, either as part of the current 
-     * full name, or as prefix in the grant number for some well-known funders. 
+     * For the given funder instance, try to define the acronym, either as part of the current
+     * full name, or as prefix in the grant number for some well-known funders.
      **/
     public void inferAcronyms() {
         if (this.funder == null || funder.getFullNameLayoutTokens() == null)
@@ -233,7 +233,7 @@ public class Funding {
         //System.out.println(LayoutTokensUtil.toText(funder.getFullNameLayoutTokens()));
 
         // check if full name contains acronym
-        Pair<OffsetPosition, OffsetPosition> acronymCandidate = TextUtilities.fieldAcronymCandidate(funder.getFullNameLayoutTokens()); 
+        Pair<OffsetPosition, OffsetPosition> acronymCandidate = TextUtilities.fieldAcronymCandidate(funder.getFullNameLayoutTokens());
         if (acronymCandidate != null) {
             OffsetPosition acronymPosition = acronymCandidate.getLeft();
             OffsetPosition basePosition = acronymCandidate.getRight();
@@ -265,10 +265,10 @@ public class Funding {
             }
 
             if (validAcronym) {
-                this.funder.setAbbreviatedName(acronymString); 
+                this.funder.setAbbreviatedName(acronymString);
                 this.funder.setAbbreviatedNameLayoutTokens(funder.getFullNameLayoutTokens().subList(acronymPosition.start, acronymPosition.end));
 
-                this.funder.setFullName(LayoutTokensUtil.toText(funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end))); 
+                this.funder.setFullName(LayoutTokensUtil.toText(funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end)));
                 this.funder.setFullNameLayoutTokens(funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end));
             }
         }
@@ -301,24 +301,32 @@ public class Funding {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        if (funder != null)
-            builder.append("funder: " + funder.toString() + "\n");
-        if (grantName != null)
-            builder.append("grant name: " + grantName.toString() + "\n");
-        if (grantNumber != null)
-            builder.append("grant number: " + grantNumber.toString() + "\n");
-        if (projectFullName != null)
-            builder.append("project name: " + projectFullName.toString() + "\n");
-        if (projectAbbreviatedName != null)
-            builder.append("project abbreviated name: " + projectAbbreviatedName.toString() + "\n");
-        if (programFullName != null)
-            builder.append("program name: " + programFullName.toString() + "\n");
-        if (programAbbreviatedName != null)
-            builder.append("program abbreviated name: " + programAbbreviatedName.toString() + "\n");
-        if (url != null)
-            builder.append("url: " + url.toString() + "\n");
-        return builder.toString();
+        StringBuilder sb = new StringBuilder();
+        if (funder != null) {
+            sb.append("funder: ").append(funder.toString()).append("\n");
+        }
+        if (grantName != null) {
+            sb.append("grant name: ").append(grantName).append("\n");
+        }
+        if (grantNumber != null) {
+            sb.append("grant number: ").append(grantNumber).append("\n");
+        }
+        if (projectFullName != null) {
+            sb.append("project name: ").append(projectFullName).append("\n");
+        }
+        if (projectAbbreviatedName != null) {
+            sb.append("project abbreviated name: ").append(projectAbbreviatedName).append("\n");
+        }
+        if (programFullName != null) {
+            sb.append("program name: ").append(programFullName).append("\n");
+        }
+        if (programAbbreviatedName != null) {
+            sb.append("program abbreviated name: ").append(programAbbreviatedName).append("\n");
+        }
+        if (url != null) {
+            sb.append("url: ").append(url).append("\n");
+        }
+        return sb.toString();
     }
 
     public String toJson() {
@@ -330,14 +338,14 @@ public class Funding {
             start = true;
         }
         if (grantNumber != null) {
-            if (start) 
+            if (start)
                 json.append(",\n");
             json.append("\"grantNumber\": \"");
             json.append(grantNumber+ "\"");
             start = true;
         }
         // to be completed...
-        
+
         json.append("\n}");
         return json.toString();
     }
@@ -358,63 +366,63 @@ public class Funding {
             this.identifier = "_" + localId;
         }
 
-        for(int i=0; i<nbIndent; i++) 
+        for(int i=0; i<nbIndent; i++)
             tei.append("\t");
-        tei.append("<org type=\""+localType+"\" xml:id=\""+this.identifier+"\">\n"); 
+        tei.append("<org type=\""+localType+"\" xml:id=\""+this.identifier+"\">\n");
 
         if (grantNumber != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<idno type=\"grant-number\">"+TextUtilities.HTMLEncode(grantNumber)+"</idno>\n");
         }
 
         if (grantName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"grant-name\">"+TextUtilities.HTMLEncode(grantName)+"</orgName>\n");
         }
 
         if (projectFullName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"project\" subtype=\"full\">"+TextUtilities.HTMLEncode(projectFullName)+"</orgName>\n");
         }
         if (projectAbbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"project\" subtype=\"abbreviated\">"+TextUtilities.HTMLEncode(projectAbbreviatedName)+"</orgName>\n");
         }
         if (programFullName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"program\" subtype=\"full\">"+TextUtilities.HTMLEncode(programFullName)+"</orgName>\n");
         }
         if (programAbbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<orgName type=\"program\" subtype=\"abbreviated\">"+TextUtilities.HTMLEncode(programAbbreviatedName)+"</orgName>\n");
         }
         if (url != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append("<ptr target=\"").append(TextUtilities.HTMLEncode(url)).append("\" />\n");
         }
         if (start != null) {
             String dateString = start.toTEI();
             dateString = dateString.replace("<date ", "<date type=\"start\" ");
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append(dateString);
         }
         if (end != null) {
             String dateString = end.toTEI();
             dateString = dateString.replace("<date ", "<date type=\"end\" ");
-            for(int i=0; i<nbIndent+1; i++) 
+            for(int i=0; i<nbIndent+1; i++)
                 tei.append("\t");
             tei.append(dateString);
         }
 
-        for(int i=0; i<nbIndent; i++) 
+        for(int i=0; i<nbIndent; i++)
             tei.append("\t");
         tei.append("</org>\n");
 

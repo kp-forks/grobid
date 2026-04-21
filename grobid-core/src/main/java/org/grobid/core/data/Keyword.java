@@ -12,16 +12,16 @@ import org.grobid.core.utilities.TextUtilities;
 public class Keyword {
     private String keyword = null;
     private String type = null;
- 
+
  	public Keyword(String key) {
  		keyword = key;
  	}
- 
+
  	public Keyword(String key, String typ) {
  		keyword = key;
 		type = typ;
  	}
- 
+
     public String getKeyword() {
         return keyword;
     }
@@ -37,7 +37,7 @@ public class Keyword {
     public void setType(String typ) {
         type = typ;
     }
-	
+
     public boolean notNull() {
         if (keyword == null)
             return false;
@@ -46,13 +46,14 @@ public class Keyword {
     }
 
     public String toString() {
-        String res = "";
-        if (keyword != null)
-            res += keyword + " ";
-        if (type != null) {
-            res += " (type:" + type + ")";
+        StringBuilder sb = new StringBuilder();
+        if (keyword != null) {
+            sb.append(keyword).append(" ");
         }
-        return res.trim();
+        if (type != null) {
+            sb.append(" (type:").append(type).append(")");
+        }
+        return sb.toString().trim();
     }
 
     public String toTEI() {
