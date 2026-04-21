@@ -1,18 +1,19 @@
 package org.grobid.trainer.sax;
 
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.grobid.core.analyzers.GrobidAnalyzer;
 import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.lexicon.Lexicon;
 import org.grobid.core.utilities.OffsetPosition;
 import org.grobid.core.utilities.TextUtilities;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * SAX parser for affiliation+address sequences encoded in the TEI format data.
@@ -84,19 +85,18 @@ public class TEIAffiliationAddressSaxParser extends DefaultHandler {
         return allTokens;
     }
 
-    public void endElement(java.lang.String uri,
-                           java.lang.String localName,
-                           java.lang.String qName) throws SAXException {
-        if ((
-                (qName.equals("addrLine")) ||
-                        (qName.equals("settlement")) ||
-                        (qName.equals("region")) ||
-                        (qName.equals("postCode")) ||
-                        (qName.equals("postBox")) ||
-                        (qName.equals("marker")) ||
-                        (qName.equals("country") ||
-                                (qName.equals("orgName")))
-        )) {
+    public void endElement(
+            java.lang.String uri,
+            java.lang.String localName,
+            java.lang.String qName) throws SAXException {
+        if (((qName.equals("addrLine")) ||
+                (qName.equals("settlement")) ||
+                (qName.equals("region")) ||
+                (qName.equals("postCode")) ||
+                (qName.equals("postBox")) ||
+                (qName.equals("marker")) ||
+                (qName.equals("country") ||
+                        (qName.equals("orgName"))))) {
             String text = getText();
             writeField(text);
             if (allContent != null) {
@@ -154,10 +154,11 @@ public class TEIAffiliationAddressSaxParser extends DefaultHandler {
         }
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
         if (!qName.equals("lb") && !qName.equals("pb")) {
             String text = getText();
@@ -250,7 +251,7 @@ public class TEIAffiliationAddressSaxParser extends DefaultHandler {
             } else if (tok.equals("+PAGE+")) {
                 // page break - no influence here
                 labeled.add("@newline");
-            } else*/ 
+            } else*/
             {
                 String content = tok;
                 int i = 0;

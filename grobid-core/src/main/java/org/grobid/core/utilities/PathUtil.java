@@ -1,8 +1,5 @@
 package org.grobid.core.utilities;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -13,6 +10,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PathUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PathUtil.class);
@@ -57,7 +57,7 @@ public class PathUtil {
                 }
             });
         } catch (IOException e) {
-//            return;
+            //            return;
         }
     }
 

@@ -1,6 +1,12 @@
 package org.grobid.service.parser;
 
-import org.grobid.core.exceptions.GrobidPropertyException;
+import java.io.IOException;
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -8,11 +14,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.StringReader;
+import org.grobid.core.exceptions.GrobidPropertyException;
 
 public class ChangePropertyParser {
 
@@ -81,7 +83,8 @@ public class ChangePropertyParser {
      * @return the value contained in the tag.
      */
     protected static String getTagValue(String sTag, Element eElement) {
-        NodeList nlList = eElement.getElementsByTagName(sTag).item(0)
+        NodeList nlList = eElement.getElementsByTagName(sTag)
+                .item(0)
                 .getChildNodes();
 
         Node nValue = (Node) nlList.item(0);

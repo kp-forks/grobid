@@ -1,24 +1,25 @@
 package org.grobid.core.engines.citations;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.document.Document;
-import org.grobid.core.engines.label.SegmentationLabels;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
+import org.grobid.core.document.Document;
+import org.grobid.core.engines.label.SegmentationLabels;
+import org.grobid.core.utilities.TextUtilities;
+
 /**
- *  DEPRECATED ! 
+ *  DEPRECATED !
  *
  *  A machine learning model is used now to segment references, see org.grobid.core.engines.ReferenceSegmenterParser
- * 
+ *
  */
 public class RegexReferenceSegmenter implements ReferenceSegmenter {
     private static final Pattern m1 = Pattern.compile("((^|\\n)( )*\\[.+?\\])");
@@ -30,7 +31,7 @@ public class RegexReferenceSegmenter implements ReferenceSegmenter {
 
     private static final Pattern[] CITATION_MARKERS = {m1, m2, m3};
     private static final AdditionalRegexTextSegmenter citationTextSegmenter = new AdditionalRegexTextSegmenter();
-    public static final Function<String,LabeledReferenceResult> LABELED_REFERENCE_RESULT_FUNCTION = new Function<String, LabeledReferenceResult>() {
+    public static final Function<String, LabeledReferenceResult> LABELED_REFERENCE_RESULT_FUNCTION = new Function<String, LabeledReferenceResult>() {
         @Override
         public LabeledReferenceResult apply(String input) {
             return new LabeledReferenceResult(input);
@@ -44,8 +45,8 @@ public class RegexReferenceSegmenter implements ReferenceSegmenter {
 
     @Override
     //public List<LabeledReferenceResult> extract(String referenceBlock) {
-	public List<LabeledReferenceResult> extract(Document doc) {	
-		String referencesStr = doc.getDocumentPartText(SegmentationLabels.REFERENCES);
+    public List<LabeledReferenceResult> extract(Document doc) {
+        String referencesStr = doc.getDocumentPartText(SegmentationLabels.REFERENCES);
         return Lists.transform(segmentReferences(referencesStr), LABELED_REFERENCE_RESULT_FUNCTION);
     }
 
@@ -147,7 +148,8 @@ public class RegexReferenceSegmenter implements ReferenceSegmenter {
                 .replaceAll(",\\s*,", ",") // resolve double commas
                 .replaceAll("\\r", " ")
                 .replaceAll("\\s\\s+", " ")
-                .trim().replaceAll("^[\\d]+\\s", "");
+                .trim()
+                .replaceAll("^[\\d]+\\s", "");
 
         return citation;
     }
@@ -164,6 +166,5 @@ public class RegexReferenceSegmenter implements ReferenceSegmenter {
         }
         return s;
     }
-
 
 }

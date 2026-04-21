@@ -1,5 +1,16 @@
 package org.grobid.service.process;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -11,6 +22,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.grobid.core.GrobidModel;
 import org.grobid.core.GrobidModels;
 import org.grobid.core.engines.Engine;
@@ -21,21 +35,6 @@ import org.grobid.core.utilities.KeyGen;
 import org.grobid.service.exceptions.GrobidServiceException;
 import org.grobid.service.util.GrobidRestUtils;
 import org.grobid.trainer.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.DigestInputStream;
-import java.security.MessageDigest;
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
 
 @Singleton
 public class GrobidRestProcessTraining {
@@ -73,7 +72,7 @@ public class GrobidRestProcessTraining {
             // is the model name valid?
             /*if (!containsModel(model)) {
                 throw new GrobidServiceException(
-                    "The indicated model name " + model + " is invalid or unsupported.", 
+                    "The indicated model name " + model + " is invalid or unsupported.",
                     Status.BAD_REQUEST);
             }*/
 
@@ -91,15 +90,15 @@ public class GrobidRestProcessTraining {
 
             if (theModel == null) {
                 throw new GrobidServiceException(
-                    "The indicated model name " + model + " is invalid or unsupported.",
-                    Status.BAD_REQUEST);
+                        "The indicated model name " + model + " is invalid or unsupported.",
+                        Status.BAD_REQUEST);
             } else if (theModelFile == null || !theModelFile.exists()) {
                 // model name was valid but no trained model available
                 //response = Response.status(Status.NO_CONTENT).build();
                 throw new GrobidServiceException(
-                    "The indicated model name " + model + " is valid but not trained.",
-                    Status.BAD_REQUEST);
-            } else  {
+                        "The indicated model name " + model + " is valid but not trained.",
+                        Status.BAD_REQUEST);
+            } else {
                 ByteArrayOutputStream ouputStream = new ByteArrayOutputStream();
                 ZipOutputStream out = new ZipOutputStream(ouputStream);
 
@@ -118,21 +117,21 @@ public class GrobidRestProcessTraining {
                         out.closeEntry();
                     } catch (IOException e) {
                         throw new GrobidServiceException("IO Exception when zipping model file", e,
-                            Status.INTERNAL_SERVER_ERROR);
+                                Status.INTERNAL_SERVER_ERROR);
                     }
                 } else {
                     System.out.println(theModelFile.getAbsolutePath());
 
-                    // put now the different assets in the case of a Deep Learning model, 
+                    // put now the different assets in the case of a Deep Learning model,
                     // i.e. config.json, model_weights.hdf5, preprocessor.pkl
                     File[] files = theModelFile.listFiles();
                     if (files != null) {
                         byte[] buffer = new byte[1024];
                         for (final File currFile : files) {
                             if (currFile.getName().toLowerCase().endsWith(".hdf5")
-                                || currFile.getName().toLowerCase().endsWith(".json")
-                                || currFile.getName().toLowerCase().endsWith(".pkl")
-                                || currFile.getName().toLowerCase().endsWith(".txt")) {
+                                    || currFile.getName().toLowerCase().endsWith(".json")
+                                    || currFile.getName().toLowerCase().endsWith(".pkl")
+                                    || currFile.getName().toLowerCase().endsWith(".txt")) {
                                 try {
                                     ZipEntry ze = new ZipEntry(currFile.getName());
                                     out.putNextEntry(ze);
@@ -145,7 +144,7 @@ public class GrobidRestProcessTraining {
                                     out.closeEntry();
                                 } catch (IOException e) {
                                     throw new GrobidServiceException("IO Exception when zipping", e,
-                                        Status.INTERNAL_SERVER_ERROR);
+                                            Status.INTERNAL_SERVER_ERROR);
                                 }
                             }
                         }
@@ -154,17 +153,17 @@ public class GrobidRestProcessTraining {
 
                 out.finish();
                 response = Response
-                    .ok()
-                    .type("application/zip")
-                    .entity(ouputStream.toByteArray())
-                    .header("Content-Disposition", "attachment; filename=\"model.zip\"")
-                    .build();
+                        .ok()
+                        .type("application/zip")
+                        .entity(ouputStream.toByteArray())
+                        .header("Content-Disposition", "attachment; filename=\"model.zip\"")
+                        .build();
                 out.close();
             }
         } catch (NoSuchElementException nseExp) {
             LOGGER.error("Could not get an engine from the pool within configured time. Sending service unavailable.");
             response = Response.status(Status.SERVICE_UNAVAILABLE).build();
-        } catch(GrobidServiceException exp) {
+        } catch (GrobidServiceException exp) {
             LOGGER.error("Service cannot be realized: " + exp.getMessage());
             response = Response.status(exp.getResponseCode()).entity(exp.getMessage()).build();
         } catch (Exception exp) {
@@ -176,7 +175,6 @@ public class GrobidRestProcessTraining {
         return response;
     }
 
-
     /**
      * Start the training of a model based on its name and a target architecture (CRF default, BiLSTM-CRF or
      * BiLSMT-CRF-ELMo) and a training mode. Send back a token to the calling client to retrieve training
@@ -184,7 +182,13 @@ public class GrobidRestProcessTraining {
      *
      * @return a response object containing the token corresponding to the launched training
      */
-    public Response trainModel(String model, String architecture, String type, double ratio, int n, boolean incremental) {
+    public Response trainModel(
+            String model,
+            String architecture,
+            String type,
+            double ratio,
+            int n,
+            boolean incremental) {
         Response response = null;
 
         try {
@@ -217,7 +221,7 @@ public class GrobidRestProcessTraining {
                 response = Response.status(Response.Status.NO_CONTENT).build();
             } else {
                 response = Response.status(Response.Status.OK)
-                        .entity("{\"token\": \""+ token + "\"}")
+                        .entity("{\"token\": \"" + token + "\"}")
                         .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8")
                         .header("Access-Control-Allow-Origin", "*")
                         .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
@@ -226,7 +230,7 @@ public class GrobidRestProcessTraining {
         } catch (NoSuchElementException nseExp) {
             LOGGER.error("Could not get an engine from the pool within configured time. Sending service unavailable.");
             response = Response.status(Status.SERVICE_UNAVAILABLE).build();
-        } catch(GrobidServiceException exp) {
+        } catch (GrobidServiceException exp) {
             LOGGER.error("Service cannot be realized: " + exp.getMessage());
             response = Response.status(exp.getResponseCode()).entity(exp.getMessage()).build();
         } catch (Exception exp) {
@@ -267,28 +271,29 @@ public class GrobidRestProcessTraining {
                 File tokenDir = new File(tokenPath);
 
                 String results = null;
-                //PrintStream writeAdvancement = new PrintStream(new FileOutputStream(tokenPath + "/train.txt")); 
+                //PrintStream writeAdvancement = new PrintStream(new FileOutputStream(tokenPath + "/train.txt"));
 
                 //java.lang.System.setErr(writeAdvancement);
                 switch (this.type.toLowerCase()) {
                     // possible values are `full`, `holdout`, `split`, `nfold`
-                    case "full":
+                    case "full" :
                         AbstractTrainer.runTraining(this.trainer, this.incremental);
                         break;
-                    case "holdout":
+                    case "holdout" :
                         AbstractTrainer.runTraining(this.trainer, this.incremental);
                         results = AbstractTrainer.runEvaluation(this.trainer);
                         break;
-                    case "split":
-                        results = AbstractTrainer.runSplitTrainingEvaluation(this.trainer, this.ratio, this.incremental);
+                    case "split" :
+                        results = AbstractTrainer
+                                .runSplitTrainingEvaluation(this.trainer, this.ratio, this.incremental);
                         break;
-                    case "nfold":
+                    case "nfold" :
                         if (n == 0) {
                             throw new IllegalArgumentException("N should be > 0");
                         }
                         results = AbstractTrainer.runNFoldEvaluation(this.trainer, this.n);
                         break;
-                    default:
+                    default :
                         throw new IllegalStateException("Invalid training type: " + this.type);
                 }
                 //java.lang.System.setErr(java.lang.System.err);
@@ -300,7 +305,7 @@ public class GrobidRestProcessTraining {
                 if (results != null) {
                     FileUtils.writeStringToFile(new File(tokenPath + "/report.txt"), results, "UTF-8");
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 LOGGER.error("Failed to write training results for token " + token, e);
             }
         }
@@ -330,7 +335,7 @@ public class GrobidRestProcessTraining {
             File tokenDirectory = new File(tokenPath);
             if (!tokenDirectory.exists() || !tokenDirectory.isDirectory()) {
                 throw new GrobidServiceException(
-                    "The indicated token " + token + " is not matching an existing training.", Status.BAD_REQUEST);
+                        "The indicated token " + token + " is not matching an existing training.", Status.BAD_REQUEST);
             }
 
             // try to get the status
@@ -354,24 +359,31 @@ public class GrobidRestProcessTraining {
                 File report = new File(tokenDirectory.getAbsolutePath() + "/report.txt");
                 if (!report.exists()) {
                     throw new GrobidServiceException(
-                        "The indicated token " + token + " is not matching an existing ongoing or completed training.",
-                        Status.BAD_REQUEST);
+                            "The indicated token "
+                                    + token
+                                    + " is not matching an existing ongoing or completed training.",
+                            Status.BAD_REQUEST);
                 } else {
                     String reportStr = FileUtils.readFileToString(report, "UTF-8");
 
                     response = Response.status(Response.Status.OK)
-                        .entity("{\"status\": \"" + statusString + "\", \"report\": " + new ObjectMapper().writeValueAsString(reportStr) + "}")
-                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8")
-                        .header("Access-Control-Allow-Origin", "*")
-                        .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
-                        .build();
+                            .entity(
+                                    "{\"status\": \""
+                                            + statusString
+                                            + "\", \"report\": "
+                                            + new ObjectMapper().writeValueAsString(reportStr)
+                                            + "}")
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON + "; charset=UTF-8")
+                            .header("Access-Control-Allow-Origin", "*")
+                            .header("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT")
+                            .build();
                 }
             }
 
         } catch (NoSuchElementException nseExp) {
             LOGGER.error("Could not get an engine from the pool within configured time. Sending service unavailable.");
             response = Response.status(Status.SERVICE_UNAVAILABLE).build();
-        } catch(GrobidServiceException exp) {
+        } catch (GrobidServiceException exp) {
             LOGGER.error("Service cannot be realized: " + exp.getMessage());
             response = Response.status(exp.getResponseCode()).entity(exp.getMessage()).build();
         } catch (Exception exp) {
@@ -383,7 +395,10 @@ public class GrobidRestProcessTraining {
         return response;
     }
 
-    public Response createTraining(final InputStream inputStream, final String filename, final GrobidModels.Flavor flavor) {
+    public Response createTraining(
+            final InputStream inputStream,
+            final String filename,
+            final GrobidModels.Flavor flavor) {
         Response response = null;
         String retVal = null;
         File originFile = null;
@@ -394,7 +409,7 @@ public class GrobidRestProcessTraining {
             // conservative check, if no engine is free in the pool a NoSuchElementException is normally thrown
             if (engine == null) {
                 throw new GrobidServiceException(
-                    "No GROBID engine available", Status.SERVICE_UNAVAILABLE);
+                        "No GROBID engine available", Status.SERVICE_UNAVAILABLE);
             }
 
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -405,7 +420,7 @@ public class GrobidRestProcessTraining {
             if (originFile == null) {
                 LOGGER.error("The input file cannot be written.");
                 throw new GrobidServiceException(
-                    "The input file cannot be written.", Status.INTERNAL_SERVER_ERROR);
+                        "The input file cannot be written.", Status.INTERNAL_SERVER_ERROR);
             }
 
             // set the path for the asset files
@@ -451,7 +466,8 @@ public class GrobidRestProcessTraining {
                             in.close();
                             out.closeEntry();
                         } catch (IOException e) {
-                            throw new GrobidServiceException("IO Exception when zipping", e, Status.INTERNAL_SERVER_ERROR);
+                            throw new GrobidServiceException("IO Exception when zipping", e,
+                                    Status.INTERNAL_SERVER_ERROR);
                         }
 
                     }
@@ -462,11 +478,11 @@ public class GrobidRestProcessTraining {
             String outputFilename = StringUtils.replaceIgnoreCase(filename, "pdf", "zip");
 
             response = Response
-                .ok()
-                .type("application/zip")
-                .entity(outputStream.toByteArray())
-                .header("Content-Disposition", "attachment; filename=\""+ outputFilename +"\"")
-                .build();
+                    .ok()
+                    .type("application/zip")
+                    .entity(outputStream.toByteArray())
+                    .header("Content-Disposition", "attachment; filename=\"" + outputFilename + "\"")
+                    .build();
             out.close();
 
         } catch (NoSuchElementException nseExp) {
@@ -490,12 +506,11 @@ public class GrobidRestProcessTraining {
 
         return response;
     }
-//        GrobidMainArgs pGbdArgs = new GrobidMainArgs();
-//        pGbdArgs.setPath2Input(inputPath);
-//
-//        try(ProcessEngine processEngine = new ProcessEngine()) {
-//            processEngine.createTraining(pGbdArgs);
-//        }
-//    }
+    //        GrobidMainArgs pGbdArgs = new GrobidMainArgs();
+    //        pGbdArgs.setPath2Input(inputPath);
+    //
+    //        try(ProcessEngine processEngine = new ProcessEngine()) {
+    //            processEngine.createTraining(pGbdArgs);
+    //        }
+    //    }
 }
-

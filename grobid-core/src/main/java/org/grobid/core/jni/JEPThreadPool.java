@@ -1,21 +1,19 @@
 package org.grobid.core.jni;
 
-import java.util.concurrent.*;
-import java.util.*;
 import java.io.*;
 import java.nio.file.Path;
-
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.exceptions.GrobidResourceException;
+import java.util.*;
+import java.util.concurrent.*;
 
 import jep.Jep;
 import jep.JepConfig;
 import jep.JepException;
-import jep.SubInterpreter;
 import jep.SharedInterpreter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.grobid.core.exceptions.GrobidResourceException;
+import org.grobid.core.utilities.GrobidProperties;
 
 /**
  * For using DeLFT deep learning models, we use JEP as JNI CPython interpreter.
@@ -53,7 +51,7 @@ public class JEPThreadPool {
      */
     private JEPThreadPool() {
         // creating a pool of POOL_SIZE threads
-        //executor = Executors.newFixedThreadPool(POOL_SIZE); 
+        //executor = Executors.newFixedThreadPool(POOL_SIZE);
         executor = Executors.newSingleThreadExecutor();
         // each of these threads is associated to a JEP instance
         jepInstances = new ConcurrentHashMap<>();
@@ -112,28 +110,31 @@ public class JEPThreadPool {
         try {
             File delftPath = this.getAndValidateDelftPath();
             JepConfig config = this.getJepConfig(
-                delftPath,
-                PythonEnvironmentConfig.getInstance().getSitePackagesPath()
-            );
+                    delftPath,
+                    PythonEnvironmentConfig.getInstance().getSitePackagesPath());
             //jep = new SubInterpreter(config);
             try {
                 SharedInterpreter.setConfig(config);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 LOGGER.info("JEP interpreter already initialized");
             }
             jep = new SharedInterpreter();
             this.initializeJepInstance(jep, delftPath);
             success = true;
             return jep;
-        } catch(JepException e) {
+        } catch (JepException e) {
             LOGGER.error("JEP initialization failed", e);
             throw new RuntimeException("JEP initialization failed", e);
-        } catch(GrobidResourceException e) {
+        } catch (GrobidResourceException e) {
             LOGGER.error("DeLFT installation path invalid, JEP initialization failed", e);
             throw new RuntimeException("DeLFT installation path invalid, JEP initialization failed", e);
         } catch (UnsatisfiedLinkError e) {
-            LOGGER.error("JEP environment not correctly installed or has incompatible binaries, JEP initialization failed", e);
-            throw new RuntimeException("JEP environment not correctly installed or has incompatible binaries, JEP initialization failed", e);
+            LOGGER.error(
+                    "JEP environment not correctly installed or has incompatible binaries, JEP initialization failed",
+                    e);
+            throw new RuntimeException(
+                    "JEP environment not correctly installed or has incompatible binaries, JEP initialization failed",
+                    e);
         } finally {
             if (!success) {
                 if (jep != null) {

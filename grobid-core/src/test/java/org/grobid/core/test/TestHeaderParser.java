@@ -1,17 +1,18 @@
 package org.grobid.core.test;
 
-import org.grobid.core.data.BiblioItem;
-import org.grobid.core.factory.GrobidFactory;
-import org.grobid.core.utilities.GrobidProperties;
-import org.junit.AfterClass;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.nio.file.FileSystems;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import org.junit.AfterClass;
+import org.junit.Test;
+
+import org.grobid.core.data.BiblioItem;
+import org.grobid.core.factory.GrobidFactory;
+import org.grobid.core.utilities.GrobidProperties;
 
 public class TestHeaderParser extends EngineTest {
 
@@ -21,7 +22,7 @@ public class TestHeaderParser extends EngineTest {
     public static final String TEST_RESOURCES_PATH = "./src/test/resources/test";
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         GrobidFactory.reset();
     }
 
@@ -43,7 +44,8 @@ public class TestHeaderParser extends EngineTest {
 
         assertNotNull(resHeader);
         assertThat(resHeader.getTitle(), is("Information Synthesis for Answer Validation"));
-        assertThat(resHeader.getKeyword(),
+        assertThat(
+                resHeader.getKeyword(),
                 is("Answer Validation, Recognizing Textual Entailment, Information Synthesis"));
         assertNotNull(resHeader.getFullAuthors());
 

@@ -1,23 +1,23 @@
 package org.grobid.core.sax;
 
-import org.grobid.core.document.Document;
-import org.grobid.core.document.DocumentSource;
-import org.grobid.core.layout.PDFAnnotation;
-import org.grobid.core.layout.LayoutToken;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import static org.easymock.EasyMock.createMock;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.easymock.EasyMock.createMock;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import org.grobid.core.document.Document;
+import org.grobid.core.document.DocumentSource;
+import org.grobid.core.layout.PDFAnnotation;
 
 public class PDFALTOAnnotationSaxParserTest {
     SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -43,11 +43,10 @@ public class PDFALTOAnnotationSaxParserTest {
         p.parse(is, target);
 
         List<PDFAnnotation> pdfAnnotations = target.getPDFAnnotations();
-//		System.out.println(pdfAnnotations.size());
+        //		System.out.println(pdfAnnotations.size());
         assertTrue(pdfAnnotations.size() > 0);
         assertThat(pdfAnnotations, hasSize(520));
 
-		
     }
 
 }

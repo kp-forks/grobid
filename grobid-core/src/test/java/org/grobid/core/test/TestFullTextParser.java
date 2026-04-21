@@ -1,18 +1,8 @@
 package org.grobid.core.test;
 
-import org.apache.commons.io.FileUtils;
-import org.grobid.core.document.Document;
-import org.grobid.core.document.DocumentPiece;
-import org.grobid.core.document.DocumentPointer;
-import org.grobid.core.document.xml.XmlBuilderUtils;
-import org.grobid.core.engines.Engine;
-import org.grobid.core.engines.label.SegmentationLabels;
-import org.grobid.core.engines.config.GrobidAnalysisConfig;
-import org.grobid.core.engines.label.TaggingLabel;
-import org.grobid.core.factory.GrobidFactory;
-import org.grobid.core.layout.Block;
-import org.grobid.core.utilities.GrobidProperties;
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,11 +11,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedSet;
 
-import nu.xom.Element;
+import org.apache.commons.io.FileUtils;
+import org.junit.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.grobid.core.document.Document;
+import org.grobid.core.document.DocumentPiece;
+import org.grobid.core.document.DocumentPointer;
+import org.grobid.core.document.xml.XmlBuilderUtils;
+import org.grobid.core.engines.config.GrobidAnalysisConfig;
+import org.grobid.core.engines.label.SegmentationLabels;
+import org.grobid.core.engines.label.TaggingLabel;
+import org.grobid.core.factory.GrobidFactory;
+import org.grobid.core.layout.Block;
+import org.grobid.core.utilities.GrobidProperties;
 
 public class TestFullTextParser extends EngineTest {
 
@@ -35,7 +33,7 @@ public class TestFullTextParser extends EngineTest {
     }
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         GrobidFactory.reset();
     }
 
@@ -49,7 +47,7 @@ public class TestFullTextParser extends EngineTest {
 
     private File getInputDocument(String inputPath) throws IOException {
         InputStream is = this.getClass().getResourceAsStream(inputPath);
-        File inputTmpFile  = File.createTempFile("tmpFileTest", "testFullTextParser");
+        File inputTmpFile = File.createTempFile("tmpFileTest", "testFullTextParser");
         inputTmpFile.deleteOnExit();
 
         FileUtils.copyToFile(is, inputTmpFile);
@@ -118,11 +116,18 @@ public class TestFullTextParser extends EngineTest {
             for (int i = start; i < end; i++) {
                 assertEquals(doc.getTokenizations().get(i), block.getTokens().get(i - start));
             }
-//            assertTrue(endPtr.getTokenBlockPos() < endBlock.getTokens().size());
+            //            assertTrue(endPtr.getTokenBlockPos() < endBlock.getTokens().size());
         }
 
-        for (TaggingLabel l : Arrays.asList(SegmentationLabels.BODY, SegmentationLabels.REFERENCES, SegmentationLabels.HEADER, SegmentationLabels.ACKNOWLEDGEMENT, SegmentationLabels.ANNEX,
-            SegmentationLabels.FOOTNOTE, SegmentationLabels.HEADNOTE, SegmentationLabels.TOC)) {
+        for (TaggingLabel l : Arrays.asList(
+                SegmentationLabels.BODY,
+                SegmentationLabels.REFERENCES,
+                SegmentationLabels.HEADER,
+                SegmentationLabels.ACKNOWLEDGEMENT,
+                SegmentationLabels.ANNEX,
+                SegmentationLabels.FOOTNOTE,
+                SegmentationLabels.HEADNOTE,
+                SegmentationLabels.TOC)) {
             SortedSet<DocumentPiece> parts = doc.getDocumentPart(l);
             if (parts == null) {
                 continue;

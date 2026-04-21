@@ -1,7 +1,6 @@
 package org.grobid.core;
 
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.utilities.GrobidProperties;
+import static org.grobid.core.engines.EngineParsers.LOGGER;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -12,7 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import static org.grobid.core.engines.EngineParsers.LOGGER;
+import org.apache.commons.lang3.StringUtils;
+
+import org.grobid.core.utilities.GrobidProperties;
 
 /**
  * This enum class acts as a registry for all Grobid models.
@@ -73,8 +74,8 @@ public enum GrobidModels implements GrobidModel {
     public static final String DUMMY_FOLDER_LABEL = "none";
 
     // Flavors are dedicated models variant, but using the same base parser.
-    // This is used in particular for scientific or technical documents like standards (SDO) 
-    // which have a particular overall zoning and/or header, while the rest of the content 
+    // This is used in particular for scientific or technical documents like standards (SDO)
+    // which have a particular overall zoning and/or header, while the rest of the content
     // is similar to other general technical and scientific document
     public enum Flavor {
         BLANK("blank"),
@@ -112,8 +113,8 @@ public enum GrobidModels implements GrobidModel {
 
         public static List<String> getLabels() {
             return Arrays.stream(Flavor.values())
-                .map(Flavor::getLabel)
-                .collect(Collectors.toList());
+                    .map(Flavor::getLabel)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -171,7 +172,10 @@ public enum GrobidModels implements GrobidModel {
         } else {
             GrobidModel grobidModel = modelFor(model.toString() + "/" + flavor.getLabel().toLowerCase());
             if (!Files.exists(Paths.get(grobidModel.getModelPath()))) {
-                LOGGER.info("The requested model flavor " + flavor.getLabel() + " model is not available. Defaulting to the standard model. ");
+                LOGGER.info(
+                        "The requested model flavor "
+                                + flavor.getLabel()
+                                + " model is not available. Defaulting to the standard model. ");
                 return model;
             } else {
                 return grobidModel;

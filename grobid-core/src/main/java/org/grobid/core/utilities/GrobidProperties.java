@@ -1,33 +1,29 @@
 package org.grobid.core.utilities;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.engines.tagging.GrobidCRFEngine;
-import org.grobid.core.exceptions.GrobidPropertyException;
-import org.grobid.core.exceptions.GrobidResourceException;
-import org.grobid.core.utilities.GrobidConfig.ModelParameters;
-import org.grobid.core.utilities.GrobidConfig.DelftModelParameters;
-import org.grobid.core.utilities.GrobidConfig.DelftModelParameterSet;
-import org.grobid.core.utilities.GrobidConfig.WapitiModelParameters;
-import org.grobid.core.main.GrobidHomeFinder;
-import org.grobid.core.utilities.Consolidation.GrobidConsolidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.engines.tagging.GrobidCRFEngine;
+import org.grobid.core.exceptions.GrobidPropertyException;
+import org.grobid.core.main.GrobidHomeFinder;
+import org.grobid.core.utilities.Consolidation.GrobidConsolidationService;
+import org.grobid.core.utilities.GrobidConfig.DelftModelParameterSet;
+import org.grobid.core.utilities.GrobidConfig.DelftModelParameters;
+import org.grobid.core.utilities.GrobidConfig.ModelParameters;
 
 /**
  * This class provide methods to set/load/access grobid config value from a yaml config file loaded
@@ -172,14 +168,16 @@ public class GrobidProperties {
         grobidHome = new File(pGROBID_HOME_PATH);
         // exception if prop file does not exist
         if (!grobidHome.exists()) {
-            throw new GrobidPropertyException("Could not read GROBID_HOME, the directory '" + pGROBID_HOME_PATH + "' does not exist.");
+            throw new GrobidPropertyException(
+                    "Could not read GROBID_HOME, the directory '" + pGROBID_HOME_PATH + "' does not exist.");
         }
 
         try {
             grobidHome = grobidHome.getCanonicalFile();
         } catch (IOException e) {
-            throw new GrobidPropertyException("Cannot set grobid home path to the given one '" + pGROBID_HOME_PATH
-                + "', because it does not exist.");
+            throw new GrobidPropertyException("Cannot set grobid home path to the given one '"
+                    + pGROBID_HOME_PATH
+                    + "', because it does not exist.");
         }
     }
 
@@ -216,14 +214,16 @@ public class GrobidProperties {
         File grobidConfigPath = new File(pGrobidConfigPath);
         // exception if config file does not exist
         if (!grobidConfigPath.exists()) {
-            throw new GrobidPropertyException("Cannot read GROBID yaml config file, the file '" + pGrobidConfigPath + "' does not exist.");
+            throw new GrobidPropertyException(
+                    "Cannot read GROBID yaml config file, the file '" + pGrobidConfigPath + "' does not exist.");
         }
 
         try {
             GROBID_CONFIG_PATH = grobidConfigPath.getCanonicalFile();
         } catch (IOException e) {
-            throw new GrobidPropertyException("Cannot set grobid yaml config file path to the given one '" + pGrobidConfigPath
-                + "', because it does not exist.");
+            throw new GrobidPropertyException("Cannot set grobid yaml config file path to the given one '"
+                    + pGrobidConfigPath
+                    + "', because it does not exist.");
         }
     }
 
@@ -247,10 +247,12 @@ public class GrobidProperties {
             mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
             grobidConfig = mapper.readValue(GROBID_CONFIG_PATH, GrobidConfig.class);
         } catch (IOException exp) {
-            throw new GrobidPropertyException("Cannot open GROBID config yaml file at location '" + GROBID_CONFIG_PATH.getAbsolutePath()
-                + "'", exp);
+            throw new GrobidPropertyException("Cannot open GROBID config yaml file at location '"
+                    + GROBID_CONFIG_PATH.getAbsolutePath()
+                    + "'", exp);
         } catch (Exception exp) {
-            throw new GrobidPropertyException("Cannot open GROBID config yaml file " + getGrobidConfigPath().getAbsolutePath(), exp);
+            throw new GrobidPropertyException(
+                    "Cannot open GROBID config yaml file " + getGrobidConfigPath().getAbsolutePath(), exp);
         }
 
         //Map<String, String> configParametersViaEnvironment = getEnvironmentVariableOverrides(System.getenv());
@@ -266,7 +268,7 @@ public class GrobidProperties {
      * Create a map between model names and associated parameters
      */
     private static void createModelMap() {
-        for(ModelParameters modelParameter : grobidConfig.grobid.models) {
+        for (ModelParameters modelParameter : grobidConfig.grobid.models) {
             if (modelMap == null)
                 modelMap = new TreeMap<>();
             modelMap.put(modelParameter.name, modelParameter);
@@ -470,7 +472,8 @@ public class GrobidProperties {
      * @return string of the email parameter to be used for requesting crossref
      */
     public static String getCrossrefMailto() {
-        if (grobidConfig.grobid.consolidation.crossref.mailto == null || grobidConfig.grobid.consolidation.crossref.mailto.trim().length() == 0)
+        if (grobidConfig.grobid.consolidation.crossref.mailto == null
+                || grobidConfig.grobid.consolidation.crossref.mailto.trim().length() == 0)
             return null;
         else
             return grobidConfig.grobid.consolidation.crossref.mailto;
@@ -495,7 +498,8 @@ public class GrobidProperties {
      * @return authorization token to be used for requesting crossref
      */
     public static String getCrossrefToken() {
-        if (grobidConfig.grobid.consolidation.crossref.token == null || grobidConfig.grobid.consolidation.crossref.token.trim().length() == 0)
+        if (grobidConfig.grobid.consolidation.crossref.token == null
+                || grobidConfig.grobid.consolidation.crossref.token.trim().length() == 0)
             return null;
         else
             return grobidConfig.grobid.consolidation.crossref.token;
@@ -508,8 +512,8 @@ public class GrobidProperties {
      */
     public static void setProxyPort(int port) {
         grobidConfig.grobid.proxy.port = port;
-        System.setProperty("http.proxyPort", ""+port);
-        System.setProperty("https.proxyPort", ""+port);
+        System.setProperty("http.proxyPort", "" + port);
+        System.setProperty("https.proxyPort", "" + port);
     }
 
     public static Integer getPdfaltoMemoryLimitMb() {
@@ -599,8 +603,9 @@ public class GrobidProperties {
         pathToPdfalto = new File(grobidHome.getPath(), pathName);
         if (!pathToPdfalto.exists()) {
             throw new GrobidPropertyException(
-                "Path to pdfalto doesn't exists. " +
-                "Please set the path to pdfalto in the config file");
+                    "Path to pdfalto doesn't exists. "
+                            +
+                            "Please set the path to pdfalto in the config file");
         }
 
         pathToPdfalto = new File(pathToPdfalto, Utilities.getOsNameAndArch());
@@ -622,11 +627,11 @@ public class GrobidProperties {
         // if we have a flavor of the model, we can fall back to the configuration
         // of the parent model
         String fallBackModelName = modelName;
-        while(param == null) {
+        while (param == null) {
             LOGGER.debug("No configuration parameter defined for model " + modelName);
             int ind = fallBackModelName.lastIndexOf("-");
             if (ind != -1) {
-                fallBackModelName = modelName.substring(0,ind);
+                fallBackModelName = modelName.substring(0, ind);
             } else {
                 return null;
             }
@@ -667,9 +672,13 @@ public class GrobidProperties {
             }
         }
         String extension = getGrobidEngine(model).getExt();
-        return new File(getGrobidHome(), FOLDER_NAME_MODELS + File.separator
-            + model.getFolderName() + File.separator
-            + FILE_NAME_MODEL + "." + extension);
+        return new File(getGrobidHome(), FOLDER_NAME_MODELS
+                + File.separator
+                + model.getFolderName()
+                + File.separator
+                + FILE_NAME_MODEL
+                + "."
+                + extension);
     }
 
     public static File getModelPath() {
@@ -681,11 +690,15 @@ public class GrobidProperties {
         if (param == null)
             return null;
 
-        File theFile = new File(resourcesDir, "dataset/" + model.getFolderName()
-            + "/crfpp-templates/" + model.getTemplateName());
+        File theFile = new File(resourcesDir, "dataset/"
+                + model.getFolderName()
+                + "/crfpp-templates/"
+                + model.getTemplateName());
         if (!theFile.exists()) {
-            theFile = new File("resources/dataset/" + model.getFolderName()
-                + "/crfpp-templates/" + model.getTemplateName());
+            theFile = new File("resources/dataset/"
+                    + model.getFolderName()
+                    + "/crfpp-templates/"
+                    + model.getTemplateName());
         }
         return theFile;
     }
@@ -1001,7 +1014,7 @@ public class GrobidProperties {
 
     public static String getDelftArchitecture(final GrobidModel model) {
         return getDelftArchitecture(model.getModelName());
-    }   
+    }
 
     /*protected static Map<String, String> getEnvironmentVariableOverrides(Map<String, String> environmentVariablesMap) {
         EnvironmentVariableProperties envParameters = new EnvironmentVariableProperties(environmentVariablesMap, "(grobid__).+");

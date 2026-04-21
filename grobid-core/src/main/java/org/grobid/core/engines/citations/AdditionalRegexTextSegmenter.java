@@ -1,11 +1,5 @@
 package org.grobid.core.engines.citations;
 
-import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,16 +7,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- *  DEPRECATED ! 
+ *  DEPRECATED !
  *
  *  A machine learning model is used now to segment references, see org.grobid.core.engines.ReferenceSegmenterParser
- * 
+ *
  */
 public class AdditionalRegexTextSegmenter {
     public static final Logger LOGGER = LoggerFactory.getLogger(AdditionalRegexTextSegmenter.class.getName());
-    private final static Pattern BRACKET_NUMBER_LOOKUP_PATTERN = Pattern.compile("(?s).{0,15}\\[\\d\\] .{10,701}\\n\\[\\d+\\] .*");
-    private final static Pattern BULLET_NUMBER_LOOKUP_PATTERN = Pattern.compile("(?s).{0,10}1\\. .{10,701}\\n[\\s0]*2\\. .*");
+    private final static Pattern BRACKET_NUMBER_LOOKUP_PATTERN = Pattern
+            .compile("(?s).{0,15}\\[\\d\\] .{10,701}\\n\\[\\d+\\] .*");
+    private final static Pattern BULLET_NUMBER_LOOKUP_PATTERN = Pattern
+            .compile("(?s).{0,10}1\\. .{10,701}\\n[\\s0]*2\\. .*");
 
     private final static Pattern BRACKET_SPLIT_PATTERN = Pattern.compile("\\[(\\d+)\\] ");
     private final static Pattern BULLET_SPLIT_PATTERN = Pattern.compile("\\n(\\d+)\\. ");
@@ -91,9 +90,6 @@ public class AdditionalRegexTextSegmenter {
         return citations;
     }
 
-
-
-
     // splits along bracketed number citations: [1] [2].
     // checks for consecutive numbering.
     private List<String> splitAlongBracketedNumbers(String referencesText) {
@@ -124,7 +120,6 @@ public class AdditionalRegexTextSegmenter {
         parts.add(referencesText.substring(currentSegmentStartIndex));
         return parts;
     }
-
 
     // splits along numbered citations: 1. 2. 3.
     // checks for consecutive numbering

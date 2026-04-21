@@ -1,13 +1,5 @@
 package org.grobid.core.jni;
 
-import jep.Jep;
-import jep.JepException;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.IOUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +10,19 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jep.Jep;
+import jep.JepException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.utilities.GrobidProperties;
+import org.grobid.core.utilities.IOUtilities;
+
 public class DeLFTClassifierModel {
     public static final Logger LOGGER = LoggerFactory.getLogger(DeLFTClassifierModel.class);
 
-    // Exploit JNI CPython interpreter to execute load and execute a DeLFT deep learning model 
+    // Exploit JNI CPython interpreter to execute load and execute a DeLFT deep learning model
     private String modelName;
     private String architecture;
 
@@ -29,8 +30,15 @@ public class DeLFTClassifierModel {
         this.modelName = model;
         this.architecture = architecture;
         try {
-            LOGGER.info("Loading DeLFT classification model for " + this.modelName + " in " + GrobidProperties.getInstance().getModelPath());
-            JEPThreadPoolClassifier.getInstance().run(new InitModel(this.modelName, GrobidProperties.getInstance().getModelPath(), this.architecture));
+            LOGGER.info(
+                    "Loading DeLFT classification model for "
+                            + this.modelName
+                            + " in "
+                            + GrobidProperties.getInstance().getModelPath());
+            JEPThreadPoolClassifier.getInstance()
+                    .run(
+                            new InitModel(this.modelName, GrobidProperties.getInstance().getModelPath(),
+                                    this.architecture));
         } catch (InterruptedException | RuntimeException e) {
             LOGGER.error("DeLFT model " + this.modelName + " initialization failed", e);
         }
@@ -59,13 +67,19 @@ public class DeLFTClassifierModel {
 
                 GrobidProperties.getInstance();
                 if (GrobidProperties.getDelftRuntimeMaxSequenceLength(this.modelName) != -1) {
-                    jep.eval(this.modelName + ".config.max_sequence_length=" +
-                        GrobidProperties.getDelftRuntimeMaxSequenceLength(this.modelName));
+                    jep.eval(
+                            this.modelName
+                                    + ".config.max_sequence_length="
+                                    +
+                                    GrobidProperties.getDelftRuntimeMaxSequenceLength(this.modelName));
                 }
 
                 if (GrobidProperties.getDelftRuntimeBatchSize(this.modelName) != -1) {
-                    jep.eval(this.modelName + ".config.batch_size=" +
-                        GrobidProperties.getDelftRuntimeBatchSize(this.modelName));
+                    jep.eval(
+                            this.modelName
+                                    + ".config.batch_size="
+                                    +
+                                    GrobidProperties.getDelftRuntimeBatchSize(this.modelName));
                 }
 
             } catch (JepException e) {
@@ -86,26 +100,29 @@ public class DeLFTClassifierModel {
         }
 
         private void setJepStringValueWithFileFallback(
-            Jep jep, String name, List<String> values
-        ) throws JepException, IOException {
+                Jep jep,
+                String name,
+                List<String> values) throws JepException, IOException {
             try {
                 jep.set(name, values);
                 // convert PyJList to a normal python list (necessary for Hugging Face transformer tokenizer input)
                 jep.eval(name + " = list(" + name + ")");
             } catch (JepException e) {
                 // we have normally the Java List as a PyJList in python, which should
-                // be equivalent to a normal python list 
+                // be equivalent to a normal python list
                 File tempFile = IOUtilities.newTempFile(name, ".data");
                 LOGGER.debug(
-                    "Falling back to file {} due to exception: {}",
-                    tempFile, e.toString()
-                );
+                        "Falling back to file {} due to exception: {}",
+                        tempFile,
+                        e.toString());
                 IOUtilities.writeListInFile(tempFile.getAbsolutePath(), values, "|");
                 jep.eval("from pathlib import Path");
                 jep.eval(
-                    name + " = Path('" + tempFile.getAbsolutePath() +
-                        "').read_text(encoding='utf-8').split(\"|\")"
-                );
+                        name
+                                + " = Path('"
+                                + tempFile.getAbsolutePath()
+                                +
+                                "').read_text(encoding='utf-8').split(\"|\")");
                 tempFile.delete();
             }
         }
@@ -120,7 +137,8 @@ public class DeLFTClassifierModel {
                 String model_variable = this.modelName.replace("-", "_");
                 jep.eval("jsondict = " + model_variable + ".predict(input, 'json', use_main_thread_only=True)");
                 //jep.eval("print(json.dumps(jsondict, sort_keys=False, indent=4, ensure_ascii=False))");
-                Object objectResult = jep.getValue("json.dumps(jsondict, sort_keys=True, indent=4, ensure_ascii=False)");
+                Object objectResult = jep
+                        .getValue("json.dumps(jsondict, sort_keys=True, indent=4, ensure_ascii=False)");
 
                 results = (String) objectResult;
 
@@ -169,8 +187,9 @@ public class DeLFTClassifierModel {
         try {
             LOGGER.info("Train DeLFT classification model " + modelName + "...");
             GrobidProperties.getInstance();
-            JEPThreadPoolClassifier.getInstance().run(
-                new TrainTask(modelName, trainingData, GrobidProperties.getModelPath()));
+            JEPThreadPoolClassifier.getInstance()
+                    .run(
+                            new TrainTask(modelName, trainingData, GrobidProperties.getModelPath()));
         } catch (InterruptedException e) {
             LOGGER.error("Train DeLFT classification model " + modelName + " task failed", e);
         }
@@ -199,7 +218,10 @@ public class DeLFTClassifierModel {
             try {
                 // load data
                 // to be reviewed for classification
-                jep.eval("x_all, y_all, f_all = load_data_and_labels_crf_file('" + this.trainPath.getAbsolutePath() + "')");
+                jep.eval(
+                        "x_all, y_all, f_all = load_data_and_labels_crf_file('"
+                                + this.trainPath.getAbsolutePath()
+                                + "')");
                 jep.eval("x_train, x_valid, y_train, y_valid = train_test_split(x_all, y_all, test_size=0.1)");
                 jep.eval("print(len(x_train), 'train sequences')");
                 jep.eval("print(len(x_valid), 'validation sequences')");
@@ -212,39 +234,58 @@ public class DeLFTClassifierModel {
 
                 String localArgs = "";
                 if (GrobidProperties.getDelftTrainingMaxSequenceLength(this.modelName) != -1)
-                    localArgs += ", maxlen=" +
-                        GrobidProperties.getDelftTrainingMaxSequenceLength(this.modelName);
+                    localArgs += ", maxlen="
+                            +
+                            GrobidProperties.getDelftTrainingMaxSequenceLength(this.modelName);
 
                 if (GrobidProperties.getDelftTrainingBatchSize(this.modelName) != -1)
-                    localArgs += ", batch_size=" +
-                        GrobidProperties.getDelftTrainingBatchSize(this.modelName);
+                    localArgs += ", batch_size="
+                            +
+                            GrobidProperties.getDelftTrainingBatchSize(this.modelName);
 
                 if (GrobidProperties.getDelftTranformer(modelName) != null) {
-                    localArgs += ", transformer=" +
-                        GrobidProperties.getDelftTranformer(modelName);
+                    localArgs += ", transformer="
+                            +
+                            GrobidProperties.getDelftTranformer(modelName);
                 }
 
                 // init model to be trained
                 if (this.architecture == null) {
-                    jep.eval("model = Classifier('" + this.modelName +
-                        "', max_epoch=100, recurrent_dropout=0.50, embeddings_name='glove-840B', use_ELMo=" + useELMo + localArgs + ")");
+                    jep.eval(
+                            "model = Classifier('"
+                                    + this.modelName
+                                    +
+                                    "', max_epoch=100, recurrent_dropout=0.50, embeddings_name='glove-840B', use_ELMo="
+                                    + useELMo
+                                    + localArgs
+                                    + ")");
                 } else {
-                    jep.eval("model = Classifier('" + this.modelName +
-                        "', max_epoch=100, recurrent_dropout=0.50, embeddings_name='glove-840B', use_ELMo=" + useELMo + localArgs +
-                        ", architecture='" + architecture + "')");
+                    jep.eval(
+                            "model = Classifier('"
+                                    + this.modelName
+                                    +
+                                    "', max_epoch=100, recurrent_dropout=0.50, embeddings_name='glove-840B', use_ELMo="
+                                    + useELMo
+                                    + localArgs
+                                    +
+                                    ", architecture='"
+                                    + architecture
+                                    + "')");
                 }
 
                 // actual training
                 if (incremental) {
                     // if incremental training, we need to load the existing model
                     if (this.modelPath != null &&
-                        this.modelPath.exists() &&
-                        !this.modelPath.isDirectory()) {
+                            this.modelPath.exists() &&
+                            !this.modelPath.isDirectory()) {
                         jep.eval("model.load('" + this.modelPath.getAbsolutePath() + "')");
                         jep.eval("model.train(x_train, y_train, x_valid, y_valid, incremental=True)");
                     } else {
-                        throw new GrobidException("the path to the model to be used for starting incremental training is invalid: " +
-                            this.modelPath.getAbsolutePath());
+                        throw new GrobidException(
+                                "the path to the model to be used for starting incremental training is invalid: "
+                                        +
+                                        this.modelPath.getAbsolutePath());
                     }
                 } else
                     jep.eval("model.train(x_train, y_train, x_valid, y_valid)");
@@ -282,12 +323,15 @@ public class DeLFTClassifierModel {
     public static void train(String modelName, File trainingData, File outputModel) {
         try {
             LOGGER.info("Train DeLFT model " + modelName + "...");
-            List<String> command = Arrays.asList("python3",
-                "dataseerClassifier.py",
-                modelName,
-                "train",
-                "--input", trainingData.getAbsolutePath(),
-                "--output", GrobidProperties.getInstance().getModelPath().getAbsolutePath());
+            List<String> command = Arrays.asList(
+                    "python3",
+                    "dataseerClassifier.py",
+                    modelName,
+                    "train",
+                    "--input",
+                    trainingData.getAbsolutePath(),
+                    "--output",
+                    GrobidProperties.getInstance().getModelPath().getAbsolutePath());
             if (GrobidProperties.getInstance().useELMo(modelName)) {
                 command.add("--use-ELMo");
             }
@@ -297,8 +341,7 @@ public class DeLFTClassifierModel {
             pb.directory(delftPath);
             Process process = pb.start();
             //pb.inheritIO();
-            CustomStreamGobbler customStreamGobbler =
-                new CustomStreamGobbler(process.getInputStream(), System.out);
+            CustomStreamGobbler customStreamGobbler = new CustomStreamGobbler(process.getInputStream(), System.out);
             Executors.newSingleThreadExecutor().submit(customStreamGobbler);
             SimpleStreamGobbler streamGobbler = new SimpleStreamGobbler(process.getErrorStream(), System.err::println);
             Executors.newSingleThreadExecutor().submit(streamGobbler);
@@ -363,7 +406,7 @@ public class DeLFTClassifierModel {
         @Override
         public void run() {
             new BufferedReader(new InputStreamReader(inputStream)).lines()
-                .forEach(consumer);
+                    .forEach(consumer);
         }
     }
 

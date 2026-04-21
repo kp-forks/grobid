@@ -1,15 +1,13 @@
 package org.grobid.core.data;
 
-import org.junit.Test;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
 
 public class PersonDeduplicationTest {
     Person target;

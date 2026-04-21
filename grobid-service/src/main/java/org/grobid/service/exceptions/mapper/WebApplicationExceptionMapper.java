@@ -1,7 +1,6 @@
 package org.grobid.service.exceptions.mapper;
 
 import com.google.inject.Inject;
-
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;

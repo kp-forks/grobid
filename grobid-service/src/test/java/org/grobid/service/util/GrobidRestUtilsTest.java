@@ -1,10 +1,10 @@
 package org.grobid.service.util;
 
-import org.junit.Test;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
 
 /**
  * Created by lfoppiano on 30/11/16.

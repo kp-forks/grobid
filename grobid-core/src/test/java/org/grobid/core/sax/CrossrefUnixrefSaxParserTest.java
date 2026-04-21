@@ -1,17 +1,19 @@
 package org.grobid.core.sax;
 
-import org.grobid.core.data.BiblioItem;
-import org.grobid.core.main.LibraryLoader;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.io.InputStream;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.InputStream;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import org.grobid.core.data.BiblioItem;
+import org.grobid.core.main.LibraryLoader;
 
 public class CrossrefUnixrefSaxParserTest {
 
@@ -29,7 +31,6 @@ public class CrossrefUnixrefSaxParserTest {
         item = new BiblioItem();
         target = new CrossrefUnixrefSaxParser(item);
     }
-
 
     @Test
     public void testParseCrossrefDoi() throws Exception {

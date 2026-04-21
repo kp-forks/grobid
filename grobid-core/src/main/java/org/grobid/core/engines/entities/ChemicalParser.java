@@ -1,5 +1,9 @@
 package org.grobid.core.engines.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.grobid.core.GrobidModels;
 import org.grobid.core.data.ChemicalEntity;
 import org.grobid.core.engines.AbstractParser;
@@ -7,28 +11,24 @@ import org.grobid.core.exceptions.GrobidException;
 import org.grobid.core.features.FeaturesVectorChemicalEntity;
 import org.grobid.core.utilities.TextUtilities;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 /**
  * Chemical entities extraction.
  *
  */
 public class ChemicalParser extends AbstractParser {
 
-//    private FeatureFactory featureFactory = null;
+    //    private FeatureFactory featureFactory = null;
 
     public ChemicalParser() {
         super(GrobidModels.ENTITIES_CHEMISTRY);
-//        featureFactory = FeatureFactory.getInstance();
+        //        featureFactory = FeatureFactory.getInstance();
     }
 
     /**
      * Extract all reference from a simple piece of text.
      */
     public List<ChemicalEntity> extractChemicalEntities(String text) throws Exception {
-//        int nbRes = 0;
+        //        int nbRes = 0;
         if (text == null)
             return null;
         if (text.length() == 0)
@@ -71,8 +71,9 @@ public class ChemicalParser extends AbstractParser {
     /**
      * Extract results from a labelled header.
      */
-    public List<ChemicalEntity> resultExtraction(String result,
-                                                 ArrayList<String> tokenizations) {
+    public List<ChemicalEntity> resultExtraction(
+            String result,
+            ArrayList<String> tokenizations) {
         List<ChemicalEntity> entities = new ArrayList<ChemicalEntity>();
 
         StringTokenizer stt = new StringTokenizer(result, "\n");

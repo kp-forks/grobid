@@ -1,9 +1,9 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModels.Flavor;
-
 import java.util.*;
 import java.util.function.Supplier;
+
+import org.grobid.core.GrobidModels.Flavor;
 
 /**
  * Single source of truth for model-name to trainer-instance mapping.
@@ -48,8 +48,11 @@ public class TrainerRegistry {
     public static AbstractTrainer getTrainer(String modelName) {
         Supplier<AbstractTrainer> factory = REGISTRY.get(modelName);
         if (factory == null) {
-            throw new IllegalStateException("Unknown model: " + modelName +
-                ". Known models: " + String.join(", ", REGISTRY.keySet()));
+            throw new IllegalStateException("Unknown model: "
+                    + modelName
+                    +
+                    ". Known models: "
+                    + String.join(", ", REGISTRY.keySet()));
         }
         return factory.get();
     }

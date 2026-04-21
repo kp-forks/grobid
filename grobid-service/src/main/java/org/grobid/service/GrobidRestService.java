@@ -1,5 +1,14 @@
 package org.grobid.service;
 
+import static org.grobid.core.GrobidModels.Flavor.BLANK;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -10,11 +19,14 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.grobid.core.GrobidModels;
 import org.grobid.core.engines.Engine;
 import org.grobid.core.engines.config.GrobidAnalysisConfig;
-import org.grobid.core.factory.AbstractEngineFactory;
 import org.grobid.core.engines.tagging.TaggerFactory;
+import org.grobid.core.factory.AbstractEngineFactory;
 import org.grobid.core.factory.GrobidPoolingFactory;
 import org.grobid.core.utilities.GrobidProperties;
 import org.grobid.service.data.ServiceInfo;
@@ -26,18 +38,6 @@ import org.grobid.service.util.BibTexMediaType;
 import org.grobid.service.util.ExpectedResponseType;
 import org.grobid.service.util.GrobidRestUtils;
 import org.grobid.service.util.ZipUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-import static org.grobid.core.GrobidModels.Flavor.BLANK;
-
 
 /**
  * RESTful service for the GROBID system.
@@ -112,7 +112,8 @@ public class GrobidRestService implements GrobidPaths {
             initializationError = "Could not get an engine from the pool within configured time.";
         } catch (Exception exp) {
             LOGGER.error("An unexpected exception occurs when initiating the grobid engine. ", exp);
-            initializationError = "An unexpected exception occurs when initiating the grobid engine: " + exp.getMessage();
+            initializationError = "An unexpected exception occurs when initiating the grobid engine: "
+                    + exp.getMessage();
         } finally {
             if (engine != null) {
                 GrobidPoolingFactory.returnEngine(engine);
@@ -161,23 +162,23 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processHeaderDocumentReturnXml_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
-        @DefaultValue("0") @FormDataParam("start") int startPage,
-        @DefaultValue("2") @FormDataParam("end") int endPage) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
+            @DefaultValue("0") @FormDataParam("start") int startPage,
+            @DefaultValue("2") @FormDataParam("end") int endPage) {
         int consol = validateConsolidationParam(consolidate);
         return restProcessFiles.processStatelessHeaderDocument(
-            inputStream, consol,
-            validateIncludeRawParam(includeRawAffiliations),
-            validateIncludeRawParam(includeRawCopyrights),
-            validateIncludeRawParam(includeDiscardedText),
-            startPage,
-            endPage,
-            ExpectedResponseType.XML
-        );
+                inputStream,
+                consol,
+                validateIncludeRawParam(includeRawAffiliations),
+                validateIncludeRawParam(includeRawCopyrights),
+                validateIncludeRawParam(includeDiscardedText),
+                startPage,
+                endPage,
+                ExpectedResponseType.XML);
     }
 
     @Path(PATH_HEADER_FUNDING)
@@ -185,44 +186,43 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processHeaderFundingDocumentReturnXml_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText) {
         int consolHeader = validateConsolidationParam(consolidateHeader);
         int consolFunders = validateConsolidationParam(consolidateFunders);
         return restProcessFiles.processStatelessHeaderFundingDocument(
-            inputStream, consolHeader, consolFunders,
-            validateIncludeRawParam(includeRawAffiliations),
-            validateIncludeRawParam(includeRawCopyrights),
-            validateIncludeRawParam(includeDiscardedText)
-        );
+                inputStream,
+                consolHeader,
+                consolFunders,
+                validateIncludeRawParam(includeRawAffiliations),
+                validateIncludeRawParam(includeRawCopyrights),
+                validateIncludeRawParam(includeDiscardedText));
     }
-
 
     @Path(PATH_HEADER)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_XML)
     @PUT
     public Response processStatelessHeaderDocumentReturnXml(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
-        @DefaultValue("0") @FormDataParam("start") int startPage,
-        @DefaultValue("2") @FormDataParam("end") int endPage) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
+            @DefaultValue("0") @FormDataParam("start") int startPage,
+            @DefaultValue("2") @FormDataParam("end") int endPage) {
         return processHeaderDocumentReturnXml_post(
-            inputStream,
-            consolidate,
-            includeRawAffiliations,
-            includeRawCopyrights,
-            includeDiscardedText,
-            startPage,
-            endPage
-        );
+                inputStream,
+                consolidate,
+                includeRawAffiliations,
+                includeRawCopyrights,
+                includeDiscardedText,
+                startPage,
+                endPage);
     }
 
     @Path(PATH_HEADER)
@@ -230,20 +230,19 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @POST
     public Response processHeaderDocumentReturnBibTeX_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam("start") int startPage,
-        @DefaultValue("2") @FormDataParam("end") int endPage) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam("start") int startPage,
+            @DefaultValue("2") @FormDataParam("end") int endPage) {
         int consol = validateConsolidationParam(consolidate);
         return restProcessFiles.processStatelessHeaderDocument(
-            inputStream,
-            consol,
-            validateIncludeRawParam(includeRawAffiliations),
-            validateIncludeRawParam(includeRawCopyrights),
-            ExpectedResponseType.BIBTEX
-        );
+                inputStream,
+                consol,
+                validateIncludeRawParam(includeRawAffiliations),
+                validateIncludeRawParam(includeRawCopyrights),
+                ExpectedResponseType.BIBTEX);
     }
 
     @Path(PATH_HEADER)
@@ -251,20 +250,19 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @PUT
     public Response processStatelessHeaderDocumentReturnBibTeX(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam("start") int startPage,
-        @DefaultValue("2") @FormDataParam("end") int endPage) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam("start") int startPage,
+            @DefaultValue("2") @FormDataParam("end") int endPage) {
         return processHeaderDocumentReturnBibTeX_post(
-            inputStream,
-            consolidate,
-            includeRawAffiliations,
-            includeRawCopyrights,
-            startPage,
-            endPage
-        );
+                inputStream,
+                consolidate,
+                includeRawAffiliations,
+                includeRawCopyrights,
+                startPage,
+                endPage);
     }
 
     @Path(PATH_FULL_TEXT)
@@ -272,26 +270,35 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processFulltextDocument_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(FLAVOR) String flavor,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
-        @DefaultValue("-1") @FormDataParam("start") int startPage,
-        @DefaultValue("-1") @FormDataParam("end") int endPage,
-        @FormDataParam("generateIDs") String generateIDs,
-        @FormDataParam("segmentSentences") String segmentSentences,
-        @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates
-    ) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(FLAVOR) String flavor,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
+            @DefaultValue("-1") @FormDataParam("start") int startPage,
+            @DefaultValue("-1") @FormDataParam("end") int endPage,
+            @FormDataParam("generateIDs") String generateIDs,
+            @FormDataParam("segmentSentences") String segmentSentences,
+            @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
         return processFulltext(
-            inputStream, flavor, consolidateHeader, consolidateCitations, consolidateFunders,
-            includeRawAffiliations, includeRawCitations, includeRawCopyrights, includeDiscardedText,
-            startPage, endPage, generateIDs, segmentSentences, coordinates
-        );
+                inputStream,
+                flavor,
+                consolidateHeader,
+                consolidateCitations,
+                consolidateFunders,
+                includeRawAffiliations,
+                includeRawCitations,
+                includeRawCopyrights,
+                includeDiscardedText,
+                startPage,
+                endPage,
+                generateIDs,
+                segmentSentences,
+                coordinates);
     }
 
     @Path(PATH_FULL_TEXT)
@@ -299,43 +306,52 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @PUT
     public Response processFulltextDocument(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(FLAVOR) String flavor,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
-        @DefaultValue("-1") @FormDataParam("start") int startPage,
-        @DefaultValue("-1") @FormDataParam("end") int endPage,
-        @FormDataParam("generateIDs") String generateIDs,
-        @FormDataParam("segmentSentences") String segmentSentences,
-        @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates
-    ) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(FLAVOR) String flavor,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_DISCARDED_TEXT) String includeDiscardedText,
+            @DefaultValue("-1") @FormDataParam("start") int startPage,
+            @DefaultValue("-1") @FormDataParam("end") int endPage,
+            @FormDataParam("generateIDs") String generateIDs,
+            @FormDataParam("segmentSentences") String segmentSentences,
+            @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
         return processFulltext(
-            inputStream, flavor, consolidateHeader, consolidateCitations, consolidateFunders,
-            includeRawAffiliations, includeRawCitations, includeRawCopyrights, includeDiscardedText,
-            startPage, endPage, generateIDs, segmentSentences, coordinates
-        );
+                inputStream,
+                flavor,
+                consolidateHeader,
+                consolidateCitations,
+                consolidateFunders,
+                includeRawAffiliations,
+                includeRawCitations,
+                includeRawCopyrights,
+                includeDiscardedText,
+                startPage,
+                endPage,
+                generateIDs,
+                segmentSentences,
+                coordinates);
     }
 
-    private Response processFulltext(InputStream inputStream,
-                                     String flavor,
-                                     String consolidateHeader,
-                                     String consolidateCitations,
-                                     String consolidateFunders,
-                                     String includeRawAffiliations,
-                                     String includeRawCitations,
-                                     String includeRawCopyrights,
-                                     String includeDiscardedText,
-                                     int startPage,
-                                     int endPage,
-                                     String generateIDs,
-                                     String segmentSentences,
-                                     List<FormDataBodyPart> coordinates
-    ) throws Exception {
+    private Response processFulltext(
+            InputStream inputStream,
+            String flavor,
+            String consolidateHeader,
+            String consolidateCitations,
+            String consolidateFunders,
+            String includeRawAffiliations,
+            String includeRawCitations,
+            String includeRawCopyrights,
+            String includeDiscardedText,
+            int startPage,
+            int endPage,
+            String generateIDs,
+            String segmentSentences,
+            List<FormDataBodyPart> coordinates) throws Exception {
         int consolHeader = validateConsolidationParam(consolidateHeader);
         int consolCitations = validateConsolidationParam(consolidateCitations);
         int consolFunders = validateConsolidationParam(consolidateFunders);
@@ -348,23 +364,29 @@ public class GrobidRestService implements GrobidPaths {
 
         if (flavorValidated == BLANK) {
             return restProcessFiles.processFulltextDocumentBlank(
-                inputStream,
-                startPage,
-                endPage,
-                false,
-                false,
-                new ArrayList<>()
-            );
+                    inputStream,
+                    startPage,
+                    endPage,
+                    false,
+                    false,
+                    new ArrayList<>());
         }
 
         return restProcessFiles.processFulltextDocument(
-            inputStream, flavorValidated, consolHeader, consolCitations, consolFunders,
-            validateIncludeRawParam(includeRawAffiliations),
-            includeRaw,
-            validateIncludeRawParam(includeRawCopyrights),
-            validateIncludeRawParam(includeDiscardedText),
-            startPage, endPage, generate, segment, teiCoordinates
-        );
+                inputStream,
+                flavorValidated,
+                consolHeader,
+                consolCitations,
+                consolFunders,
+                validateIncludeRawParam(includeRawAffiliations),
+                includeRaw,
+                validateIncludeRawParam(includeRawCopyrights),
+                validateIncludeRawParam(includeDiscardedText),
+                startPage,
+                endPage,
+                generate,
+                segment,
+                teiCoordinates);
     }
 
     private GrobidModels.Flavor validateModelFlavor(String flavor) {
@@ -411,24 +433,33 @@ public class GrobidRestService implements GrobidPaths {
     @Produces("application/zip")
     @POST
     public Response processFulltextAssetDocument_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(FLAVOR) String flavor,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @DefaultValue("-1") @FormDataParam("start") int startPage,
-        @DefaultValue("-1") @FormDataParam("end") int endPage,
-        @FormDataParam("generateIDs") String generateIDs,
-        @FormDataParam("segmentSentences") String segmentSentences,
-        @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(FLAVOR) String flavor,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @DefaultValue("-1") @FormDataParam("start") int startPage,
+            @DefaultValue("-1") @FormDataParam("end") int endPage,
+            @FormDataParam("generateIDs") String generateIDs,
+            @FormDataParam("segmentSentences") String segmentSentences,
+            @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
         return processStatelessFulltextAssetHelper(
-            inputStream, flavor, consolidateHeader, consolidateCitations, consolidateFunders,
-            includeRawAffiliations, includeRawCitations, includeRawCopyrights,
-            startPage, endPage, generateIDs, segmentSentences, coordinates
-        );
+                inputStream,
+                flavor,
+                consolidateHeader,
+                consolidateCitations,
+                consolidateFunders,
+                includeRawAffiliations,
+                includeRawCitations,
+                includeRawCopyrights,
+                startPage,
+                endPage,
+                generateIDs,
+                segmentSentences,
+                coordinates);
     }
 
     @Path(PATH_FULL_TEXT_ASSET)
@@ -436,39 +467,49 @@ public class GrobidRestService implements GrobidPaths {
     @Produces("application/zip")
     @PUT
     public Response processStatelessFulltextAssetDocument(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(FLAVOR) String flavor,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @DefaultValue("-1") @FormDataParam("start") int startPage,
-        @DefaultValue("-1") @FormDataParam("end") int endPage,
-        @FormDataParam("generateIDs") String generateIDs,
-        @FormDataParam("segmentSentences") String segmentSentences,
-        @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(FLAVOR) String flavor,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_FUNDERS) String consolidateFunders,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_COPYRIGHTS) String includeRawCopyrights,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @DefaultValue("-1") @FormDataParam("start") int startPage,
+            @DefaultValue("-1") @FormDataParam("end") int endPage,
+            @FormDataParam("generateIDs") String generateIDs,
+            @FormDataParam("segmentSentences") String segmentSentences,
+            @FormDataParam("teiCoordinates") List<FormDataBodyPart> coordinates) throws Exception {
         return processStatelessFulltextAssetHelper(
-            inputStream, flavor, consolidateHeader, consolidateCitations, consolidateFunders,
-            includeRawAffiliations, includeRawCitations, includeRawCopyrights,
-            startPage, endPage, generateIDs, segmentSentences, coordinates
-        );
+                inputStream,
+                flavor,
+                consolidateHeader,
+                consolidateCitations,
+                consolidateFunders,
+                includeRawAffiliations,
+                includeRawCitations,
+                includeRawCopyrights,
+                startPage,
+                endPage,
+                generateIDs,
+                segmentSentences,
+                coordinates);
     }
 
-    private Response processStatelessFulltextAssetHelper(InputStream inputStream,
-                                                         String flavor,
-                                                         String consolidateHeader,
-                                                         String consolidateCitations,
-                                                         String consolidateFunders,
-                                                         String includeRawAffiliations,
-                                                         String includeRawCopyrights,
-                                                         String includeRawCitations,
-                                                         int startPage,
-                                                         int endPage,
-                                                         String generateIDs,
-                                                         String segmentSentences,
-                                                         List<FormDataBodyPart> coordinates) throws Exception {
+    private Response processStatelessFulltextAssetHelper(
+            InputStream inputStream,
+            String flavor,
+            String consolidateHeader,
+            String consolidateCitations,
+            String consolidateFunders,
+            String includeRawAffiliations,
+            String includeRawCopyrights,
+            String includeRawCitations,
+            int startPage,
+            int endPage,
+            String generateIDs,
+            String segmentSentences,
+            List<FormDataBodyPart> coordinates) throws Exception {
         int consolHeader = validateConsolidationParam(consolidateHeader);
         int consolCitations = validateConsolidationParam(consolidateCitations);
         int consolFunders = validateConsolidationParam(consolidateFunders);
@@ -479,11 +520,19 @@ public class GrobidRestService implements GrobidPaths {
         GrobidModels.Flavor validatedModelFlavor = validateModelFlavor(flavor);
 
         return restProcessFiles.processStatelessFulltextAssetDocument(
-            inputStream, validatedModelFlavor, consolHeader, consolCitations, consolFunders,
-            validateIncludeRawParam(includeRawAffiliations),
-            includeRaw, validateIncludeRawParam(includeRawCopyrights),
-            startPage, endPage, generate, segment, teiCoordinates
-        );
+                inputStream,
+                validatedModelFlavor,
+                consolHeader,
+                consolCitations,
+                consolFunders,
+                validateIncludeRawParam(includeRawAffiliations),
+                includeRaw,
+                validateIncludeRawParam(includeRawCopyrights),
+                startPage,
+                endPage,
+                generate,
+                segment,
+                teiCoordinates);
     }
 
     /*@Path(PATH_CITATION_PATENT_TEI)
@@ -501,9 +550,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processCitationPatentST36(
-        @FormDataParam(INPUT) InputStream pInputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
+            @FormDataParam(INPUT) InputStream pInputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
 
@@ -517,9 +566,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processCitationPatentPDF(
-        @FormDataParam(INPUT) InputStream pInputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
+            @FormDataParam(INPUT) InputStream pInputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
         return restProcessFiles.processCitationPatentPDF(pInputStream, consol, includeRaw);
@@ -530,9 +579,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processCitationPatentTXT_post(
-        @FormParam(INPUT) String text,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(INPUT) String text,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
         return restProcessString.processCitationPatentTXT(text, consol, includeRaw);
@@ -631,13 +680,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processCitationReturnXml_post(
-        @FormParam(CITATION) String citation,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) String citation,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         GrobidAnalysisConfig config = new GrobidAnalysisConfig.GrobidAnalysisConfigBuilder()
-            .consolidateCitations(validateConsolidationParam(consolidate))
-            .includeRawCitations(validateIncludeRawParam(includeRawCitations))
-            .build();
+                .consolidateCitations(validateConsolidationParam(consolidate))
+                .includeRawCitations(validateIncludeRawParam(includeRawCitations))
+                .build();
         return restProcessString.processCitation(citation, config, ExpectedResponseType.XML);
     }
 
@@ -646,9 +695,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @PUT
     public Response processCitationReturnXml(
-        @FormParam(CITATION) String citation,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) String citation,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         return processCitationReturnXml_post(citation, consolidate, includeRawCitations);
     }
 
@@ -657,13 +706,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @POST
     public Response processCitationReturnBibTeX_post(
-        @FormParam(CITATION) String citation,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) String citation,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         GrobidAnalysisConfig config = new GrobidAnalysisConfig.GrobidAnalysisConfigBuilder()
-            .consolidateCitations(validateConsolidationParam(consolidate))
-            .includeRawCitations(validateIncludeRawParam(includeRawCitations))
-            .build();
+                .consolidateCitations(validateConsolidationParam(consolidate))
+                .includeRawCitations(validateIncludeRawParam(includeRawCitations))
+                .build();
         return restProcessString.processCitation(citation, config, ExpectedResponseType.BIBTEX);
     }
 
@@ -672,9 +721,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @PUT
     public Response processCitationReturnBibTeX(
-        @FormParam(CITATION) String citation,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) String citation,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         return processCitationReturnBibTeX_post(citation, consolidate, includeRawCitations);
     }
 
@@ -683,13 +732,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processCitationListReturnXml_post(
-        @FormParam(CITATION) List<String> citations,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) List<String> citations,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         GrobidAnalysisConfig config = new GrobidAnalysisConfig.GrobidAnalysisConfigBuilder()
-            .consolidateCitations(validateConsolidationParam(consolidate))
-            .includeRawCitations(validateIncludeRawParam(includeRawCitations))
-            .build();
+                .consolidateCitations(validateConsolidationParam(consolidate))
+                .includeRawCitations(validateIncludeRawParam(includeRawCitations))
+                .build();
         return restProcessString.processCitationList(citations, config, ExpectedResponseType.XML);
     }
 
@@ -698,13 +747,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @POST
     public Response processCitationListReturnBibTeX_post(
-        @FormParam(CITATION) List<String> citations,
-        @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormParam(CITATION) List<String> citations,
+            @DefaultValue("0") @FormParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         GrobidAnalysisConfig config = new GrobidAnalysisConfig.GrobidAnalysisConfigBuilder()
-            .consolidateCitations(validateConsolidationParam(consolidate))
-            .includeRawCitations(validateIncludeRawParam(includeRawCitations))
-            .build();
+                .consolidateCitations(validateConsolidationParam(consolidate))
+                .includeRawCitations(validateIncludeRawParam(includeRawCitations))
+                .build();
         return restProcessString.processCitationList(citations, config, ExpectedResponseType.BIBTEX);
     }
 
@@ -713,12 +762,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @POST
     public Response processStatelessReferencesDocumentReturnXml_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
-        return restProcessFiles.processStatelessReferencesDocument(inputStream, consol, includeRaw, ExpectedResponseType.XML);
+        return restProcessFiles
+                .processStatelessReferencesDocument(inputStream, consol, includeRaw, ExpectedResponseType.XML);
     }
 
     @Path(PATH_REFERENCES)
@@ -726,9 +776,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_XML)
     @PUT
     public Response processStatelessReferencesDocumentReturnXml(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         return processStatelessReferencesDocumentReturnXml_post(inputStream, consolidate, includeRawCitations);
     }
 
@@ -737,12 +787,13 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @POST
     public Response processStatelessReferencesDocumentReturnBibTeX_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
-        return restProcessFiles.processStatelessReferencesDocument(inputStream, consol, includeRaw, ExpectedResponseType.BIBTEX);
+        return restProcessFiles
+                .processStatelessReferencesDocument(inputStream, consol, includeRaw, ExpectedResponseType.BIBTEX);
     }
 
     @Path(PATH_REFERENCES)
@@ -750,9 +801,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(BibTexMediaType.MEDIA_TYPE_QS)
     @PUT
     public Response processStatelessReferencesDocumentReturnBibTeX(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) {
         return processStatelessReferencesDocumentReturnBibTeX_post(inputStream, consolidate, includeRawCitations);
     }
 
@@ -761,24 +812,26 @@ public class GrobidRestService implements GrobidPaths {
     @Produces("application/pdf")
     @POST
     public Response processAnnotatePDF(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(INPUT) FormDataBodyPart inputBodyPart,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @FormDataParam("type") int type) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(INPUT) FormDataBodyPart inputBodyPart,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_AFFILIATIONS) String includeRawAffiliations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @FormDataParam("type") int type) throws Exception {
         String fileName = inputBodyPart.getFormDataContentDisposition().getFileName();
         int consolHeader = validateConsolidationParam(consolidateHeader);
         int consolCitations = validateConsolidationParam(consolidateCitations);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
 
         return restProcessFiles.processPDFAnnotation(
-            inputStream, fileName, consolHeader, consolCitations,
-            validateIncludeRawParam(includeRawAffiliations),
-            includeRaw,
-            GrobidRestUtils.getAnnotationFor(type)
-        );
+                inputStream,
+                fileName,
+                consolHeader,
+                consolCitations,
+                validateIncludeRawParam(includeRawAffiliations),
+                includeRaw,
+                GrobidRestUtils.getAnnotationFor(type));
     }
 
     @Path(PATH_REFERENCES_PDF_ANNOTATION)
@@ -786,16 +839,17 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_JSON)
     @POST
     public Response processPDFReferenceAnnotation(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
-        @DefaultValue("0") @FormDataParam(INCLUDE_FIGURES_TABLES) String includeFiguresTables) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_HEADER) String consolidateHeader,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidateCitations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations,
+            @DefaultValue("0") @FormDataParam(INCLUDE_FIGURES_TABLES) String includeFiguresTables) throws Exception {
         int consolHeader = validateConsolidationParam(consolidateHeader);
         int consolCitations = validateConsolidationParam(consolidateCitations);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
         boolean includeFig = validateIncludeRawParam(includeFiguresTables);
-        return restProcessFiles.processPDFReferenceAnnotation(inputStream, consolHeader, consolCitations, includeRaw, includeFig);
+        return restProcessFiles
+                .processPDFReferenceAnnotation(inputStream, consolHeader, consolCitations, includeRaw, includeFig);
     }
 
     @Path(PATH_CITATIONS_PATENT_PDF_ANNOTATION)
@@ -803,9 +857,9 @@ public class GrobidRestService implements GrobidPaths {
     @Produces(MediaType.APPLICATION_JSON)
     @POST
     public Response annotatePDFPatentCitation(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
-        @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @DefaultValue("0") @FormDataParam(CONSOLIDATE_CITATIONS) String consolidate,
+            @DefaultValue("0") @FormDataParam(INCLUDE_RAW_CITATIONS) String includeRawCitations) throws Exception {
         int consol = validateConsolidationParam(consolidate);
         boolean includeRaw = validateIncludeRawParam(includeRawCitations);
         return restProcessFiles.annotateCitationPatentPDF(inputStream, consol, includeRaw);
@@ -827,9 +881,10 @@ public class GrobidRestService implements GrobidPaths {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_PLAIN)
     @POST
-    public Response processFundingAcknowledgementPost(@FormParam(TEXT) String text,
-                                                      @DefaultValue("0") @FormParam("generateIDs") String generateIDs,
-                                                      @DefaultValue("0") @FormParam("segmentSentences") String segmentSentences) {
+    public Response processFundingAcknowledgementPost(
+            @FormParam(TEXT) String text,
+            @DefaultValue("0") @FormParam("generateIDs") String generateIDs,
+            @DefaultValue("0") @FormParam("segmentSentences") String segmentSentences) {
         boolean generate = validateGenerateIdParam(generateIDs);
         boolean segment = validateGenerateIdParam(segmentSentences);
         return restProcessString.processFundingAcknowledgement(text, generate, segment);
@@ -841,12 +896,13 @@ public class GrobidRestService implements GrobidPaths {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    public Response trainModel(@FormParam("model") String model,
-                               @DefaultValue("crf") @FormParam("architecture") String architecture,
-                               @DefaultValue("split") @FormParam("type") String type,
-                               @DefaultValue("0.9") @FormParam("ratio") double ratio,
-                               @DefaultValue("10") @FormParam("n") int n,
-                               @DefaultValue("0") @FormParam("incremental") String incremental) {
+    public Response trainModel(
+            @FormParam("model") String model,
+            @DefaultValue("crf") @FormParam("architecture") String architecture,
+            @DefaultValue("split") @FormParam("type") String type,
+            @DefaultValue("0.9") @FormParam("ratio") double ratio,
+            @DefaultValue("10") @FormParam("n") int n,
+            @DefaultValue("0") @FormParam("incremental") String incremental) {
         boolean incrementalVal = validateIncludeRawParam(incremental);
         return restProcessTraining.trainModel(model, architecture, type, ratio, n, incrementalVal);
     }
@@ -863,8 +919,9 @@ public class GrobidRestService implements GrobidPaths {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces("application/zip")
     @GET
-    public Response getModel(@QueryParam("model") String model,
-                             @QueryParam("architecture") String architecture) {
+    public Response getModel(
+            @QueryParam("model") String model,
+            @QueryParam("architecture") String architecture) {
         return restProcessTraining.getModel(model, architecture);
     }
 
@@ -872,8 +929,9 @@ public class GrobidRestService implements GrobidPaths {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces("application/zip")
     @POST
-    public Response getModel_post(@FormParam("model") String model,
-                                  @FormParam("architecture") String architecture) {
+    public Response getModel_post(
+            @FormParam("model") String model,
+            @FormParam("architecture") String architecture) {
         return restProcessTraining.getModel(model, architecture);
     }
 
@@ -882,15 +940,15 @@ public class GrobidRestService implements GrobidPaths {
     @Produces("application/zip")
     @POST
     public Response createTraining_post(
-        @FormDataParam(INPUT) InputStream inputStream,
-        @FormDataParam(INPUT) FormDataBodyPart inputBodyPart,
-        @FormDataParam(FLAVOR) String flavor
-    ) {
+            @FormDataParam(INPUT) InputStream inputStream,
+            @FormDataParam(INPUT) FormDataBodyPart inputBodyPart,
+            @FormDataParam(FLAVOR) String flavor) {
         GrobidModels.Flavor validatedModelFlavor = validateModelFlavor(flavor);
         String fileName = inputBodyPart.getFormDataContentDisposition().getFileName();
         return restProcessTraining.createTraining(
-            inputStream, fileName, validatedModelFlavor
-        );
+                inputStream,
+                fileName,
+                validatedModelFlavor);
     }
 
 }

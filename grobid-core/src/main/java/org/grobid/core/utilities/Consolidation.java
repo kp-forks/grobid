@@ -1,9 +1,19 @@
 package org.grobid.core.utilities;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.grobid.core.data.BiblioItem.cleanDOI;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.rockymadden.stringmetric.similarity.RatcliffObershelpMetric;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import scala.Option;
+
 import org.grobid.core.data.BibDataSet;
 import org.grobid.core.data.BiblioItem;
 import org.grobid.core.data.Funder;
@@ -13,16 +23,6 @@ import org.grobid.core.utilities.crossref.CrossrefRequestListener;
 import org.grobid.core.utilities.crossref.FunderDeserializer;
 import org.grobid.core.utilities.crossref.WorkDeserializer;
 import org.grobid.core.utilities.glutton.GluttonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.Option;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.grobid.core.data.BiblioItem.cleanDOI;
 
 /**
  * Singleton class for managing the extraction of bibliographical information from pdf documents.
@@ -42,7 +42,6 @@ public class Consolidation {
 
     public static String CONSOLIDATION_STATUS_CONSOLIDATED = "consolidated";
     public static String CONSOLIDATION_STATUS_EXTRACTED = "extracted";
-
 
     public enum GrobidConsolidationService {
         CROSSREF("crossref"),
@@ -69,8 +68,11 @@ public class Consolidation {
                     return e;
                 }
             }
-            throw new IllegalArgumentException("No consolidation service with name '" + name +
-                    "', possible values are: " + Arrays.toString(values()));
+            throw new IllegalArgumentException("No consolidation service with name '"
+                    + name
+                    +
+                    "', possible values are: "
+                    + Arrays.toString(values()));
         }
     }
 
@@ -89,7 +91,7 @@ public class Consolidation {
         final String year;
 
         BibQueryFields(String doi, String halId, String author, String title,
-                       String journalTitle, String volume, String firstPage, String year) {
+                String journalTitle, String volume, String firstPage, String year) {
             this.doi = doi;
             this.halId = halId;
             this.author = author;
@@ -152,9 +154,11 @@ public class Consolidation {
      * @param service the consolidation service being used
      * @return query arguments map, or null if insufficient data
      */
-    static Map<String, String> buildWorkQueryArguments(BibQueryFields fields, String rawCitation,
-                                                       int consolidateMode,
-                                                       GrobidConsolidationService service) {
+    static Map<String, String> buildWorkQueryArguments(
+            BibQueryFields fields,
+            String rawCitation,
+            int consolidateMode,
+            GrobidConsolidationService service) {
         Map<String, String> arguments = new HashMap<>();
 
         if (StringUtils.isNotBlank(fields.doi)) {
@@ -199,12 +203,12 @@ public class Consolidation {
             }
             if (StringUtils.isNotBlank(fields.title)) {
                 if (service != GrobidConsolidationService.CROSSREF ||
-                    (StringUtils.isBlank(rawCitation) && StringUtils.isBlank(fields.doi)))
+                        (StringUtils.isBlank(rawCitation) && StringUtils.isBlank(fields.doi)))
                     arguments.put("query.title", fields.title);
             }
             if (StringUtils.isNotBlank(fields.author)) {
                 if (service != GrobidConsolidationService.CROSSREF ||
-                    (StringUtils.isBlank(rawCitation) && StringUtils.isBlank(fields.doi)))
+                        (StringUtils.isBlank(rawCitation) && StringUtils.isBlank(fields.doi)))
                     arguments.put("query.author", fields.author);
             }
             if (StringUtils.isNotBlank(fields.journalTitle) && service != GrobidConsolidationService.CROSSREF) {
@@ -228,7 +232,7 @@ public class Consolidation {
         // check if there's enough information for CrossRef
         if (service == GrobidConsolidationService.CROSSREF) {
             if (StringUtils.isBlank(fields.doi) && StringUtils.isBlank(rawCitation) &&
-                 (StringUtils.isBlank(fields.author) || StringUtils.isBlank(fields.title))) {
+                    (StringUtils.isBlank(fields.author) || StringUtils.isBlank(fields.title))) {
                 return null;
             }
         }
@@ -316,9 +320,14 @@ public class Consolidation {
         final List<BiblioItem> results = new ArrayList<>();
 
         BibQueryFields fields = extractFieldsFromBiblioItem(bib);
-        final GrobidConsolidationService consolidationService = GrobidProperties.getInstance().getConsolidationService();
+        final GrobidConsolidationService consolidationService = GrobidProperties.getInstance()
+                .getConsolidationService();
 
-        Map<String, String> arguments = buildWorkQueryArguments(fields, rawCitation, consolidateMode, consolidationService);
+        Map<String, String> arguments = buildWorkQueryArguments(
+                fields,
+                rawCitation,
+                consolidateMode,
+                consolidationService);
         if (arguments == null) {
             return null;
         }
@@ -342,47 +351,47 @@ public class Consolidation {
             }
 
             client.pushRequest(
-                "works",
-                arguments,
-                workDeserializer,
-                threadId,
-                new CrossrefRequestListener<>(0) {
+                    "works",
+                    arguments,
+                    workDeserializer,
+                    threadId,
+                    new CrossrefRequestListener<>(0) {
 
-                @Override
-                public void onSuccess(List<BiblioItem> res) {
-                    if (CollectionUtils.isNotEmpty(res)) {
-                        for(BiblioItem oneRes : res) {
-                            /*
-                              Glutton integrates its own post-validation, so we can skip post-validation in GROBID when it is used as
-                              consolidation service.
+                        @Override
+                        public void onSuccess(List<BiblioItem> res) {
+                            if (CollectionUtils.isNotEmpty(res)) {
+                                for (BiblioItem oneRes : res) {
+                                    /*
+                                      Glutton integrates its own post-validation, so we can skip post-validation in GROBID when it is used as
+                                      consolidation service.
 
-                              Post-validation for CrossRef is configurable. When disabled, all results are accepted.
-                              When enabled (default), DOI-based queries skip post-validation, and other queries require it.
-                            */
-                            if (consolidationService == GrobidConsolidationService.GLUTTON
-                                || !GrobidProperties.getCrossrefPostValidation()
-                                || doiQuery
-                                || postValidation(bib, oneRes)) {
-                                oneRes.setStatus(CONSOLIDATION_STATUS_CONSOLIDATED);
-                                oneRes.setConsolidationService(consolidationService.getExt());
-                                results.add(oneRes);
-                                if (cntManager != null) {
-                                    cntManager.i(ConsolidationCounters.CONSOLIDATION_SUCCESS);
-                                    if (doiQuery)
-                                        cntManager.i(ConsolidationCounters.CONSOLIDATION_PER_DOI_SUCCESS);
+                                      Post-validation for CrossRef is configurable. When disabled, all results are accepted.
+                                      When enabled (default), DOI-based queries skip post-validation, and other queries require it.
+                                    */
+                                    if (consolidationService == GrobidConsolidationService.GLUTTON
+                                            || !GrobidProperties.getCrossrefPostValidation()
+                                            || doiQuery
+                                            || postValidation(bib, oneRes)) {
+                                        oneRes.setStatus(CONSOLIDATION_STATUS_CONSOLIDATED);
+                                        oneRes.setConsolidationService(consolidationService.getExt());
+                                        results.add(oneRes);
+                                        if (cntManager != null) {
+                                            cntManager.i(ConsolidationCounters.CONSOLIDATION_SUCCESS);
+                                            if (doiQuery)
+                                                cntManager.i(ConsolidationCounters.CONSOLIDATION_PER_DOI_SUCCESS);
+                                        }
+                                        break;
+                                    }
                                 }
-                                break;
                             }
                         }
-                    }
-                }
 
-                @Override
-                public void onError(int status, String message, Exception exception) {
-                    LOGGER.info("Consolidation service returns error ("+status+") : "+message, exception);
-                }
-            });
-        } catch(Exception e) {
+                        @Override
+                        public void onError(int status, String message, Exception exception) {
+                            LOGGER.info("Consolidation service returns error (" + status + ") : " + message, exception);
+                        }
+                    });
+        } catch (Exception e) {
             LOGGER.info("Consolidation error - ", e);
         }
 
@@ -393,21 +402,21 @@ public class Consolidation {
             return results.get(0);
     }
 
-
     /**
      * Try to consolidate a list of bibliographical objects in one operation with consolidation services.
      * In practice this method is used for consolidating the metadata of all the extracted bibliographical
      * references.
      */
-    public Map<Integer,BiblioItem> consolidate(List<BibDataSet> biblios) {
+    public Map<Integer, BiblioItem> consolidate(List<BibDataSet> biblios) {
         if (CollectionUtils.isEmpty(biblios))
             return null;
-        final Map<Integer,BiblioItem> results = new ConcurrentHashMap<>();
+        final Map<Integer, BiblioItem> results = new ConcurrentHashMap<>();
         int n = 0;
         long threadId = Thread.currentThread().getId();
-        final GrobidConsolidationService consolidationService = GrobidProperties.getInstance().getConsolidationService();
+        final GrobidConsolidationService consolidationService = GrobidProperties.getInstance()
+                .getConsolidationService();
 
-        for(BibDataSet bibDataSet : biblios) {
+        for (BibDataSet bibDataSet : biblios) {
             final BiblioItem theBiblio = bibDataSet.getResBib();
 
             if (cntManager != null)
@@ -440,11 +449,11 @@ public class Consolidation {
 
                     @Override
                     public void onSuccess(List<BiblioItem> res) {
-                        if (CollectionUtils.isNotEmpty(res) ) {
-                            for(BiblioItem oneRes : res) {
+                        if (CollectionUtils.isNotEmpty(res)) {
+                            for (BiblioItem oneRes : res) {
                                 if (consolidationService == GrobidConsolidationService.GLUTTON
-                                    || !GrobidProperties.getCrossrefPostValidation()
-                                    || postValidation(theBiblio, oneRes)) {
+                                        || !GrobidProperties.getCrossrefPostValidation()
+                                        || postValidation(theBiblio, oneRes)) {
                                     oneRes.setLabeledTokens(theBiblio.getLabeledTokens());
                                     oneRes.setStatus(CONSOLIDATION_STATUS_CONSOLIDATED);
                                     oneRes.setConsolidationService(consolidationService.getExt());
@@ -462,10 +471,10 @@ public class Consolidation {
 
                     @Override
                     public void onError(int status, String message, Exception exception) {
-                        LOGGER.info("Consolidation service returns error ("+status+") : "+message);
+                        LOGGER.info("Consolidation service returns error (" + status + ") : " + message);
                     }
                 });
-            } catch(Exception e) {
+            } catch (Exception e) {
                 LOGGER.info("Consolidation error - ", e);
             }
             n++;
@@ -485,8 +494,8 @@ public class Consolidation {
         boolean valid = true;
 
         if (!StringUtils.isBlank(source.getFirstAuthorSurname()) &&
-            !StringUtils.isBlank(result.getFirstAuthorSurname())) {
-            if (ratcliffObershelpDistance(source.getFirstAuthorSurname(),result.getFirstAuthorSurname(), false) < 0.8)
+                !StringUtils.isBlank(result.getFirstAuthorSurname())) {
+            if (ratcliffObershelpDistance(source.getFirstAuthorSurname(), result.getFirstAuthorSurname(), false) < 0.8)
                 return false;
         }
 
@@ -494,7 +503,7 @@ public class Consolidation {
     }
 
     private double ratcliffObershelpDistance(String string1, String string2, boolean caseDependent) {
-        if ( StringUtils.isBlank(string1) || StringUtils.isBlank(string2) )
+        if (StringUtils.isBlank(string1) || StringUtils.isBlank(string2))
             return 0.0;
         Double similarity = 0.0;
         if (!caseDependent) {
@@ -505,9 +514,8 @@ public class Consolidation {
             similarity = 1.0;
         }
 
-        if ( isNotEmpty(string1) && isNotEmpty(string2) ) {
-            Option<Object> similarityObject =
-                RatcliffObershelpMetric.compare(string1, string2);
+        if (isNotEmpty(string1) && isNotEmpty(string2)) {
+            Option<Object> similarityObject = RatcliffObershelpMetric.compare(string1, string2);
             if (similarityObject.isDefined()) {
                 similarity = (Double) similarityObject.get();
             }
@@ -526,28 +534,38 @@ public class Consolidation {
         long threadId = Thread.currentThread().getId();
 
         try {
-            client.pushRequest("funders", arguments, funderDeserializer, threadId, new CrossrefRequestListener<Funder>(0) {
-                @Override
-                public void onSuccess(List<Funder> res) {
-                    if ((res != null) && (res.size() > 0) ) {
-                        for(Funder oneRes : res) {
-                            if (oneRes.getFullName() != null) {
-                                String localFullName = oneRes.getFullName();
-                                localFullName = TextUtilities.removeFieldStopwords(localFullName);
-                                if (ratcliffObershelpDistance(localFullName, arguments.get("query"), false)>0.9) {
-                                    results.add(oneRes);
+            client.pushRequest(
+                    "funders",
+                    arguments,
+                    funderDeserializer,
+                    threadId,
+                    new CrossrefRequestListener<Funder>(0) {
+                        @Override
+                        public void onSuccess(List<Funder> res) {
+                            if ((res != null) && (res.size() > 0)) {
+                                for (Funder oneRes : res) {
+                                    if (oneRes.getFullName() != null) {
+                                        String localFullName = oneRes.getFullName();
+                                        localFullName = TextUtilities.removeFieldStopwords(localFullName);
+                                        if (ratcliffObershelpDistance(
+                                                localFullName,
+                                                arguments.get("query"),
+                                                false) > 0.9) {
+                                            results.add(oneRes);
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
 
-                @Override
-                public void onError(int status, String message, Exception exception) {
-                    LOGGER.info("Funder consolidation service returns error ("+status+") : "+message, exception);
-                }
-            });
-        } catch(Exception e) {
+                        @Override
+                        public void onError(int status, String message, Exception exception) {
+                            LOGGER.info(
+                                    "Funder consolidation service returns error (" + status + ") : " + message,
+                                    exception);
+                        }
+                    });
+        } catch (Exception e) {
             LOGGER.info("Funder consolidation error - ", e);
         }
         client.finish(threadId);
@@ -557,13 +575,13 @@ public class Consolidation {
             return results.get(0);
     }
 
-    public Map<Integer,Funder> consolidateFunders(List<Funder> funders) {
+    public Map<Integer, Funder> consolidateFunders(List<Funder> funders) {
         if (CollectionUtils.isEmpty(funders))
             return null;
-        final Map<Integer,Funder> results = new ConcurrentHashMap<>();
+        final Map<Integer, Funder> results = new ConcurrentHashMap<>();
         int n = 0;
         long threadId = Thread.currentThread().getId();
-        for(Funder funder : funders) {
+        for (Funder funder : funders) {
 
             Map<String, String> arguments = buildFunderQueryArguments(funder);
             if (arguments == null) {
@@ -572,35 +590,45 @@ public class Consolidation {
             }
 
             try {
-                client.pushRequest("funders", arguments, funderDeserializer, threadId, new CrossrefRequestListener<Funder>(n) {
-                    @Override
-                    public void onSuccess(List<Funder> res) {
-                        List<Funder> localResults = new ArrayList<>();
-                        if (CollectionUtils.isNotEmpty(res) ) {
-                            for(Funder oneRes : res) {
-                                if (oneRes.getFullName() != null) {
-                                    String localFullName = oneRes.getFullName();
-                                    localFullName = TextUtilities.removeFieldStopwords(localFullName);
-                                    if (localFullName.equalsIgnoreCase(arguments.get("query"))) {
-                                        localResults.add(oneRes);
-                                        break;
-                                    } else if (ratcliffObershelpDistance(localFullName, arguments.get("query"), false)>0.9) {
-                                        localResults.add(oneRes);
+                client.pushRequest(
+                        "funders",
+                        arguments,
+                        funderDeserializer,
+                        threadId,
+                        new CrossrefRequestListener<Funder>(n) {
+                            @Override
+                            public void onSuccess(List<Funder> res) {
+                                List<Funder> localResults = new ArrayList<>();
+                                if (CollectionUtils.isNotEmpty(res)) {
+                                    for (Funder oneRes : res) {
+                                        if (oneRes.getFullName() != null) {
+                                            String localFullName = oneRes.getFullName();
+                                            localFullName = TextUtilities.removeFieldStopwords(localFullName);
+                                            if (localFullName.equalsIgnoreCase(arguments.get("query"))) {
+                                                localResults.add(oneRes);
+                                                break;
+                                            } else if (ratcliffObershelpDistance(
+                                                    localFullName,
+                                                    arguments.get("query"),
+                                                    false) > 0.9) {
+                                                localResults.add(oneRes);
+                                            }
+                                        }
                                     }
+
+                                    if (localResults.size() > 0)
+                                        results.put(Integer.valueOf(getRank()), localResults.get(0));
                                 }
                             }
 
-                            if (localResults.size() >0)
-                                results.put(Integer.valueOf(getRank()), localResults.get(0));
-                        }
-                    }
-
-                    @Override
-                    public void onError(int status, String message, Exception exception) {
-                        LOGGER.info("Funder consolidation service returns error ("+status+") : "+message, exception);
-                    }
-                });
-            } catch(Exception e) {
+                            @Override
+                            public void onError(int status, String message, Exception exception) {
+                                LOGGER.info(
+                                        "Funder consolidation service returns error (" + status + ") : " + message,
+                                        exception);
+                            }
+                        });
+            } catch (Exception e) {
                 LOGGER.info("Funder consolidation error - ", e);
             }
             n++;

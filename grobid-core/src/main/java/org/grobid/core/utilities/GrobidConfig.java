@@ -21,12 +21,12 @@ public class GrobidConfig {
 
         public String languageDetectorFactory;
         public String sentenceDetectorFactory;
-  
-        public int concurrency = 10;  
+
+        public int concurrency = 10;
         public int poolMaxWait = 1;
-        
-        public DelftParameters delft; 
-        public WapitiParameters wapiti; 
+
+        public DelftParameters delft;
+        public WapitiParameters wapiti;
         public List<ModelParameters> models;
     }
 
@@ -63,7 +63,7 @@ public class GrobidConfig {
         public String url;
         public int timeoutSec = 60;
     }
-    
+
     public static class DelftParameters {
         /**
          * Generic parameters relative to the DeLFT engine
@@ -109,9 +109,9 @@ public class GrobidConfig {
         public int batch_size = -1;
     }
 
-    public static class ModelParameters {   
-        public String name;   /* name of model */
-        public String engine; /* value wapiti or delft */ 
+    public static class ModelParameters {
+        public String name; /* name of model */
+        public String engine; /* value wapiti or delft */
 
         public WapitiModelParameters wapiti;
         public DelftModelParameters delft;

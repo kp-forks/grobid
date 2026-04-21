@@ -1,11 +1,13 @@
 package org.grobid.core.tokenization;
 
+import java.util.List;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.grobid.core.engines.label.TaggingLabel;
 import org.grobid.core.engines.label.TaggingLabels;
-import org.grobid.core.engines.tagging.GenericTaggerUtils;
 import org.grobid.core.layout.LayoutToken;
-
-import java.util.List;
 
 /**
  * Representing labeled tokens and stuff
@@ -20,7 +22,8 @@ public class LabeledTokensContainer {
     private boolean trailingNewLine;
     private String featureString;
 
-    public LabeledTokensContainer(List<LayoutToken> layoutTokens, String token, TaggingLabel taggingLabel, boolean beginning) {
+    public LabeledTokensContainer(List<LayoutToken> layoutTokens, String token, TaggingLabel taggingLabel,
+            boolean beginning) {
         this.layoutTokens = layoutTokens;
         this.token = token;
         this.taggingLabel = taggingLabel;
@@ -78,6 +81,9 @@ public class LabeledTokensContainer {
 
     @Override
     public String toString() {
-        return token + " (" + getFullLabel() + ")";
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("token", token)
+                .append("fullLabel", getFullLabel())
+                .toString();
     }
 }

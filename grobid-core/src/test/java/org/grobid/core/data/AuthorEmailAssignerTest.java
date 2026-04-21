@@ -1,11 +1,12 @@
 package org.grobid.core.data;
 
-import org.grobid.core.data.util.AuthorEmailAssigner;
-import org.grobid.core.data.util.ClassicAuthorEmailAssigner;
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Test;
+
+import org.grobid.core.data.util.AuthorEmailAssigner;
+import org.grobid.core.data.util.ClassicAuthorEmailAssigner;
 
 public class AuthorEmailAssignerTest {
 
@@ -13,7 +14,11 @@ public class AuthorEmailAssignerTest {
     public void testEmailAssignment() {
         AuthorEmailAssigner assigner = new ClassicAuthorEmailAssigner();
 
-        List<Person> authors = l(p("Jalal Al-Muhtadi"), p("Manish Anand"), p("M.", "Dennis Mickunas"), p("Roy Campbell"));
+        List<Person> authors = l(
+                p("Jalal Al-Muhtadi"),
+                p("Manish Anand"),
+                p("M.", "Dennis Mickunas"),
+                p("Roy Campbell"));
         assigner.assign(
                 authors,
                 l("almuhtad@uiuc.edu", "manand@uiuc.edu", "mickunas@uiuc.edu", "rhc@uiuc.edu"));

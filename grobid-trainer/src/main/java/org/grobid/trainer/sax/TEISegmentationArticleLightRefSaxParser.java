@@ -1,14 +1,13 @@
 package org.grobid.trainer.sax;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxParser {
 
@@ -21,7 +20,6 @@ public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxP
     private String upperTag = null;
     private List<String> labeled = null; // store line by line the labeled data
     private boolean inTeiHeader = false; // flag to track when we're inside teiHeader
-
 
     public TEISegmentationArticleLightRefSaxParser() {
         labeled = new ArrayList<String>();
@@ -49,9 +47,10 @@ public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxP
         return labeled;
     }
 
-    public void endElement(String uri,
-                           String localName,
-                           String qName) throws SAXException {
+    public void endElement(
+            String uri,
+            String localName,
+            String qName) throws SAXException {
         if (qName.equals("teiHeader")) {
             inTeiHeader = false;
             return;
@@ -66,27 +65,28 @@ public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxP
             writeData(qName, currentTag);
         }
         if (qName.equals("body") ||
-            qName.equals("cover") ||
-            qName.equals("front") ||
-            qName.equals("div") ||
-            qName.equals("toc") ||
-            qName.equals("other") ||
-            qName.equals("listBibl")) {
+                qName.equals("cover") ||
+                qName.equals("front") ||
+                qName.equals("div") ||
+                qName.equals("toc") ||
+                qName.equals("other") ||
+                qName.equals("listBibl")) {
             currentTag = null;
             upperTag = null;
         } else if (qName.equals("note") ||
-            qName.equals("page") ||
-            qName.equals("pages") ||
-            qName.equals("titlePage") ) {
+                qName.equals("page") ||
+                qName.equals("pages") ||
+                qName.equals("titlePage")) {
             currentTag = upperTag;
         }
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
-        throws SAXException {
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
+            throws SAXException {
         if (inTeiHeader) {
             // Skip processing of all elements inside teiHeader
             return;
@@ -142,7 +142,7 @@ public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxP
                 currentTag = "<body>";
                 upperTag = null;
                 upperQname = "body";
-            }else if (qName.equals("div")) {
+            } else if (qName.equals("div")) {
                 currentTag = "<body>";
                 upperTag = currentTag;
                 upperQname = "body";
@@ -156,10 +156,9 @@ public class TEISegmentationArticleLightRefSaxParser extends TEISegmentationSaxP
             surfaceTag = "<other>";
         }
         if ((qName.equals("front")) || (qName.equals("titlePage")) || (qName.equals("note")) ||
-            (qName.equals("page")) || (qName.equals("pages")) || (qName.equals("body")) ||
-            (qName.equals("listBibl")) || (qName.equals("div")) ||
-            (qName.equals("other")) || (qName.equals("toc"))
-        ) {
+                (qName.equals("page")) || (qName.equals("pages")) || (qName.equals("body")) ||
+                (qName.equals("listBibl")) || (qName.equals("div")) ||
+                (qName.equals("other")) || (qName.equals("toc"))) {
             String text = getText();
             text = text.replace("\n", " ");
             text = text.replace("\r", " ");

@@ -1,5 +1,15 @@
 package org.grobid.core.data;
 
+import static org.grobid.core.document.TEIFormatter.generateDiscardedTextNote;
+import static org.grobid.core.document.xml.XmlBuilderUtils.addXmlId;
+import static org.grobid.core.document.xml.XmlBuilderUtils.textNode;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedSet;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -9,6 +19,9 @@ import nu.xom.Element;
 import nu.xom.Node;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.grobid.core.GrobidModels;
 import org.grobid.core.document.Document;
 import org.grobid.core.document.TEIFormatter;
@@ -24,18 +37,6 @@ import org.grobid.core.utilities.BoundingBoxCalculator;
 import org.grobid.core.utilities.KeyGen;
 import org.grobid.core.utilities.LayoutTokensUtil;
 import org.grobid.core.utilities.TextUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedSet;
-
-import static org.grobid.core.document.TEIFormatter.generateDiscardedTextNote;
-import static org.grobid.core.document.xml.XmlBuilderUtils.addXmlId;
-import static org.grobid.core.document.xml.XmlBuilderUtils.textNode;
 
 /**
  * Class for representing a figure.
@@ -61,7 +62,8 @@ public class Figure {
     public static final Predicate<GraphicObject> BOXED_GRAPHIC_OBJECT_PREDICATE = new Predicate<GraphicObject>() {
         @Override
         public boolean apply(GraphicObject graphicObject) {
-            return graphicObject.getType() == GraphicObjectType.BITMAP || graphicObject.getType() == GraphicObjectType.VECTOR_BOX;
+            return graphicObject.getType() == GraphicObjectType.BITMAP
+                    || graphicObject.getType() == GraphicObjectType.VECTOR_BOX;
         }
     };
     protected StringBuilder caption = null;
@@ -208,7 +210,8 @@ public class Figure {
         if (graphicObjects == null) {
             return null;
         }
-        ArrayList<GraphicObject> graphicObjects = Lists.newArrayList(Iterables.filter(this.graphicObjects, GRAPHIC_OBJECT_PREDICATE));
+        ArrayList<GraphicObject> graphicObjects = Lists
+                .newArrayList(Iterables.filter(this.graphicObjects, GRAPHIC_OBJECT_PREDICATE));
         if (graphicObjects.isEmpty()) {
             return null;
         }
@@ -219,7 +222,8 @@ public class Figure {
         if (graphicObjects == null) {
             return null;
         }
-        ArrayList<GraphicObject> graphicObjects = Lists.newArrayList(Iterables.filter(this.graphicObjects, BOXED_GRAPHIC_OBJECT_PREDICATE));
+        ArrayList<GraphicObject> graphicObjects = Lists
+                .newArrayList(Iterables.filter(this.graphicObjects, BOXED_GRAPHIC_OBJECT_PREDICATE));
         if (graphicObjects.isEmpty()) {
             return null;
         }
@@ -230,13 +234,13 @@ public class Figure {
         if (graphicObjects == null) {
             return null;
         }
-        ArrayList<GraphicObject> graphicObjects = Lists.newArrayList(Iterables.filter(this.graphicObjects, VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
+        ArrayList<GraphicObject> graphicObjects = Lists
+                .newArrayList(Iterables.filter(this.graphicObjects, VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
         if (graphicObjects.isEmpty()) {
             return null;
         }
         return graphicObjects;
     }
-
 
     public void addGraphicObject(GraphicObject obj) {
         if (graphicObjects == null)
@@ -259,7 +263,7 @@ public class Figure {
      * Proper bounding boxes
      */
     public List<BoundingBox> getCoordinates() {
-        /*if (layoutTokens == null || layoutTokens.size() == 0) 
+        /*if (layoutTokens == null || layoutTokens.size() == 0)
             return null;
         else {
             BoundingBox oneBox = BoundingBoxCalculator.calculateOneBox(layoutTokens, true);
@@ -318,12 +322,18 @@ public class Figure {
     }
 
     public boolean isCompleteForTEI() {
-        return (StringUtils.isNotBlank(header) || StringUtils.isNotBlank(caption) || CollectionUtils.isNotEmpty(graphicObjects));
+        return (StringUtils.isNotBlank(header) || StringUtils.isNotBlank(caption)
+                || CollectionUtils.isNotEmpty(graphicObjects));
     }
 
-    public String toTEI(GrobidAnalysisConfig config, Document doc, TEIFormatter formatter, List<MarkerType> markerTypes) {
+    public String toTEI(
+            GrobidAnalysisConfig config,
+            Document doc,
+            TEIFormatter formatter,
+            List<MarkerType> markerTypes) {
         if (!isCompleteForTEI()) {
-            LOGGER.warn("Found a figure that is badly formatted but it should have been spotted before. We ignore it now.");
+            LOGGER.warn(
+                    "Found a figure that is badly formatted but it should have been spotted before. We ignore it now.");
             return null;
         }
         Element figureElement = XmlBuilderUtils.teiElement("figure");
@@ -368,14 +378,16 @@ public class Figure {
         }
 
         if (StringUtils.isNotBlank(header)) {
-            Element head = XmlBuilderUtils.teiElement("head",
+            Element head = XmlBuilderUtils.teiElement(
+                    "head",
                     LayoutTokensUtil.normalizeText(header.toString()));
             figureElement.appendChild(head);
         }
 
         if (StringUtils.isNotBlank(label)) {
-            Element labelEl = XmlBuilderUtils.teiElement("label",
-                LayoutTokensUtil.normalizeText(label.toString()));
+            Element labelEl = XmlBuilderUtils.teiElement(
+                    "label",
+                    LayoutTokensUtil.normalizeText(label.toString()));
             figureElement.appendChild(labelEl);
         }
         if (StringUtils.isNotBlank(caption)) {
@@ -388,7 +400,8 @@ public class Figure {
             // if the segment has been parsed with the full text model we further extract the clusters
             // to get the bibliographical references
             if (StringUtils.isNotBlank(labeledCaption)) {
-                TaggingTokenClusteror clusteror = new TaggingTokenClusteror(GrobidModels.FULLTEXT, labeledCaption, captionLayoutTokens);
+                TaggingTokenClusteror clusteror = new TaggingTokenClusteror(GrobidModels.FULLTEXT, labeledCaption,
+                        captionLayoutTokens);
                 List<TaggingTokenCluster> clusters = clusteror.cluster();
 
                 MarkerType citationMarkerType = null;
@@ -417,7 +430,7 @@ public class Figure {
                                     desc.appendChild(n);
                                 }
                             }
-                        } catch(Exception e) {
+                        } catch (Exception e) {
                             LOGGER.warn("Problem when serializing TEI fragment for figure caption", e);
                         }
                     } else {
@@ -431,9 +444,14 @@ public class Figure {
             }
 
             if (StringUtils.isNotBlank(desc.getValue()) && config.isWithSentenceSegmentation()) {
-                formatter.segmentIntoSentences(desc, this.captionLayoutTokens, config, doc.getLanguage(), doc.getPDFAnnotations());
+                formatter.segmentIntoSentences(
+                        desc,
+                        this.captionLayoutTokens,
+                        config,
+                        doc.getLanguage(),
+                        doc.getPDFAnnotations());
 
-                // we need a sentence segmentation of the figure caption, for that we need to introduce 
+                // we need a sentence segmentation of the figure caption, for that we need to introduce
                 // a <div>, then a <p>
                 desc.setLocalName("p");
 
@@ -452,8 +470,7 @@ public class Figure {
         if (config.isIncludeDiscardedText() && CollectionUtils.isNotEmpty(discardedPiecesTokens)) {
             for (List<LayoutToken> discardedPieceTokens : discardedPiecesTokens) {
                 figureElement.appendChild(
-                    generateDiscardedTextNote(discardedPieceTokens, doc, formatter, config)
-                );
+                        generateDiscardedTextNote(discardedPieceTokens, doc, formatter, config));
             }
         }
 

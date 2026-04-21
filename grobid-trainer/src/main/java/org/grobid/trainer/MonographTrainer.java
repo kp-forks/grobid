@@ -1,19 +1,14 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModels;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.trainer.sax.TEIMonographSaxParser;
+import java.io.*;
+import java.util.List;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
-import org.apache.commons.io.FileUtils;
+import org.grobid.core.GrobidModels;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.trainer.sax.TEIMonographSaxParser;
 
 public class MonographTrainer extends AbstractTrainer {
 
@@ -23,26 +18,31 @@ public class MonographTrainer extends AbstractTrainer {
 
     @Override
     public int createCRFPPData(File corpusPath, File outputFile) {
-        return addFeaturesSegmentation(corpusPath.getAbsolutePath() + "/tei",
+        return addFeaturesSegmentation(
+                corpusPath.getAbsolutePath() + "/tei",
                 corpusPath.getAbsolutePath() + "/raw",
-                outputFile, null, 1.0);
+                outputFile,
+                null,
+                1.0);
     }
 
-       /**
-     * Add the selected features for the monograph model
-     *
-     * @param corpusDir          path where corpus files are located
-     * @param trainingOutputPath path where to store the temporary training data
-     * @param evalOutputPath     path where to store the temporary evaluation data
-     * @param splitRatio         ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
-     * @return the total number of used corpus items
-     */
+    /**
+    * Add the selected features for the monograph model
+    *
+    * @param corpusDir          path where corpus files are located
+    * @param trainingOutputPath path where to store the temporary training data
+    * @param evalOutputPath     path where to store the temporary evaluation data
+    * @param splitRatio         ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
+    * @return the total number of used corpus items
+    */
     @Override
-    public int createCRFPPData(final File corpusDir,
-                               final File trainingOutputPath,
-                               final File evalOutputPath,
-                               double splitRatio) {
-        return addFeaturesSegmentation(corpusDir.getAbsolutePath() + "/tei",
+    public int createCRFPPData(
+            final File corpusDir,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
+        return addFeaturesSegmentation(
+                corpusDir.getAbsolutePath() + "/tei",
                 corpusDir.getAbsolutePath() + "/raw",
                 trainingOutputPath,
                 evalOutputPath,
@@ -59,11 +59,12 @@ public class MonographTrainer extends AbstractTrainer {
      * @param splitRatio         ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
      * @return number of examples
      */
-    public int addFeaturesSegmentation(String sourceTEIPathLabel,
-                                       String sourceRawPathLabel,
-                                       final File trainingOutputPath,
-                                       final File evalOutputPath,
-                                       double splitRatio) {
+    public int addFeaturesSegmentation(
+            String sourceTEIPathLabel,
+            String sourceRawPathLabel,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
         int totalExamples = 0;
         try {
             System.out.println("sourceTEIPathLabel: " + sourceTEIPathLabel);
@@ -127,7 +128,7 @@ public class MonographTrainer extends AbstractTrainer {
                     }
 
                 } catch (Exception e) {
-                   LOGGER.error("Fail to open or process raw file", e);
+                    LOGGER.error("Fail to open or process raw file", e);
                 }
             }
 

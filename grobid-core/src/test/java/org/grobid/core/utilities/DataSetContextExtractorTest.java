@@ -1,11 +1,10 @@
 package org.grobid.core.utilities;
 
-import org.apache.commons.io.IOUtils;
-
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 public class DataSetContextExtractorTest {
 

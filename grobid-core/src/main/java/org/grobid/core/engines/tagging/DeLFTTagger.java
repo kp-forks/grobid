@@ -1,11 +1,11 @@
 package org.grobid.core.engines.tagging;
 
-import com.google.common.base.Joiner;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.jni.DeLFTModel;
-
 import java.io.IOException;
+
+import com.google.common.base.Joiner;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.jni.DeLFTModel;
 
 public class DeLFTTagger implements GenericTagger {
 

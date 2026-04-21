@@ -1,8 +1,8 @@
 package org.grobid.core.data.util;
 
-import org.grobid.core.data.Person;
-
 import java.util.List;
+
+import org.grobid.core.data.Person;
 
 public interface AuthorEmailAssigner {
     //embeds emails into authors

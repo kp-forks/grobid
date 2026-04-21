@@ -1,6 +1,10 @@
 package org.grobid.core.data;
 
 import java.util.*;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.grobid.core.engines.config.GrobidAnalysisConfig;
 
 /**
@@ -92,19 +96,24 @@ public class BibDataSet {
         return offsets;
     }
 
-	@Override
-	public String toString() {
-		return "BibDataSet [resBib=" + resBib.toString() + ", sourceBib=" + sourceBib
-				+ ", refSymbol=" + refSymbol + ", rawBib=" + rawBib
-				+ ", confidence=" + confidence + ", offsets=" + offsets + "]";
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("resBib", resBib)
+                .append("sourceBib", sourceBib)
+                .append("refSymbol", refSymbol)
+                .append("rawBib", rawBib)
+                .append("confidence", confidence)
+                .append("offsets", offsets)
+                .toString();
+    }
 
     public String toTEI() {
         return toTEI(false);
     }
-    
-	public String toTEI(boolean includeRawCitations) {
-		if (resBib != null) {
+
+    public String toTEI(boolean includeRawCitations) {
+        if (resBib != null) {
             GrobidAnalysisConfig config = GrobidAnalysisConfig.builder()
                     .includeRawCitations(includeRawCitations)
                     .build();
@@ -112,14 +121,14 @@ public class BibDataSet {
         } else {
             return "";
         }
-	}
-    
+    }
+
     public String toTEI(int p) {
         return toTEI(p, false);
     }
 
-	public String toTEI(int p, boolean includeRawCitations) {
-		if (resBib != null) {
+    public String toTEI(int p, boolean includeRawCitations) {
+        if (resBib != null) {
             GrobidAnalysisConfig config = GrobidAnalysisConfig.builder()
                     .includeRawCitations(includeRawCitations)
                     .build();
@@ -127,5 +136,5 @@ public class BibDataSet {
         } else {
             return "";
         }
-	}
+    }
 }

@@ -1,16 +1,17 @@
 package org.grobid.core.analyzers;
 
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.lang.Language;
-import org.grobid.core.utilities.UnicodeUtil;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.List;
-
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import org.grobid.core.lang.Language;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.UnicodeUtil;
 
 public class GrobidAnalyzerTest {
     GrobidAnalyzer target;
@@ -22,7 +23,8 @@ public class GrobidAnalyzerTest {
 
     @Test
     public void testTokenizeWithLayoutToken() {
-        final List<LayoutToken> layoutTokens = target.tokenizeWithLayoutToken("This is a normal \ntext,\n\n\n on several lines.\n");
+        final List<LayoutToken> layoutTokens = target
+                .tokenizeWithLayoutToken("This is a normal \ntext,\n\n\n on several lines.\n");
 
         assertThat(layoutTokens, hasSize(22));
         assertThat(layoutTokens.get(0).getText(), is("This"));

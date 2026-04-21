@@ -1,25 +1,26 @@
 package org.grobid.core.sax;
 
-import org.grobid.core.document.Document;
-import org.grobid.core.document.DocumentSource;
-import org.grobid.core.layout.GraphicObject;
-import org.grobid.core.layout.LayoutToken;
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.easymock.EasyMock.createMock;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import org.grobid.core.document.Document;
+import org.grobid.core.document.DocumentSource;
+import org.grobid.core.layout.GraphicObject;
+import org.grobid.core.layout.LayoutToken;
 
 public class PDFALTOSaxHandlerTest {
     SAXParserFactory spf = SAXParserFactory.newInstance();

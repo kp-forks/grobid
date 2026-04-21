@@ -1,17 +1,14 @@
 package org.grobid.core.data;
 
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.OffsetPosition;
-import org.grobid.core.utilities.LayoutTokensUtil;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.lang.Language;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.HashMap;
+
+import org.grobid.core.lang.Language;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.TextUtilities;
 
 /**
  * Class for representing a funding organization.
@@ -196,12 +193,14 @@ public class Funder {
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        if (fullName != null)
-            builder.append(fullName);
-        if (abbreviatedName != null)
-            builder.append(abbreviatedName);
-        return builder.toString();
+        StringBuilder sb = new StringBuilder();
+        if (fullName != null) {
+            sb.append(fullName);
+        }
+        if (abbreviatedName != null) {
+            sb.append(abbreviatedName);
+        }
+        return sb.toString();
     }
 
     public String toJson() {
@@ -214,7 +213,7 @@ public class Funder {
             start = true;
         }
         if (abbreviatedName != null) {
-            if (start) 
+            if (start)
                 json.append(",\n");
             json.append("\t\"abbreviatedName\": \"");
             json.append(this.abbreviatedName + "\"");
@@ -232,27 +231,27 @@ public class Funder {
     public String toTEI(int nbIndent) {
         StringBuilder tei = new StringBuilder();
 
-        for(int i=0; i<nbIndent; i++) 
+        for (int i = 0; i < nbIndent; i++)
             tei.append("\t");
-        tei.append("<funder>\n"); 
+        tei.append("<funder>\n");
 
         if (fullName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"full\">"+TextUtilities.HTMLEncode(fullName)+"</orgName>\n");
+            tei.append("<orgName type=\"full\">" + TextUtilities.HTMLEncode(fullName) + "</orgName>\n");
         }
         if (abbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"abbreviated\">"+TextUtilities.HTMLEncode(abbreviatedName)+"</orgName>\n");
+            tei.append("<orgName type=\"abbreviated\">" + TextUtilities.HTMLEncode(abbreviatedName) + "</orgName>\n");
         }
         if (doi != null) {
-            for(int i=0; i<nbIndent+1; i++) 
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<idno type=\"DOI\" subtype=\"crossref\">"+TextUtilities.HTMLEncode(doi)+"</idno>\n");
+            tei.append("<idno type=\"DOI\" subtype=\"crossref\">" + TextUtilities.HTMLEncode(doi) + "</idno>\n");
         }
 
-        for(int i=0; i<nbIndent; i++) 
+        for (int i = 0; i < nbIndent; i++)
             tei.append("\t");
         tei.append("</funder>\n");
 

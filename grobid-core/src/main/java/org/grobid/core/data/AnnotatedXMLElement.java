@@ -1,6 +1,7 @@
 package org.grobid.core.data;
 
 import nu.xom.Element;
+
 import org.grobid.core.utilities.OffsetPosition;
 
 /**

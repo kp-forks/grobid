@@ -1,17 +1,14 @@
 package org.grobid.core.features;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.List;
+import java.util.regex.Matcher;
+
 import org.apache.commons.collections4.CollectionUtils;
 
+import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.utilities.OffsetPosition;
 import org.grobid.core.utilities.TextUtilities;
 import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.core.utilities.TextUtilities;
-
-import org.grobid.core.layout.LayoutToken;
-
-import java.util.List;
-import java.util.regex.Matcher;
 
 /**
  * Class for features used for parsing sequence of names.
@@ -34,8 +31,10 @@ public class FeaturesVectorName {
     public boolean isKnownSuffix = false;
 
     public String printVector() {
-        if (string == null) return null;
-        if (string.length() == 0) return null;
+        if (string == null)
+            return null;
+        if (string.length() == 0)
+            return null;
         StringBuffer res = new StringBuffer();
 
         // token string (1)
@@ -113,10 +112,13 @@ public class FeaturesVectorName {
     }
 
     /**
-     * Add feature for name parsing. 
+     * Add feature for name parsing.
      */
-    static public String addFeaturesName(List<LayoutToken> tokens, List<String> labels,
-            List<OffsetPosition> titlePosition, List<OffsetPosition> suffixPosition) throws Exception {
+    static public String addFeaturesName(
+            List<LayoutToken> tokens,
+            List<String> labels,
+            List<OffsetPosition> titlePosition,
+            List<OffsetPosition> suffixPosition) throws Exception {
         FeatureFactory featureFactory = FeatureFactory.getInstance();
 
         StringBuffer header = new StringBuffer();
@@ -133,7 +135,7 @@ public class FeaturesVectorName {
         boolean isSuffixToken;
         boolean skipTest;
 
-        for(int n=0; n<tokens.size(); n++) {
+        for (int n = 0; n < tokens.size(); n++) {
             boolean outputLineStatus = false;
             isTitleToken = false;
             isSuffixToken = false;
@@ -180,7 +182,7 @@ public class FeaturesVectorName {
 
             // parano normalisation
             text = UnicodeUtil.normaliseTextAndRemoveSpaces(text);
-            if (text.trim().length() == 0 ) {
+            if (text.trim().length() == 0) {
                 continue;
             }
 

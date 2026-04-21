@@ -15,9 +15,9 @@ public class OffsetPosition implements Comparable<OffsetPosition> {
         this.end = end;
     }
 
-	public boolean overlaps(OffsetPosition pos) {
-		return !((end <= pos.start) || (start >= pos.end)) ;
-	}
+    public boolean overlaps(OffsetPosition pos) {
+        return !((end <= pos.start) || (start >= pos.end));
+    }
 
     public String toString() {
         return "" + start + "\t" + end;
@@ -32,31 +32,33 @@ public class OffsetPosition implements Comparable<OffsetPosition> {
                 return 1;
             else if (pos.end == end)
                 return 0;
-            else 
+            else
                 return -1;
-        } else 
+        } else
             return -1;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
+        if (this == o)
+            return true;
 
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         OffsetPosition that = (OffsetPosition) o;
 
         return new EqualsBuilder()
-            .append(start, that.start)
-            .append(end, that.end)
-            .isEquals();
+                .append(start, that.start)
+                .append(end, that.end)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
-            .append(start)
-            .append(end)
-            .toHashCode();
+                .append(start)
+                .append(end)
+                .toHashCode();
     }
 }

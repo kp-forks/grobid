@@ -1,14 +1,15 @@
 package org.grobid.core.tokenization;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import org.grobid.core.engines.label.TaggingLabel;
 import org.grobid.core.layout.LayoutToken;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Cluster of related tokens
@@ -22,7 +23,8 @@ public class TaggingTokenCluster {
             }
 
             if (labeledTokensContainer.getFeatureString() == null) {
-                throw new IllegalStateException("This method must be called when feature string is not empty for " +
+                throw new IllegalStateException("This method must be called when feature string is not empty for "
+                        +
                         "LabeledTokenContainers");
             }
             return labeledTokensContainer.getFeatureString();
@@ -67,12 +69,13 @@ public class TaggingTokenCluster {
 
     public List<LayoutToken> concatTokens() {
 
-        Iterable<LayoutToken> it = Iterables.concat(Iterables.transform(labeledTokensContainers, new Function<LabeledTokensContainer, List<LayoutToken>>() {
-            @Override
-            public List<LayoutToken> apply(LabeledTokensContainer labeledTokensContainer) {
-                return labeledTokensContainer.getLayoutTokens();
-            }
-        }));
+        Iterable<LayoutToken> it = Iterables.concat(
+                Iterables.transform(labeledTokensContainers, new Function<LabeledTokensContainer, List<LayoutToken>>() {
+                    @Override
+                    public List<LayoutToken> apply(LabeledTokensContainer labeledTokensContainer) {
+                        return labeledTokensContainer.getLayoutTokens();
+                    }
+                }));
         return Lists.newArrayList(it);
     }
 

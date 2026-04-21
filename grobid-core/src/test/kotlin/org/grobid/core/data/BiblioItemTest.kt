@@ -34,8 +34,7 @@ class BiblioItemTest {
         LibraryLoader.load()
     }
 
-    private val configBuilder = (GrobidAnalysisConfig.GrobidAnalysisConfigBuilder()
-            )
+    private val configBuilder = (GrobidAnalysisConfig.GrobidAnalysisConfigBuilder())
 
     @Test
     @Throws(Exception::class)
@@ -56,7 +55,7 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("raw affiliation 1"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("raw affiliation 1")),
         )
     }
 
@@ -80,12 +79,12 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation label",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/label/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("A"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("A")),
         )
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>(" raw affiliation 1"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>(" raw affiliation 1")),
         )
     }
 
@@ -109,12 +108,12 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation label",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/label/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("&"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("&")),
         )
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>(" raw affiliation 1"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>(" raw affiliation 1")),
         )
     }
 
@@ -133,7 +132,7 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("raw affiliation 1"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("raw affiliation 1")),
         )
     }
 
@@ -155,7 +154,7 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "raw_affiliation",
             getXpathStrings(doc, "//note[@type=\"raw_affiliation\"]/text()"),
-            CoreMatchers.`is`<MutableCollection<out String?>?>(Matchers.empty<String?>())
+            CoreMatchers.`is`<MutableCollection<out String?>?>(Matchers.empty<String?>()),
         )
     }
 
@@ -197,22 +196,22 @@ class BiblioItemTest {
         Assert.assertThat<MutableList<String?>?>(
             "DOI",
             getXpathStrings(doc, "//idno[@type=\"DOI\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("10.1233/23232&3232"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("10.1233/23232&3232")),
         )
         Assert.assertThat<MutableList<String?>?>(
             "ISSN",
             getXpathStrings(doc, "//idno[@type=\"ISSN\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("0974&9756"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("0974&9756")),
         )
         Assert.assertThat<MutableList<String?>?>(
             "PMID",
             getXpathStrings(doc, "//idno[@type=\"PMID\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("pmid&123"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("pmid&123")),
         )
         Assert.assertThat<MutableList<String?>?>(
             "Ark",
             getXpathStrings(doc, "//idno[@type=\"ark\"]/text()"),
-            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("Noah & !"))
+            CoreMatchers.`is`<MutableList<String?>?>(mutableListOf<String?>("Noah & !")),
         )
     }
 
@@ -220,7 +219,6 @@ class BiblioItemTest {
     fun correct_empty_shouldNotFail() {
         BiblioItem.correct(BiblioItem(), BiblioItem())
     }
-
 
     @Test
     fun correct_1author_shouldWork() {
@@ -238,11 +236,11 @@ class BiblioItemTest {
 
         Assert.assertThat<String?>(
             biblio1.getFirstAuthorSurname(),
-            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname())
+            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName()),
         )
     }
 
@@ -264,25 +262,25 @@ class BiblioItemTest {
 
         Assert.assertThat<String?>(
             biblio1.getFirstAuthorSurname(),
-            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname())
+            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname()),
         )
         Assert.assertThat<MutableList<Person?>?>(biblio1.getFullAuthors(), Matchers.hasSize<Person?>(2))
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName()),
         )
         // biblio1 affiliations empty we update them with ones from biblio2
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString()),
         )
     }
 
@@ -304,29 +302,29 @@ class BiblioItemTest {
 
         Assert.assertThat<String?>(
             biblio1.getFirstAuthorSurname(),
-            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname())
+            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname()),
         )
         Assert.assertThat<MutableList<Person?>?>(biblio1.getFullAuthors(), Matchers.hasSize<Person?>(2))
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName()),
         )
         // biblio1 affiliations not empty, we keep biblio1 as is
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString()),
         )
     }
 
@@ -348,25 +346,25 @@ class BiblioItemTest {
 
         Assert.assertThat<String?>(
             biblio1.getFirstAuthorSurname(),
-            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname())
+            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname()),
         )
         Assert.assertThat<MutableList<Person?>?>(biblio1.getFullAuthors(), Matchers.hasSize<Person?>(2))
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName()),
         )
         // affiliation should be kept though since not empty
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(1).getFirstName()),
         )
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString()),
         )
     }
 
@@ -388,22 +386,22 @@ class BiblioItemTest {
 
         Assert.assertThat<String?>(
             biblio1.getFirstAuthorSurname(),
-            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname())
+            CoreMatchers.`is`<String?>(biblio2.getFirstAuthorSurname()),
         )
         Assert.assertThat<MutableList<Person?>?>(biblio1.getFullAuthors(), Matchers.hasSize<Person?>(2))
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getFirstName(),
-            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName())
+            CoreMatchers.`is`<String?>(biblio2.getFullAuthors().get(0).getFirstName()),
         )
         // affiliation should be kept though
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(0).getAffiliations().get(0).getAffiliationString()),
         )
-        //assertThat(biblio1.getFullAuthors().get(1).getFirstName(), is(biblio2.getFullAuthors().get(0).getFirstName()));
+        // assertThat(biblio1.getFullAuthors().get(1).getFirstName(), is(biblio2.getFullAuthors().get(0).getFirstName()));
         Assert.assertThat<String?>(
             biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString(),
-            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString())
+            CoreMatchers.`is`<String?>(biblio1.getFullAuthors().get(1).getAffiliations().get(0).getAffiliationString()),
         )
     }
 
@@ -610,15 +608,15 @@ class BiblioItemTest {
         val langs: MutableList<String?> = getXpathStrings(doc, "/biblStruct/@xml:lang")
         Assert.assertThat(
             xmlIds,
-            CoreMatchers.`is`(mutableListOf<String?>("b5"))
+            CoreMatchers.`is`(mutableListOf<String?>("b5")),
         )
         Assert.assertThat(
             statuses,
-            CoreMatchers.`is`(mutableListOf<String?>("consolidated"))
+            CoreMatchers.`is`(mutableListOf<String?>("consolidated")),
         )
         Assert.assertThat(
             langs,
-            CoreMatchers.`is`(mutableListOf<String?>("en"))
+            CoreMatchers.`is`(mutableListOf<String?>("en")),
         )
     }
 
@@ -710,10 +708,12 @@ class BiblioItemTest {
     @Test
     fun toBibTeX_multipleAuthors() {
         val biblio = BiblioItem()
-        biblio.setFullAuthors(mutableListOf(
-            createPerson("John", "Doe"),
-            createPerson("Jane", "Smith")
-        ))
+        biblio.setFullAuthors(
+            mutableListOf(
+                createPerson("John", "Doe"),
+                createPerson("Jane", "Smith"),
+            ),
+        )
         val bibtex = biblio.toBibTeX()
         Assert.assertThat(bibtex, Matchers.containsString("author = {Doe, John and Smith, Jane}"))
     }
@@ -907,7 +907,6 @@ class BiblioItemTest {
     companion object {
         val LOGGER: Logger = LoggerFactory.getLogger(BiblioItemTest::class.java)
 
-
         @BeforeClass
         fun init() {
             GrobidProperties.getInstance()
@@ -923,7 +922,8 @@ class BiblioItemTest {
 
         @Throws(XPathExpressionException::class)
         private fun getXpathStrings(
-            doc: Document?, xpath_expr: String?
+            doc: Document?,
+            xpath_expr: String?,
         ): MutableList<String?> {
             val xpath = XPathFactory.newInstance().newXPath()
             // Add support for xml namespace
@@ -935,13 +935,9 @@ class BiblioItemTest {
                     return XMLConstants.NULL_NS_URI
                 }
 
-                override fun getPrefix(namespaceURI: String?): String? {
-                    return null
-                }
+                override fun getPrefix(namespaceURI: String?): String? = null
 
-                override fun getPrefixes(namespaceURI: String?): Iterator<String?>? {
-                    return null
-                }
+                override fun getPrefixes(namespaceURI: String?): Iterator<String?>? = null
             })
             val expr = xpath.compile(xpath_expr)
             val nodes = expr.evaluate(doc, XPathConstants.NODESET) as NodeList

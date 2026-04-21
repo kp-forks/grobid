@@ -1,8 +1,11 @@
 package org.grobid.core.utilities.counters.impl;
 
-import org.grobid.core.utilities.counters.Counter;
-
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import org.grobid.core.utilities.counters.Counter;
 
 class CounterImpl implements Counter {
     private static final long serialVersionUID = 4764636620333386314L;
@@ -37,15 +40,20 @@ class CounterImpl implements Counter {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
+        if (this == o)
+            return true;
+        if (!(o instanceof CounterImpl))
+            return false;
         CounterImpl counter = (CounterImpl) o;
-        return cnt.get() == counter.cnt.get();
+        return new EqualsBuilder()
+                .append(cnt.get(), counter.cnt.get())
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return cnt.hashCode();
+        return new HashCodeBuilder(17, 37)
+                .append(cnt.get())
+                .toHashCode();
     }
 }

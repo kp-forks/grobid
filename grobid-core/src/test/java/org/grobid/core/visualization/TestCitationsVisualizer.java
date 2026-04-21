@@ -1,32 +1,31 @@
 package org.grobid.core.visualization;
 
-import org.apache.commons.io.FileUtils;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
+import org.junit.Test;
+
 import org.grobid.core.document.Document;
 import org.grobid.core.engines.Engine;
 import org.grobid.core.engines.config.GrobidAnalysisConfig;
 import org.grobid.core.factory.GrobidFactory;
-import org.junit.AfterClass;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import com.fasterxml.jackson.core.Versioned;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 public class TestCitationsVisualizer {
 
     static final ObjectMapper mapper = new ObjectMapper();
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         GrobidFactory.reset();
     }
 
@@ -100,7 +99,7 @@ public class TestCitationsVisualizer {
     // XXX: copied from TestFullTextParser
     private File getInputDocument(String inputPath) throws IOException {
         InputStream is = this.getClass().getResourceAsStream(inputPath);
-        File inputTmpFile  = File.createTempFile("tmpFileTest", "testFullTextParser");
+        File inputTmpFile = File.createTempFile("tmpFileTest", "testFullTextParser");
         inputTmpFile.deleteOnExit();
 
         FileUtils.copyToFile(is, inputTmpFile);

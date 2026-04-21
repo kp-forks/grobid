@@ -26,17 +26,19 @@ public final class Language {
     private String lang;
     private double conf;
 
-	// default construction for jackson mapping
-	public Language() {}
+    // default construction for jackson mapping
+    public Language() {
+    }
 
     public Language(String langId) {
         if (langId == null) {
             throw new GrobidException("Language id cannot be null");
         }
 
-        if ((langId.length() != 3 && langId.length() != 2 && (!langId.equals("sorb")) && 
-            (!langId.equals("zh-cn")) && (!langId.equals("zh-tw"))) || !(Character.isLetter(langId.charAt(0))
-            && Character.isLetter(langId.charAt(1)))) {
+        if ((langId.length() != 3 && langId.length() != 2 && (!langId.equals("sorb")) &&
+                (!langId.equals("zh-cn")) && (!langId.equals("zh-tw")))
+                || !(Character.isLetter(langId.charAt(0))
+                        && Character.isLetter(langId.charAt(1)))) {
             throw new GrobidException("Language id should consist of two or three letters, but was: " + langId);
         }
 
@@ -49,9 +51,10 @@ public final class Language {
             throw new GrobidException("Language id cannot be null");
         }
 
-        if ((langId.length() != 3 && langId.length() != 2 && (!langId.equals("sorb")) && 
-            (!langId.equals("zh-cn")) && (!langId.equals("zh-tw"))) || !(Character.isLetter(langId.charAt(0))
-            && Character.isLetter(langId.charAt(1)))) {
+        if ((langId.length() != 3 && langId.length() != 2 && (!langId.equals("sorb")) &&
+                (!langId.equals("zh-cn")) && (!langId.equals("zh-tw")))
+                || !(Character.isLetter(langId.charAt(0))
+                        && Character.isLetter(langId.charAt(1)))) {
             throw new GrobidException("Language id should consist of two or three letters, but was: " + langId);
         }
 
@@ -78,7 +81,7 @@ public final class Language {
     public String getLang() {
         return lang;
     }
-	
+
     public void setLang(String lang) {
         this.lang = lang;
     }
@@ -88,9 +91,9 @@ public final class Language {
         return conf;
     }
 
-	public void setConf(double conf) {
-		this.conf = conf;
-	}
+    public void setConf(double conf) {
+        this.conf = conf;
+    }
 
     @Override
     public String toString() {
@@ -98,6 +101,6 @@ public final class Language {
     }
 
     public String toJSON() {
-        return "{\"lang\":\""+lang+"\", \"conf\": "+conf+"}";
+        return "{\"lang\":\"" + lang + "\", \"conf\": " + conf + "}";
     }
 }

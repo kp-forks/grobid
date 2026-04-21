@@ -1,13 +1,11 @@
 package org.grobid.core.utilities;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class IOUtilitiesTest {
 

@@ -1,13 +1,12 @@
 package org.grobid.core.utilities.counters.impl;
 
-
-import org.grobid.core.utilities.counters.CntManager;
-import org.grobid.core.utilities.counters.CntManagerRepresentation;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.TimeZone;
+
+import org.grobid.core.utilities.counters.CntManager;
+import org.grobid.core.utilities.counters.CntManagerRepresentation;
 
 public class CntManagerGrepRepresentation implements CntManagerRepresentation {
     public static final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

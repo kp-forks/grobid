@@ -1,17 +1,17 @@
 package org.grobid.core.sax;
 
-import org.grobid.core.data.BiblioItem;
-
 import java.io.*;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
+import org.grobid.core.data.BiblioItem;
+
 /**
  * SAX parser for XML crossref DOI metadata descriptions.
  * See http://www.crossref.org/openurl_info.html
  *
- * -> This is not used anymore, we use the JSON REST API from 
+ * -> This is not used anymore, we use the JSON REST API from
  *    CrossRef or from biblio-glutton, und das ist auch gut so.
  *
  */
@@ -38,9 +38,10 @@ public class CrossrefSaxParser extends DefaultHandler {
         return text.toString().trim();
     }
 
-    public void endElement(java.lang.String uri,
-                           java.lang.String localName,
-                           java.lang.String qName) throws SAXException {
+    public void endElement(
+            java.lang.String uri,
+            java.lang.String localName,
+            java.lang.String qName) throws SAXException {
         System.out.println(qName);
         if (qName.equals("article_title")) {
             biblio.setArticleTitle(getText());
@@ -94,10 +95,11 @@ public class CrossrefSaxParser extends DefaultHandler {
         //biblio.setDOIRetrieval(true);
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
         if (qName.equals("query")) {
             String n1 = atts.getValue("status");
@@ -105,4 +107,3 @@ public class CrossrefSaxParser extends DefaultHandler {
     }
 
 }
-

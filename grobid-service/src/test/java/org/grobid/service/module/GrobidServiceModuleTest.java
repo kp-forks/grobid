@@ -11,10 +11,10 @@ import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jackson.Jackson;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
-import org.grobid.service.GrobidServiceConfiguration;
-import org.grobid.service.modules.GrobidServiceModule;
 import org.hibernate.validator.HibernateValidator;
 
+import org.grobid.service.GrobidServiceConfiguration;
+import org.grobid.service.modules.GrobidServiceModule;
 
 public class GrobidServiceModuleTest extends GrobidServiceModule {
 
@@ -29,7 +29,6 @@ public class GrobidServiceModuleTest extends GrobidServiceModule {
         super.configure();
     }
 
-
     @Provides
     @Singleton
     @Override
@@ -39,14 +38,15 @@ public class GrobidServiceModuleTest extends GrobidServiceModule {
         ValidatorFactory validatorFactory = Validation
                 .byProvider(HibernateValidator.class)
                 .configure()
-//                .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
+                //                .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
                 .buildValidatorFactory();
 
-
-        final ConfigurationFactory<GrobidServiceConfiguration> configurationFactory =
-                new DefaultConfigurationFactoryFactory<GrobidServiceConfiguration>()
-                        .create(GrobidServiceConfiguration.class,
-                                validatorFactory.getValidator(), objectMapper, "dw");
+        final ConfigurationFactory<GrobidServiceConfiguration> configurationFactory = new DefaultConfigurationFactoryFactory<GrobidServiceConfiguration>()
+                .create(
+                        GrobidServiceConfiguration.class,
+                        validatorFactory.getValidator(),
+                        objectMapper,
+                        "dw");
 
         try {
             return configurationFactory.build(new FileConfigurationSourceProvider(), TEST_CONFIG_FILE);
@@ -61,6 +61,5 @@ public class GrobidServiceModuleTest extends GrobidServiceModule {
         return new Environment("test-grobid-service-env", new ObjectMapper(), null, new MetricRegistry(),
                 this.getClass().getClassLoader(), null, configuration());
     }
-
 
 }

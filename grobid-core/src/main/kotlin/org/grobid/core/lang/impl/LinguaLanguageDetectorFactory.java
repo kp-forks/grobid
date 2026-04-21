@@ -16,7 +16,7 @@ public class LinguaLanguageDetectorFactory implements LanguageDetectorFactory {
     public LanguageDetector getInstance() {
         if (instance == null) {
             synchronized (this) {
-                if(instance == null) {
+                if (instance == null) {
                     init();
                     instance = new LinguaLanguageDetector();
                 }

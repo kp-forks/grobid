@@ -1,21 +1,19 @@
 package org.grobid.core.utilities;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import org.apache.commons.lang3.StringUtils;
 
 import org.grobid.core.layout.BoundingBox;
 import org.grobid.core.layout.LayoutToken;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Dealing with layout tokens
@@ -54,7 +52,8 @@ public class LayoutTokensUtil {
     }
 
     public static String normalizeDehyphenizeText(List<LayoutToken> tokens) {
-        return StringUtils.normalizeSpace(LayoutTokensUtil.toText(LayoutTokensUtil.dehyphenize(tokens)).replace("\n", " "));
+        return StringUtils
+                .normalizeSpace(LayoutTokensUtil.toText(LayoutTokensUtil.dehyphenize(tokens)).replace("\n", " "));
     }
 
     public static String toText(List<LayoutToken> tokens) {
@@ -65,18 +64,17 @@ public class LayoutTokensUtil {
         return t.getPage() == -1 || t.getWidth() <= 0;
     }
 
-
     public static boolean spaceyToken(String tok) {
         /*return (tok.equals(" ")
                 || tok.equals("\u00A0")
                 || tok.equals("\n"));*/
-        // all space characters are normalised into simple space character        
+        // all space characters are normalised into simple space character
         return tok.equals(" ");
     }
 
     public static boolean newLineToken(String tok) {
         //return (tok.equals("\n") || tok.equals("\r") || tok.equals("\n\r"));
-        // all new line characters are normalised into simple \n character  
+        // all new line characters are normalised into simple \n character
         return tok.equals("\n");
     }
 
@@ -118,15 +116,19 @@ public class LayoutTokensUtil {
         return -1;
     }
 
-//    public static List<List<LayoutToken>> split(List<LayoutToken> toks, Pattern p) {
-//        return split(toks, p, false);
-//    }
+    //    public static List<List<LayoutToken>> split(List<LayoutToken> toks, Pattern p) {
+    //        return split(toks, p, false);
+    //    }
 
     public static List<List<LayoutToken>> split(List<LayoutToken> toks, Pattern p, boolean preserveSeparator) {
         return split(toks, p, preserveSeparator, true);
     }
 
-    public static List<List<LayoutToken>> split(List<LayoutToken> toks, Pattern p, boolean preserveSeparator, boolean preserveLeftOvers) {
+    public static List<List<LayoutToken>> split(
+            List<LayoutToken> toks,
+            Pattern p,
+            boolean preserveSeparator,
+            boolean preserveLeftOvers) {
         List<List<LayoutToken>> split = new ArrayList<>();
         List<LayoutToken> curToks = new ArrayList<>();
         for (LayoutToken tok : toks) {
@@ -147,7 +149,6 @@ public class LayoutTokensUtil {
         }
         return split;
     }
-
 
     public static boolean tooFarAwayVertically(List<BoundingBox> boxes, double distance) {
         if (boxes == null) {
@@ -193,12 +194,12 @@ public class LayoutTokensUtil {
                         z--;
                     }
 
-
                     List<Integer> breakLines = new ArrayList<>();
                     List<Integer> spaces = new ArrayList<>();
 
                     int j = i + 1;
-                    while (j < tokens.size() && tokens.get(j).getText().equals(" ") || tokens.get(j).getText().equals("\n")) {
+                    while (j < tokens.size() && tokens.get(j).getText().equals(" ")
+                            || tokens.get(j).getText().equals("\n")) {
                         String tokenString = tokens.get(j).getText();
 
                         if (tokenString.equals("\n")) {
@@ -295,7 +296,7 @@ public class LayoutTokensUtil {
                 if (StringUtils.isAlpha(tokens.get(z).getText())) {
                     if (tokens.get(z).getY() < coordinateY) {
                         backward = true;
-                    } else if(coordinateY == -1 && breakLine > 0) {
+                    } else if (coordinateY == -1 && breakLine > 0) {
                         backward = true;
                     }
                 }
@@ -311,9 +312,9 @@ public class LayoutTokensUtil {
 
     public static List<LayoutToken> subListByOffset(List<LayoutToken> token, int startIncluded, int endExcluded) {
         return token
-            .stream()
-            .filter(t -> t.getOffset() >= startIncluded && t.getOffset() < endExcluded)
-            .collect(Collectors.toList());
+                .stream()
+                .filter(t -> t.getOffset() >= startIncluded && t.getOffset() < endExcluded)
+                .collect(Collectors.toList());
     }
 
     public static List<LayoutToken> getLayoutTokensForTokenizedText(List<String> tokens) {

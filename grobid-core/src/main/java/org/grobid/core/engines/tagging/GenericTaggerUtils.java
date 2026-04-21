@@ -1,17 +1,18 @@
 package org.grobid.core.engines.tagging;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.grobid.core.engines.label.TaggingLabels;
-import org.grobid.core.utilities.Triple;
-import org.grobid.analyzers.grobidkr.utils.StringUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
+import org.grobid.analyzers.grobidkr.utils.StringUtil;
+import org.grobid.core.engines.label.TaggingLabels;
+import org.grobid.core.utilities.Triple;
 
 public class GenericTaggerUtils {
 
@@ -40,14 +41,15 @@ public class GenericTaggerUtils {
      * and the third element is a string with the features
      * Note an empty line in the result will be transformed to a 'null' pointer of a pair
      */
-    public static List<Triple<String, String, String>> getTokensWithLabelsAndFeatures(String labeledResult,
-                                                                                      final boolean addFeatureString) {
+    public static List<Triple<String, String, String>> getTokensWithLabelsAndFeatures(
+            String labeledResult,
+            final boolean addFeatureString) {
         Function<List<String>, Triple<String, String, String>> fromSplits = splits -> {
             String featureString = addFeatureString ? Joiner.on("\t").join(splits.subList(0, splits.size() - 1)) : null;
             return new Triple<>(
-                splits.get(0),
-                splits.get(splits.size() - 1),
-                featureString);
+                    splits.get(0),
+                    splits.get(splits.size() - 1),
+                    featureString);
         };
 
         return processLabeledResult(labeledResult, fromSplits);
@@ -74,7 +76,7 @@ public class GenericTaggerUtils {
 
     public static boolean isBeginningOfIOBEntity(String label) {
         return StringUtil.startsWith(label, TaggingLabels.IOB_START_ENTITY_LABEL_PREFIX)
-            || StringUtil.startsWith(label, TaggingLabels.ENAMEX_START_ENTITY_LABEL_PREFIX);
+                || StringUtil.startsWith(label, TaggingLabels.ENAMEX_START_ENTITY_LABEL_PREFIX);
     }
 
     // I-<citation> --> <citation>
@@ -85,6 +87,6 @@ public class GenericTaggerUtils {
 
     public static boolean isBeginningOfEntity(String label) {
         return StringUtils.startsWith(label, TaggingLabels.GROBID_START_ENTITY_LABEL_PREFIX)
-            || StringUtil.startsWith(label, TaggingLabels.ENAMEX_START_ENTITY_LABEL_PREFIX);
+                || StringUtil.startsWith(label, TaggingLabels.ENAMEX_START_ENTITY_LABEL_PREFIX);
     }
 }

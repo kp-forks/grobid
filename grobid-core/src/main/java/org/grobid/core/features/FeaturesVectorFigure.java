@@ -32,21 +32,23 @@ public class FeaturesVectorFigure {
     public boolean http = false;
     //public boolean acronym = false;
 
-    public String punctType = null; 
+    public String punctType = null;
     // one of NOPUNCT, OPENBRACKET, ENDBRACKET, DOT, COMMA, HYPHEN, QUOTE, PUNCT (default)
 
-    public int relativeDocumentPosition = -1; 
-    public int relativePagePosition = -1; 
+    public int relativeDocumentPosition = -1;
+    public int relativePagePosition = -1;
 
     public boolean bitmapAround = false;
     public boolean vectorAround = false;
-    public int closestGraphicHeight = -1; 
-    public int closestGraphicWidth = -1; 
-    public int closestGraphicSurface = -1; 
+    public int closestGraphicHeight = -1;
+    public int closestGraphicWidth = -1;
+    public int closestGraphicSurface = -1;
 
     public String printVector() {
-        if (string == null) return null;
-        if (string.length() == 0) return null;
+        if (string == null)
+            return null;
+        if (string.length() == 0)
+            return null;
         StringBuffer res = new StringBuffer();
 
         // token string (1)

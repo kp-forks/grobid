@@ -32,7 +32,9 @@ public class LevenshteinDistanceAligment<E> {
         compute();
     }
 
-    public enum Op {Start, Match, Insert, Delete, Substitute}
+    public enum Op {
+        Start, Match, Insert, Delete, Substitute
+    }
 
     private static class Diagonal<E> {
         /**
@@ -239,18 +241,17 @@ public class LevenshteinDistanceAligment<E> {
         LinkedList<Op> alignment = new LinkedList<Op>();
         int i = Math.min(a.length, b.length);
 
-        LOOP:
-        while (true) {
+        LOOP : while (true) {
             // adds operations in reverse order
             if (diag == null)
                 break LOOP;  //PL
             Op op = diag.getOp(i);
             switch (op) {
-                case Match:
-                case Substitute:
+                case Match :
+                case Substitute :
                     i--;
                     break;
-                case Insert:
+                case Insert :
                     if (diag.offset == 0) {
                         diag = diag.prev;
                         i--;
@@ -261,7 +262,7 @@ public class LevenshteinDistanceAligment<E> {
                         i--;
                     }
                     break;
-                case Delete:
+                case Delete :
                     if (diag.offset == 0) {
                         diag = diag.next;
                         i--;
@@ -272,7 +273,7 @@ public class LevenshteinDistanceAligment<E> {
                         diag = diag.prev;
                     }
                     break;
-                case Start:
+                case Start :
                     break LOOP;
             }
             alignment.add(op);
@@ -309,9 +310,8 @@ public class LevenshteinDistanceAligment<E> {
 
     public static void main(String[] args) {
         assert args.length == 2;
-        LevenshteinDistanceAligment<Character> foo =
-                new LevenshteinDistanceAligment<Character>(str2chararray(args[0]),
-                        str2chararray(args[1]));
+        LevenshteinDistanceAligment<Character> foo = new LevenshteinDistanceAligment<Character>(str2chararray(args[0]),
+                str2chararray(args[1]));
         System.out.println("Levenshtein distance = " + foo.getDistance());
         System.out.println("Alignment: " + foo.getAlignment());
     }

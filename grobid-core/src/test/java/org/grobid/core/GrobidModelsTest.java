@@ -1,12 +1,13 @@
 package org.grobid.core;
 
-import org.grobid.core.utilities.GrobidConfig;
-import org.grobid.core.utilities.GrobidProperties;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
+import org.grobid.core.utilities.GrobidConfig;
+import org.grobid.core.utilities.GrobidProperties;
 
 public class GrobidModelsTest {
 
@@ -14,7 +15,6 @@ public class GrobidModelsTest {
     public static void setInitialContext() throws Exception {
         GrobidProperties.getInstance();
     }
-
 
     @Test
     public void testGrobidModelsEnum_StandardModel_affiliation() throws Exception {

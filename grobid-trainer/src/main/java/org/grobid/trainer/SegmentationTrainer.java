@@ -1,20 +1,20 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModels;
-import org.grobid.core.GrobidModels.Flavor;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.trainer.sax.TEISegmentationArticleLightRefSaxParser;
-import org.grobid.trainer.sax.TEISegmentationArticleLightSaxParser;
-import org.grobid.trainer.sax.TEISegmentationSaxParser;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.StringTokenizer;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.grobid.core.GrobidModels;
+import org.grobid.core.GrobidModels.Flavor;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.utilities.UnicodeUtil;
+import org.grobid.trainer.sax.TEISegmentationArticleLightRefSaxParser;
+import org.grobid.trainer.sax.TEISegmentationArticleLightSaxParser;
+import org.grobid.trainer.sax.TEISegmentationSaxParser;
 
 public class SegmentationTrainer extends AbstractTrainer {
 
@@ -32,9 +32,12 @@ public class SegmentationTrainer extends AbstractTrainer {
 
     @Override
     public int createCRFPPData(File corpusPath, File outputFile) {
-        return addFeaturesSegmentation(corpusPath.getAbsolutePath() + "/tei",
+        return addFeaturesSegmentation(
+                corpusPath.getAbsolutePath() + "/tei",
                 corpusPath.getAbsolutePath() + "/raw",
-                outputFile, null, 1.0);
+                outputFile,
+                null,
+                1.0);
     }
 
     /**
@@ -47,11 +50,13 @@ public class SegmentationTrainer extends AbstractTrainer {
      * @return the total number of used corpus items
      */
     @Override
-    public int createCRFPPData(final File corpusDir,
-                               final File trainingOutputPath,
-                               final File evalOutputPath,
-                               double splitRatio) {
-        return addFeaturesSegmentation(corpusDir.getAbsolutePath() + "/tei",
+    public int createCRFPPData(
+            final File corpusDir,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
+        return addFeaturesSegmentation(
+                corpusDir.getAbsolutePath() + "/tei",
                 corpusDir.getAbsolutePath() + "/raw",
                 trainingOutputPath,
                 evalOutputPath,
@@ -68,11 +73,12 @@ public class SegmentationTrainer extends AbstractTrainer {
      * @param splitRatio         ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
      * @return number of examples
      */
-    public int addFeaturesSegmentation(String sourceTEIPathLabel,
-                                       String sourceRawPathLabel,
-                                       final File trainingOutputPath,
-                                       final File evalOutputPath,
-                                       double splitRatio) {
+    public int addFeaturesSegmentation(
+            String sourceTEIPathLabel,
+            String sourceRawPathLabel,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
         int totalExamples = 0;
         try {
             System.out.println("sourceTEIPathLabel: " + sourceTEIPathLabel);
@@ -147,18 +153,18 @@ public class SegmentationTrainer extends AbstractTrainer {
                     for(String label : labeled) {
                         if (!label.startsWith("@newline"))
                             newLabeled.add(label);
-                    } 
+                    }
                     labeled = newLabeled;*/
 
-/*StringBuilder temp = new StringBuilder();
-for(String label : labeled) {
-    temp.append(label);
-}
-FileUtils.writeStringToFile(new File("/tmp/expected-"+name+".txt"), temp.toString());*/
-                
+                    /*StringBuilder temp = new StringBuilder();
+                    for(String label : labeled) {
+                        temp.append(label);
+                    }
+                    FileUtils.writeStringToFile(new File("/tmp/expected-"+name+".txt"), temp.toString());*/
+
                     int q = 0;
                     BufferedReader bis = new BufferedReader(
-                        new InputStreamReader(new FileInputStream(theRawFile), StandardCharsets.UTF_8));
+                            new InputStreamReader(new FileInputStream(theRawFile), StandardCharsets.UTF_8));
                     StringBuilder segmentation = new StringBuilder();
                     String line = null;
                     int l = 0;
@@ -198,7 +204,7 @@ FileUtils.writeStringToFile(new File("/tmp/expected-"+name+".txt"), temp.toStrin
                                 nbInvalid++;
                                 // let's reuse the latest tag
                                 if (previousTag != null)
-                                   segmentation.append(line).append(" ").append(previousTag);
+                                    segmentation.append(line).append(" ").append(previousTag);
                                 break;
                             }
                         }
@@ -221,10 +227,12 @@ FileUtils.writeStringToFile(new File("/tmp/expected-"+name+".txt"), temp.toStrin
                                 writer3.write(segmentation.toString() + "\n");
                         }
                     } else {
-                        LOGGER.error("{} / too many synchronization issues, file not used in training data and to be fixed!", name);
+                        LOGGER.error(
+                                "{} / too many synchronization issues, file not used in training data and to be fixed!",
+                                name);
                     }
                 } catch (Exception e) {
-                   LOGGER.error("Fail to open or process raw file", e);
+                    LOGGER.error("Fail to open or process raw file", e);
                 }
             }
 
@@ -246,7 +254,6 @@ FileUtils.writeStringToFile(new File("/tmp/expected-"+name+".txt"), temp.toStrin
         }
         return totalExamples;
     }
-
 
     public static void main(String[] args) throws Exception {
         AbstractTrainer.trainAndEvaluate(args, SegmentationTrainer::new, SegmentationTrainer::new);

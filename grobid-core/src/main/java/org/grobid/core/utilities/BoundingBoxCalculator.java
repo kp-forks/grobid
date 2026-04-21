@@ -1,12 +1,13 @@
 package org.grobid.core.utilities;
 
+import java.util.List;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+
 import org.grobid.core.layout.BoundingBox;
 import org.grobid.core.layout.LayoutToken;
-
-import java.util.List;
 
 /**
  * Utilities to calculate bounding boxes from coordinates
@@ -25,7 +26,7 @@ public class BoundingBoxCalculator {
         }
 
         BoundingBox b = null;
-        for (LayoutToken t : tokens)  {
+        for (LayoutToken t : tokens) {
             if (LayoutTokensUtil.noCoords(t)) {
                 continue;
             }
@@ -48,7 +49,8 @@ public class BoundingBoxCalculator {
             tokens = Lists.newArrayList(Iterables.filter(tokens, new Predicate<LayoutToken>() {
                 @Override
                 public boolean apply(LayoutToken layoutToken) {
-                    return !(Math.abs(layoutToken.getWidth()) <= Double.MIN_VALUE || Math.abs(layoutToken.getHeight()) <= Double.MIN_VALUE);
+                    return !(Math.abs(layoutToken.getWidth()) <= Double.MIN_VALUE
+                            || Math.abs(layoutToken.getHeight()) <= Double.MIN_VALUE);
                 }
             }));
         }

@@ -1,20 +1,21 @@
 package org.grobid.trainer.sax;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
+import java.util.StringTokenizer;
+
 import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.utilities.TextUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import org.grobid.core.utilities.TextUtilities;
 
 /**
- * SAX parser for the TEI format for fulltext data encoded for training. Normally all training data should 
+ * SAX parser for the TEI format for fulltext data encoded for training. Normally all training data should
  * be in this unique format for the fulltext model.
  * The segmentation of tokens must be identical as the one from pdf2xml files so that
  * training and online input tokens are aligned.
@@ -28,10 +29,10 @@ public class TEIFulltextSaxParser extends DefaultHandler {
 
     private String output = null;
     private Stack<String> currentTags = null;
-	private String currentTag = null;
-	
+    private String currentTag = null;
+
     private boolean figureBlock = false;
-	private boolean tableBlock = false;
+    private boolean tableBlock = false;
     private boolean inTeiHeader = false; // flag to track when we're inside teiHeader
 
     private ArrayList<String> labeled = null; // store line by line the labeled data
@@ -62,10 +63,11 @@ public class TEIFulltextSaxParser extends DefaultHandler {
         return labeled;
     }
 
-    public void endElement(java.lang.String uri,
-                           java.lang.String localName,
-                           java.lang.String qName) throws SAXException {
-		if (qName.equals("teiHeader")) {
+    public void endElement(
+            java.lang.String uri,
+            java.lang.String localName,
+            java.lang.String qName) throws SAXException {
+        if (qName.equals("teiHeader")) {
             inTeiHeader = false;
             return;
         }
@@ -75,25 +77,26 @@ public class TEIFulltextSaxParser extends DefaultHandler {
             return;
         }
 
-        if ( (!qName.equals("lb")) && (!qName.equals("pb")) && (!qName.equals("space")) ) {
+        if ((!qName.equals("lb")) && (!qName.equals("pb")) && (!qName.equals("space"))) {
             writeData(qName, true);
-			if (!currentTags.empty()) {
-				currentTag = currentTags.peek();
-			}
+            if (!currentTags.empty()) {
+                currentTag = currentTags.peek();
+            }
         }
 
         if (qName.equals("figure") || qName.equals("table")) {
             figureBlock = false;
-			tableBlock = false;
+            tableBlock = false;
         }
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
-       if (inTeiHeader) {
+        if (inTeiHeader) {
             // Skip processing of all elements inside teiHeader
             return;
         }
@@ -101,8 +104,7 @@ public class TEIFulltextSaxParser extends DefaultHandler {
         if (qName.equals("lb")) {
             //accumulator.append(" +LINE+ ");
             accumulator.append(" ");
-        } 
-		else if (qName.equals("space")) {
+        } else if (qName.equals("space")) {
             accumulator.append(" ");
         } else if (qName.equals("teiHeader")) {
             inTeiHeader = true;
@@ -129,7 +131,7 @@ public class TEIFulltextSaxParser extends DefaultHandler {
                         if (name.equals("type")) {
                             if (value.equals("paragraph")) {
                                 currentTags.push("<paragraph>");
-								currentTag = "<paragraph>";
+                                currentTag = "<paragraph>";
                             } else {
                                 logger.error("Invalid attribute value for element div: " + name + "=" + value);
                             }
@@ -138,9 +140,9 @@ public class TEIFulltextSaxParser extends DefaultHandler {
                         }
                     }
                 }
-            } else if (qName.equals("p") ) {
+            } else if (qName.equals("p")) {
                 currentTags.push("<paragraph>");
-				currentTag = "<paragraph>";
+                currentTag = "<paragraph>";
             } else if (qName.equals("ref")) {
                 int length = atts.getLength();
 
@@ -154,14 +156,14 @@ public class TEIFulltextSaxParser extends DefaultHandler {
                         if (name.equals("type")) {
                             if (value.equals("biblio")) {
                                 currentTags.push("<citation_marker>");
-								currentTag = "<citation_marker>";
+                                currentTag = "<citation_marker>";
                             } else if (value.equals("figure")) {
                                 currentTags.push("<figure_marker>");
-								currentTag = "<figure_marker>";
+                                currentTag = "<figure_marker>";
                             } else if (value.equals("table")) {
-								currentTags.push("<table_marker>");
-								currentTag = "<table_marker>";
-							} else if (value.equals("formula") || value.equals("equation")) {
+                                currentTags.push("<table_marker>");
+                                currentTag = "<table_marker>";
+                            } else if (value.equals("formula") || value.equals("equation")) {
                                 currentTags.push("<equation_marker>");
                                 currentTag = "<equation_marker>";
                             } else if (value.equals("section")) {
@@ -177,103 +179,97 @@ public class TEIFulltextSaxParser extends DefaultHandler {
                 }
             } else if (qName.equals("formula")) {
                 currentTags.push("<equation>");
-				currentTag = "<equation>";
+                currentTag = "<equation>";
             } else if (qName.equals("label")) {
                 currentTags.push("<equation_label>");
                 currentTag = "<equation_label>";
             } else if (qName.equals("head")) {
-				{
+                {
                     currentTags.push("<section>");
-					currentTag = "<section>";
+                    currentTag = "<section>";
                 }
-            } 
-            else if (qName.equals("table")) {
+            } else if (qName.equals("table")) {
                 currentTags.push("<table>");
-				currentTag = "<table>";
+                currentTag = "<table>";
                 tableBlock = true;
                 figureBlock = false;
-            } 
-			else if (qName.equals("item")) {
+            } else if (qName.equals("item")) {
                 currentTags.push("<paragraph>");
-				currentTag = "<paragraph>";
+                currentTag = "<paragraph>";
                 //currentTags.push("<item>");
                 //currentTag = "<item>";
-            } 
-			else if (qName.equals("figure")) {
-	            figureBlock = true;
+            } else if (qName.equals("figure")) {
+                figureBlock = true;
                 tableBlock = false;
-	            int length = atts.getLength();
+                int length = atts.getLength();
 
-	            // Process each attribute
-	            for (int i = 0; i < length; i++) {
-	                // Get names and values for each attribute
-	                String name = atts.getQName(i);
-	                String value = atts.getValue(i);
+                // Process each attribute
+                for (int i = 0; i < length; i++) {
+                    // Get names and values for each attribute
+                    String name = atts.getQName(i);
+                    String value = atts.getValue(i);
 
-	                if (name != null) {
-	                    if (name.equals("type")) {
-	                        if (value.equals("table")) {
-	                            tableBlock = true;
-	                        } else {
+                    if (name != null) {
+                        if (name.equals("type")) {
+                            if (value.equals("table")) {
+                                tableBlock = true;
+                            } else {
                                 logger.error("Invalid attribute value for element figure: " + name + "=" + value);
                             }
-	                    } else {
+                        } else {
                             logger.error("Invalid attribute name for element figure: " + name);
                         }
-	                }
-	            }
-				if (tableBlock) {
-					figureBlock = false;
-	                currentTags.push("<table>");
-					currentTag = "<table>";
-				}
-				else {
-	                currentTags.push("<figure>");
-					currentTag = "<figure>";
-				}
-	        } 
-			else if (qName.equals("other")) {
+                    }
+                }
+                if (tableBlock) {
+                    figureBlock = false;
+                    currentTags.push("<table>");
+                    currentTag = "<table>";
+                } else {
+                    currentTags.push("<figure>");
+                    currentTag = "<figure>";
+                }
+            } else if (qName.equals("other")) {
                 currentTags.push("<other>");
-				currentTag = "<other>";
-			} else if (qName.equals("text")) {
+                currentTag = "<other>";
+            } else if (qName.equals("text")) {
                 currentTags.push("<other>");
                 currentTag = "<other>";
             } else {
-                if (!StringUtils.equalsIgnoreCase(qName, "tei") && !qName.equals("teiHeader") && !qName.equals("fileDesc") && !qName.equals("list")) {
+                if (!StringUtils.equalsIgnoreCase(qName, "tei") && !qName.equals("teiHeader")
+                        && !qName.equals("fileDesc") && !qName.equals("list")) {
                     logger.error("Invalid element name: " + qName + " - it will be mapped to the label <other>");
                     currentTags.push("<other>");
                     currentTag = "<other>";
                 }
             }
         }
-		
+
     }
 
     private void writeData(String qName, boolean pop) {
-        if ( (qName.equals("other")) || (qName.equals("p")) || 
-                (qName.equals("ref")) || (qName.equals("head")) || (qName.equals("figure")) || 
+        if ((qName.equals("other")) || (qName.equals("p")) ||
+                (qName.equals("ref")) || (qName.equals("head")) || (qName.equals("figure")) ||
                 (qName.equals("paragraph")) ||
                 (qName.equals("div")) || //(qName.equals("figDesc")) ||
                 (qName.equals("table")) || //(qName.equals("trash")) ||
-                (qName.equals("formula")) || (qName.equals("item")) || (qName.equals("label"))
-                ) {
-			if (currentTag == null) {
-				return;
-			}
-	
-            if (pop) {
-				if (!currentTags.empty()) {
-					currentTags.pop();
-				}
+                (qName.equals("formula")) || (qName.equals("item")) || (qName.equals("label"))) {
+            if (currentTag == null) {
+                return;
             }
 
-			// adjust tag (conservative)
-			if (tableBlock) {
-				currentTag = "<table>";
-			}
-			else if (figureBlock) {
-				currentTag = "<figure>";
-			}
+            if (pop) {
+                if (!currentTags.empty()) {
+                    currentTags.pop();
+                }
+            }
+
+            // adjust tag (conservative)
+            if (tableBlock) {
+                currentTag = "<table>";
+            } else if (figureBlock) {
+                currentTag = "<figure>";
+            }
 
             String text = getText();
             // we segment the text
@@ -281,8 +277,8 @@ public class TEIFulltextSaxParser extends DefaultHandler {
             boolean begin = true;
             while (st.hasMoreTokens()) {
                 String tok = st.nextToken().trim();
-                if (tok.length() == 0) 
-					continue;
+                if (tok.length() == 0)
+                    continue;
 
                 /*if (tok.equals("+LINE+")) {
                     labeled.add("@newline\n");

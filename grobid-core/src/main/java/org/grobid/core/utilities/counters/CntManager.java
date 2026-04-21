@@ -1,9 +1,9 @@
 package org.grobid.core.utilities.counters;
 
-import org.grobid.core.engines.counters.Countable;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import org.grobid.core.engines.counters.Countable;
 
 public interface CntManager extends Serializable {
     void i(Countable e);

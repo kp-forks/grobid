@@ -1,16 +1,17 @@
 package org.grobid.core.engines.tagging;
 
-import org.grobid.core.GrobidModels;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.BeforeClass;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import org.grobid.core.GrobidModels;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.utilities.GrobidProperties;
 
 public class DummyTaggerTest {
     GenericTagger target;
@@ -32,8 +33,9 @@ public class DummyTaggerTest {
 
     @Test
     public void testDummyTagger() {
-        assertThat(target.label(Arrays.asList("bao", "miao", "ciao")),
-            is(equalTo("bao\t<dummy>\nmiao\t<dummy>\nciao\t<dummy>")));
+        assertThat(
+                target.label(Arrays.asList("bao", "miao", "ciao")),
+                is(equalTo("bao\t<dummy>\nmiao\t<dummy>\nciao\t<dummy>")));
     }
 
     @Test(expected = GrobidException.class)

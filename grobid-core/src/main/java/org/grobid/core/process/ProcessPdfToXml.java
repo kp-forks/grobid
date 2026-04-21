@@ -1,13 +1,13 @@
 package org.grobid.core.process;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.*;
 import java.util.List;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProcessPdfToXml {
 
@@ -23,19 +23,19 @@ public class ProcessPdfToXml {
         String message = "error message cannot be retrieved";
         try {
             builder = new ProcessBuilder(cmd);
-            builder.redirectErrorStream(true);  
+            builder.redirectErrorStream(true);
             process = builder.start();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));  
-            String output = null;  
+            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String output = null;
             String previousOutput = null;
-            while (null != (output = br.readLine())) {  
+            while (null != (output = br.readLine())) {
                 // writing the pdfalto stderr in the GROBID logs as warning
                 if (!output.equals(previousOutput)) {
                     LOGGER.warn("pdfalto stderr: " + output);
                     previousOutput = output;
                 }
-            } 
+            }
             exit = process.waitFor();
             message = IOUtils.toString(process.getErrorStream(), UTF_8);
 
@@ -51,8 +51,11 @@ public class ProcessPdfToXml {
                 process.destroy();
 
                 if (exit == null || exit != 0) {
-                    LOGGER.error("pdfalto process finished with error code: "
-                            + exit + ". " + cmd);
+                    LOGGER.error(
+                            "pdfalto process finished with error code: "
+                                    + exit
+                                    + ". "
+                                    + cmd);
                     LOGGER.error("pdfalto return message: \n" + message);
                 }
             }

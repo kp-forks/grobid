@@ -1,10 +1,10 @@
 package org.grobid.core.lang.impl;
 
-import org.grobid.core.lang.SentenceDetector;
-import org.grobid.core.lang.SentenceDetectorFactory;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.grobid.core.lang.SentenceDetector;
+import org.grobid.core.lang.SentenceDetectorFactory;
 
 /**
  * Implementation of a sentence segmenter factory with BlingFire
