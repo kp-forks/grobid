@@ -1,11 +1,12 @@
 package org.grobid.trainer.sax;
 
-import org.grobid.core.exceptions.GrobidException;
+import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
+import org.grobid.core.exceptions.GrobidException;
 
 /**
  * This SAX parser simply records the chemical formula stand off annotations and their corresponding word
@@ -27,9 +28,10 @@ public class ChemicalFormulasSaxParser extends DefaultHandler {
         return numberEntities;
     }
 
-    public void endElement(java.lang.String uri,
-                           java.lang.String localName,
-                           java.lang.String qName) throws SAXException {
+    public void endElement(
+            java.lang.String uri,
+            java.lang.String localName,
+            java.lang.String qName) throws SAXException {
         try {
             if (qName.equals("formula-name")) {
                 if ((localChemicalWords != null) && (localChemicalWords.size() > 0)) {
@@ -64,15 +66,16 @@ public class ChemicalFormulasSaxParser extends DefaultHandler {
                 numberEntities++;
             }
         } catch (Exception e) {
-//		    e.printStackTrace();
+            //		    e.printStackTrace();
             throw new GrobidException("An exception occured while running Grobid.", e);
         }
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts) throws SAXException {
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts) throws SAXException {
         try {
             if (qName.equals("nite:root")) {
                 chemicalWords = new ArrayList<ArrayList<String>>();
@@ -113,10 +116,9 @@ public class ChemicalFormulasSaxParser extends DefaultHandler {
 
             }
         } catch (Exception e) {
-//		    e.printStackTrace();
+            //		    e.printStackTrace();
             throw new GrobidException("An exception occured while running Grobid.", e);
         }
     }
-
 
 }

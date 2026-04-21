@@ -1,10 +1,10 @@
 package org.grobid.core.data.util;
 
-import org.grobid.core.data.Person;
-import org.grobid.core.utilities.TextUtilities;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.grobid.core.data.Person;
+import org.grobid.core.utilities.TextUtilities;
 
 public class ClassicAuthorEmailAssigner implements AuthorEmailAssigner {
 
@@ -28,7 +28,8 @@ public class ClassicAuthorEmailAssigner implements AuthorEmailAssigner {
                         for (Person aut : fullAuthors) {
                             Integer kk = k;
                             if (!winners.contains(kk)) {
-                                List<String> emailVariants = TextUtilities.generateEmailVariants(aut.getFirstName(), aut.getLastName());
+                                List<String> emailVariants = TextUtilities
+                                        .generateEmailVariants(aut.getFirstName(), aut.getLastName());
 
                                 for (String variant : emailVariants) {
                                     variant = variant.toLowerCase();

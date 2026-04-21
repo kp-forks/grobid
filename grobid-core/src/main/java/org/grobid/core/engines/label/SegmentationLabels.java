@@ -2,7 +2,7 @@ package org.grobid.core.engines.label;
 
 import org.grobid.core.GrobidModels;
 
-public class SegmentationLabels extends TaggingLabels{
+public class SegmentationLabels extends TaggingLabels {
     /**
      * cover page <cover>,
      * document header <header>,
@@ -13,11 +13,11 @@ public class SegmentationLabels extends TaggingLabels{
      * bibliographical section <references>,
      * page number <page>,
      * annexes <annex>,
-	 * acknowledgement <acknowledgement>,
-	 * availability <availability>,
-	 * funding <funding>,
+     * acknowledgement <acknowledgement>,
+     * availability <availability>,
+     * funding <funding>,
      * other <other>,
-	 * toc <toc> -> not yet used because not yet training data for this
+     * toc <toc> -> not yet used because not yet training data for this
      */
 
     public final static String COVER_LABEL = "<cover>";
@@ -45,11 +45,14 @@ public class SegmentationLabels extends TaggingLabels{
     public static final TaggingLabel PAGE_NUMBER = new TaggingLabelImpl(GrobidModels.SEGMENTATION, PAGE_NUMBER_LABEL);
     public static final TaggingLabel ANNEX = new TaggingLabelImpl(GrobidModels.SEGMENTATION, ANNEX_LABEL);
     public static final TaggingLabel REFERENCES = new TaggingLabelImpl(GrobidModels.SEGMENTATION, REFERENCES_LABEL);
-    public static final TaggingLabel ACKNOWLEDGEMENT = new TaggingLabelImpl(GrobidModels.SEGMENTATION, ACKNOWLEDGEMENT_LABEL);
+    public static final TaggingLabel ACKNOWLEDGEMENT = new TaggingLabelImpl(GrobidModels.SEGMENTATION,
+            ACKNOWLEDGEMENT_LABEL);
 
     public static final TaggingLabel AVAILABILITY = new TaggingLabelImpl(GrobidModels.SEGMENTATION, AVAILABILITY_LABEL);
-    public static final TaggingLabel CONFLICT_OF_INTEREST = new TaggingLabelImpl(GrobidModels.SEGMENTATION, CONFLICT_OF_INTEREST_LABEL);
-    public static final TaggingLabel AUTHOR_CONTRIBUTION = new TaggingLabelImpl(GrobidModels.SEGMENTATION, AUTHOR_CONTRIBUTION_LABEL);
+    public static final TaggingLabel CONFLICT_OF_INTEREST = new TaggingLabelImpl(GrobidModels.SEGMENTATION,
+            CONFLICT_OF_INTEREST_LABEL);
+    public static final TaggingLabel AUTHOR_CONTRIBUTION = new TaggingLabelImpl(GrobidModels.SEGMENTATION,
+            AUTHOR_CONTRIBUTION_LABEL);
     public static final TaggingLabel FUNDING = new TaggingLabelImpl(GrobidModels.SEGMENTATION, FUNDING_LABEL);
     public static final TaggingLabel TOC = new TaggingLabelImpl(GrobidModels.SEGMENTATION, TOC_LABEL);
 

@@ -1,15 +1,16 @@
 package org.grobid.trainer.evaluation;
 
-import org.grobid.trainer.evaluation.utilities.FieldSpecification;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import org.grobid.trainer.evaluation.utilities.FieldSpecification;
 
 public class EndToEndEvaluationTest {
 

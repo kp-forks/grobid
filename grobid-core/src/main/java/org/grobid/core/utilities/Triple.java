@@ -59,8 +59,10 @@ public class Triple<A, B, C> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Triple)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Triple))
+            return false;
         Triple<?, ?, ?> that = (Triple<?, ?, ?>) o;
         return new EqualsBuilder()
                 .append(a, that.a)
@@ -69,16 +71,16 @@ public class Triple<A, B, C> {
                 .isEquals();
     }
 
-	public A getA() {
-		return a;
-	}
+    public A getA() {
+        return a;
+    }
 
-	public B getB() {
-		return b;
-	}
-	
-	public C getC() {
-		return c;
-	}
+    public B getB() {
+        return b;
+    }
+
+    public C getC() {
+        return c;
+    }
 
 }

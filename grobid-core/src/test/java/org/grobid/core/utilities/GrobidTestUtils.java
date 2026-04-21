@@ -1,12 +1,12 @@
 package org.grobid.core.utilities;
 
-import org.apache.commons.lang3.tuple.Triple;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertThat;
+import org.apache.commons.lang3.tuple.Triple;
 
 public class GrobidTestUtils {
 
@@ -21,7 +21,10 @@ public class GrobidTestUtils {
      * @param labels label maps. A list of Triples, containing label (left), start_index (middle) and end_index exclusive (right)
      * @return a string containing the resulting features + labels returned by wapiti
      */
-    public static String getWapitiResult(List<String> features, List<Triple<String, Integer, Integer>> labels, String separator) {
+    public static String getWapitiResult(
+            List<String> features,
+            List<Triple<String, Integer, Integer>> labels,
+            String separator) {
 
         List<String> labeled = new ArrayList<>();
         int idx = 0;

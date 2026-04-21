@@ -1,8 +1,5 @@
 package org.grobid.trainer;
 
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.utilities.GrobidProperties;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +8,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
+import org.grobid.core.utilities.GrobidProperties;
+
 /**
  * Training application for training a target model.
  *
@@ -18,7 +19,8 @@ import java.util.List;
 public class TrainerRunner {
 
     private static final List<String> models = new ArrayList<>(TrainerRegistry.getModelNames());
-    private static final List<String> options = Arrays.asList("0 - train", "1 - evaluate", "2 - split, train and evaluate", "3 - n-fold evaluation");
+    private static final List<String> options = Arrays
+            .asList("0 - train", "1 - evaluate", "2 - split, train and evaluate", "3 - n-fold evaluation");
 
     private enum RunType {
         TRAIN, EVAL, SPLIT, EVAL_N_FOLD;
@@ -39,8 +41,13 @@ public class TrainerRunner {
     }
 
     public static void main(String[] args) {
-        String usage = "Usage: {" + String.join(
-            ", ", options) + "} {" + String.join(", ", models) + "} -gH /path/to/Grobid/home -s { [0.0 - 1.0] - split ratio, optional} -n {[int, num folds for n-fold evaluation, optional]} -epsilon {double, Wapiti epsilon, optional} -w {int, Wapiti window, optional} -maxIter {int, Wapiti max iterations, optional} -modelPath {path, custom output model file, optional}";
+        String usage = "Usage: {"
+                + String.join(
+                        ", ",
+                        options)
+                + "} {"
+                + String.join(", ", models)
+                + "} -gH /path/to/Grobid/home -s { [0.0 - 1.0] - split ratio, optional} -n {[int, num folds for n-fold evaluation, optional]} -epsilon {double, Wapiti epsilon, optional} -w {int, Wapiti window, optional} -maxIter {int, Wapiti max iterations, optional} -modelPath {path, custom output model file, optional}";
         if (args.length < 4) {
             throw new IllegalStateException(usage);
         }
@@ -135,10 +142,18 @@ public class TrainerRunner {
 
         if (path2GbdHome == null) {
             throw new IllegalStateException(
-                "Grobid-home path not found.\n Usage: {" + String.join(", ", options) + "} {" + String.join(", ", models) + "} -gH /path/to/Grobid/home -s { [0.0 - 1.0] - split ratio, optional} -n {[int, num folds for n-fold evaluation, optional]} -epsilon {double, Wapiti epsilon, optional} -w {int, Wapiti window, optional} -maxIter {int, Wapiti max iterations, optional} -modelPath {path, custom output model file, optional}");
+                    "Grobid-home path not found.\n Usage: {"
+                            + String.join(", ", options)
+                            + "} {"
+                            + String.join(", ", models)
+                            + "} -gH /path/to/Grobid/home -s { [0.0 - 1.0] - split ratio, optional} -n {[int, num folds for n-fold evaluation, optional]} -epsilon {double, Wapiti epsilon, optional} -w {int, Wapiti window, optional} -maxIter {int, Wapiti max iterations, optional} -modelPath {path, custom output model file, optional}");
         }
 
-        final String path2GbdProperties = path2GbdHome + File.separator + "config" + File.separator + "grobid.properties";
+        final String path2GbdProperties = path2GbdHome
+                + File.separator
+                + "config"
+                + File.separator
+                + "grobid.properties";
 
         System.out.println("path2GbdHome=" + path2GbdHome + "   path2GbdProperties=" + path2GbdProperties);
         initProcess(path2GbdHome, path2GbdProperties);
@@ -159,17 +174,17 @@ public class TrainerRunner {
         }
 
         switch (mode) {
-            case TRAIN:
+            case TRAIN :
                 AbstractTrainer.runTraining(trainer, incremental);
                 break;
-            case EVAL:
+            case EVAL :
                 System.out.println(AbstractTrainer.runEvaluation(trainer));
                 break;
-            case SPLIT:
+            case SPLIT :
                 System.out.println(AbstractTrainer.runSplitTrainingEvaluation(trainer, split, incremental));
                 break;
-            case EVAL_N_FOLD:
-                if(numFolds == 0) {
+            case EVAL_N_FOLD :
+                if (numFolds == 0) {
                     throw new IllegalArgumentException("N should be > 0");
                 }
                 if (StringUtils.isNotEmpty(outputFilePath)) {
@@ -182,7 +197,7 @@ public class TrainerRunner {
                     System.out.println(results);
                 }
                 break;
-            default:
+            default :
                 throw new IllegalStateException("Invalid RunType: " + mode.name());
         }
         System.exit(0);

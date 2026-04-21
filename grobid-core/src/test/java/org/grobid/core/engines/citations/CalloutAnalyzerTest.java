@@ -1,23 +1,16 @@
 package org.grobid.core.engines.citations;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
-
-import org.grobid.core.engines.citations.CalloutAnalyzer.MarkerType;
-import org.grobid.core.analyzers.GrobidDefaultAnalyzer;
-import org.grobid.core.layout.LayoutToken;
+import static org.junit.Assert.assertThat;
 
 import java.util.List;
+
+import org.junit.Test;
+
+import org.grobid.core.analyzers.GrobidDefaultAnalyzer;
+import org.grobid.core.engines.citations.CalloutAnalyzer.MarkerType;
+import org.grobid.core.layout.LayoutToken;
 
 public class CalloutAnalyzerTest {
 

@@ -69,5 +69,5 @@ public class ChemicalEntity {
         return buffer.toString();
     }
 
-	// TODO: CML encoding
+    // TODO: CML encoding
 }

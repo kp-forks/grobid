@@ -1,16 +1,16 @@
 package org.grobid.core.engines;
 
-import org.grobid.core.engines.entities.ChemicalParser;
-import org.grobid.core.engines.patent.ReferenceExtractor;
-import org.grobid.core.GrobidModels.Flavor;
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.EnumMap;
+import org.grobid.core.GrobidModels.Flavor;
+import org.grobid.core.engines.entities.ChemicalParser;
+import org.grobid.core.engines.patent.ReferenceExtractor;
 
 public class EngineParsers implements Closeable {
     public static final Logger LOGGER = LoggerFactory.getLogger(EngineParsers.class);
@@ -18,7 +18,7 @@ public class EngineParsers implements Closeable {
     private AuthorParser authorParser = null;
     private AffiliationAddressParser affiliationAddressParser = null;
     private HeaderParser headerParser = null;
-    private Map<Flavor,HeaderParser> headerParsers = null;
+    private Map<Flavor, HeaderParser> headerParsers = null;
     private DateParser dateParser = null;
     private CitationParser citationParser = null;
     private FullTextParser fullTextParser = null;
@@ -26,8 +26,8 @@ public class EngineParsers implements Closeable {
     private ReferenceExtractor referenceExtractor = null;
     private ChemicalParser chemicalParser = null;
     private Segmentation segmentationParser = null;
-    private Map<Flavor,Segmentation> segmentationParsers = null;
-    private Map<Flavor,FullTextParser> fullTextParsers = null;
+    private Map<Flavor, Segmentation> segmentationParsers = null;
+    private Map<Flavor, FullTextParser> fullTextParsers = null;
     private ReferenceSegmenterParser referenceSegmenterParser = null;
     private FigureParser figureParser = null;
     private TableParser tableParser = null;
@@ -106,7 +106,6 @@ public class EngineParsers implements Closeable {
         return citationParser;
     }
 
-
     public FullTextParser getFullTextParser(Flavor flavor) {
         if (flavor == null) {
             if (fullTextParser == null) {
@@ -117,7 +116,8 @@ public class EngineParsers implements Closeable {
                 }
             }
             return fullTextParser;
-        } {
+        }
+        {
             synchronized (this) {
                 if (fullTextParsers == null || fullTextParsers.get(flavor) == null) {
                     FullTextParser localFulltextParser = new FullTextParser(this, flavor);
@@ -168,7 +168,8 @@ public class EngineParsers implements Closeable {
                 }
             }
             return segmentationParser;
-        } {
+        }
+        {
             synchronized (this) {
                 if (segmentationParsers == null || segmentationParsers.get(flavor) == null) {
                     Segmentation localSegmentationParser = new Segmentation(flavor);
@@ -256,7 +257,7 @@ public class EngineParsers implements Closeable {
             }
         }
         return fundingAcknowledgementParser;
-    } 
+    }
 
     /**
      * Init all model, this will also load the model into memory.

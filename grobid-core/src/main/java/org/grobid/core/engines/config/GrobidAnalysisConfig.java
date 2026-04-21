@@ -25,9 +25,9 @@ import org.grobid.core.analyzers.Analyzer;
  * generateIDs if true, generate random attribute id on the textual elements of
  * the resulting TEI
  * generateTeiCoordinates give the list of TEI elements for which the coordinates
- * of the corresponding element in the original PDF should be included in the 
+ * of the corresponding element in the original PDF should be included in the
  * resulting TEI
- * analyzer in case a particular Grobid Analyzer to be used for 
+ * analyzer in case a particular Grobid Analyzer to be used for
  * tokenizing/filtering text
  */
 public class GrobidAnalysisConfig {
@@ -91,7 +91,7 @@ public class GrobidAnalysisConfig {
     // a particular Grobid Analyzer to be used for tokenizing/filtering text
     private Analyzer analyzer = null;
 
-    // if true, the TEI text will be segmented into sentences 
+    // if true, the TEI text will be segmented into sentences
     private boolean withSentenceSegmentation = false;
 
     public boolean isIncludeDiscardedText() {
@@ -215,7 +215,6 @@ public class GrobidAnalysisConfig {
             return this;
         }
 
-
         public GrobidAnalysisConfig build() {
             postProcessAndValidate();
             return config;
@@ -227,7 +226,8 @@ public class GrobidAnalysisConfig {
             }
 
             if (config.generateImageReferences && config.getPdfAssetPath() == null) {
-                throw new InvalidGrobidAnalysisConfig("Generating image references is switched on, but no pdf asset path is provided");
+                throw new InvalidGrobidAnalysisConfig(
+                        "Generating image references is switched on, but no pdf asset path is provided");
             }
         }
 
@@ -304,7 +304,7 @@ public class GrobidAnalysisConfig {
     }
 
     public boolean isGenerateTeiCoordinates() {
-        return getGenerateTeiCoordinates() != null && getGenerateTeiCoordinates().size()>0;
+        return getGenerateTeiCoordinates() != null && getGenerateTeiCoordinates().size() > 0;
     }
 
     public boolean isGenerateTeiCoordinates(String type) {

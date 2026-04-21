@@ -1,14 +1,15 @@
 package org.grobid.core.utilities;
 
-import org.grobid.core.exceptions.GrobidPropertyException;
-import org.grobid.core.main.GrobidHomeFinder;
-import org.junit.Test;
-import org.junit.After;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Collections;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.After;
+import org.junit.Test;
+
+import org.grobid.core.exceptions.GrobidPropertyException;
+import org.grobid.core.main.GrobidHomeFinder;
 
 /**
  * Testing location of grobid home

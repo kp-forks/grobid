@@ -1,12 +1,12 @@
 package org.grobid.core.engines.tagging;
 
-import com.google.common.base.Joiner;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.jni.WapitiModel;
-
 import java.io.File;
 import java.io.IOException;
+
+import com.google.common.base.Joiner;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.jni.WapitiModel;
 
 public class WapitiTagger implements GenericTagger {
 

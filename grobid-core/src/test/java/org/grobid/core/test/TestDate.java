@@ -1,20 +1,19 @@
 package org.grobid.core.test;
 
-import org.grobid.core.data.Date;
-import org.grobid.core.factory.GrobidFactory;
-import org.grobid.core.main.LibraryLoader;
-import org.grobid.core.utilities.GrobidProperties;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+
+import java.util.List;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import org.grobid.core.data.Date;
+import org.grobid.core.factory.GrobidFactory;
+import org.grobid.core.utilities.GrobidProperties;
 
 public class TestDate extends EngineTest {
 
@@ -24,7 +23,7 @@ public class TestDate extends EngineTest {
     }
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         GrobidFactory.reset();
     }
 

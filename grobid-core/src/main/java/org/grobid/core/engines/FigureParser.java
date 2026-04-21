@@ -1,5 +1,13 @@
 package org.grobid.core.engines;
 
+import static org.grobid.core.engines.label.TaggingLabels.*;
+
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.grobid.core.GrobidModels;
 import org.grobid.core.data.Figure;
 import org.grobid.core.engines.label.TaggingLabel;
@@ -10,14 +18,6 @@ import org.grobid.core.tokenization.TaggingTokenCluster;
 import org.grobid.core.tokenization.TaggingTokenClusteror;
 import org.grobid.core.utilities.LayoutTokensUtil;
 import org.grobid.core.utilities.TextUtilities;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
-
-import static org.grobid.core.engines.label.TaggingLabels.*;
 
 class FigureParser extends AbstractParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(FigureParser.class);
@@ -47,10 +47,10 @@ class FigureParser extends AbstractParser {
     private Figure getExtractionResult(List<LayoutToken> tokenizations, String result) {
         TaggingTokenClusteror clusteror = new TaggingTokenClusteror(GrobidModels.FIGURE, result, tokenizations);
         List<TaggingTokenCluster> clusters = clusteror.cluster();
-        
+
         Figure figure = new Figure();
         figure.setLayoutTokens(tokenizations);
-        
+
         for (TaggingTokenCluster cluster : clusters) {
             if (cluster == null) {
                 continue;
@@ -83,8 +83,10 @@ class FigureParser extends AbstractParser {
     /**
      * The training data creation is called from the full text training creation in cascade.
      */
-    public Pair<String, String> createTrainingData(List<LayoutToken> tokenizations,
-                                                                             String featureVector, String id) {
+    public Pair<String, String> createTrainingData(
+            List<LayoutToken> tokenizations,
+            String featureVector,
+            String id) {
         //System.out.println(tokenizations.toString() + "\n" );
         String res = null;
         try {
@@ -137,11 +139,11 @@ class FigureParser extends AbstractParser {
                         // we check one ahead
                         tokPtr++;
                         tokenizationToken = tokenizations.get(tokPtr).getText();
-                        if (!tok.equals(tokenizationToken) && (tokenizations.size() > tokPtr+1)) {
+                        if (!tok.equals(tokenizationToken) && (tokenizations.size() > tokPtr + 1)) {
                             // we try another position forward (second hope!)
                             tokPtr++;
                             tokenizationToken = tokenizations.get(tokPtr).getText();
-                            if (!tok.equals(tokenizationToken) && (tokenizations.size() > tokPtr+1)) {
+                            if (!tok.equals(tokenizationToken) && (tokenizations.size() > tokPtr + 1)) {
                                 // we try another position forward (last hope!)
                                 tokPtr++;
                                 tokenizationToken = tokenizations.get(tokPtr).getText();
@@ -149,8 +151,14 @@ class FigureParser extends AbstractParser {
                                     // we return to the initial position
                                     tokPtr = tokPtr - 3;
                                     tokenizationToken = tokenizations.get(tokPtr).getText();
-                                    LOGGER.error("Implementation error, tokens out of sync: " +
-                                            tokenizationToken + " != " + tok + ", at position " + tokPtr);
+                                    LOGGER.error(
+                                            "Implementation error, tokens out of sync: "
+                                                    +
+                                                    tokenizationToken
+                                                    + " != "
+                                                    + tok
+                                                    + ", at position "
+                                                    + tokPtr);
                                 }
                             }
                         }
@@ -221,59 +229,66 @@ class FigureParser extends AbstractParser {
     }
 
     public String getTEIHeader(String id) {
-        return "<tei>\n" +
-                "    <teiHeader>\n" +
-                "        <fileDesc xml:id=\"_" + id + "\"/>\n" +
-                "    </teiHeader>\n" +
+        return "<tei>\n"
+                +
+                "    <teiHeader>\n"
+                +
+                "        <fileDesc xml:id=\"_"
+                + id
+                + "\"/>\n"
+                +
+                "    </teiHeader>\n"
+                +
                 "    <text xml:lang=\"en\">\n";
     }
 
-    private boolean testClosingTag(StringBuilder buffer,
-                                   String currentTag,
-                                   String lastTag,
-                                   boolean addSpace,
-                                   boolean addEOL) {
+    private boolean testClosingTag(
+            StringBuilder buffer,
+            String currentTag,
+            String lastTag,
+            boolean addSpace,
+            boolean addEOL) {
         boolean res = false;
         if (!currentTag.equals(lastTag)) {
             res = true;
             // we close the current tag
             switch (lastTag) {
-                case "<other>":
+                case "<other>" :
                     if (addEOL)
                         buffer.append("<lb/>");
                     if (addSpace)
                         buffer.append(" ");
                     buffer.append("\n");
                     break;
-                case "<figure_head>":
+                case "<figure_head>" :
                     if (addEOL)
                         buffer.append("<lb/>");
                     if (addSpace)
                         buffer.append(" ");
                     buffer.append("</head>\n");
                     break;
-                case "<figDesc>":
+                case "<figDesc>" :
                     if (addEOL)
                         buffer.append("<lb/>");
                     if (addSpace)
                         buffer.append(" ");
                     buffer.append("</figDesc>\n");
                     break;
-                case "<label>":
+                case "<label>" :
                     if (addEOL)
                         buffer.append("<lb/>");
                     if (addSpace)
                         buffer.append(" ");
                     buffer.append("</label>\n");
                     break;
-                case "<content>":
+                case "<content>" :
                     if (addEOL)
                         buffer.append("<lb/>");
                     if (addSpace)
                         buffer.append(" ");
                     buffer.append("</content>\n");
                     break;
-                default:
+                default :
                     res = false;
                     break;
             }
@@ -281,14 +296,15 @@ class FigureParser extends AbstractParser {
         return res;
     }
 
-    private String writeField(String currentTag,
-                              String lastTag,
-                              String token,
-                              String field,
-                              String outField,
-                              boolean addSpace,
-                              boolean addEOL,
-                              int nbIndent) {
+    private String writeField(
+            String currentTag,
+            String lastTag,
+            String token,
+            String field,
+            String outField,
+            boolean addSpace,
+            boolean addEOL,
+            int nbIndent) {
         String result = null;
         if (currentTag.endsWith(field)) {
             if (currentTag.endsWith("<other>") || currentTag.endsWith("<content>")) {

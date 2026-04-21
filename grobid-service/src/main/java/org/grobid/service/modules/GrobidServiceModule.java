@@ -2,12 +2,10 @@ package org.grobid.service.modules;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-
 import jakarta.ws.rs.client.Client;
 import jakarta.ws.rs.client.ClientBuilder;
+import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 
 import org.grobid.service.GrobidRestService;
 import org.grobid.service.GrobidServiceConfiguration;
@@ -20,8 +18,6 @@ import org.grobid.service.process.GrobidRestProcessGeneric;
 import org.grobid.service.process.GrobidRestProcessString;
 import org.grobid.service.process.GrobidRestProcessTraining;
 import org.grobid.service.resources.HealthResource;
-
-import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 
 public class GrobidServiceModule extends DropwizardAwareModule<GrobidServiceConfiguration> {
 

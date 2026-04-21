@@ -1,14 +1,13 @@
 package org.grobid.core.test;
 
-import org.grobid.core.data.BibDataSet;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import org.grobid.core.data.BibDataSet;
 
 public class TestReferencesParser extends EngineTest {
 

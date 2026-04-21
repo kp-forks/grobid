@@ -142,12 +142,12 @@ public class Date implements Comparable<Date> {
 
     public boolean isNotNull() {
         return (rawDate != null) ||
-            (dayString != null) ||
-            (monthString != null) ||
-            (yearString != null) ||
-            (day != -1) ||
-            (month != -1) ||
-            (year != -1);
+                (dayString != null) ||
+                (monthString != null) ||
+                (yearString != null) ||
+                (day != -1) ||
+                (month != -1) ||
+                (year != -1);
     }
 
     public boolean isAmbiguous() {
@@ -244,7 +244,7 @@ public class Date implements Comparable<Date> {
     }
 
     public String toTEI() {
-		// TEI uses ISO 8601 for date encoding
+        // TEI uses ISO 8601 for date encoding
         String theDate = "<date when=\"";
         if (year != -1) {
             theDate += year;
@@ -256,12 +256,11 @@ public class Date implements Comparable<Date> {
             theDate += "-" + day;
         }
 
-		if (rawDate != null) {
-        	theDate += "\">"+TextUtilities.HTMLEncode(rawDate)+"</date>";
-		}
-		else {
-			theDate += "\" />";
-		}
+        if (rawDate != null) {
+            theDate += "\">" + TextUtilities.HTMLEncode(rawDate) + "</date>";
+        } else {
+            theDate += "\" />";
+        }
 
         return theDate;
     }

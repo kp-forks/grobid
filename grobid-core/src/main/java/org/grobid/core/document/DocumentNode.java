@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.grobid.core.layout.BoundingBox;
 
 /**
@@ -137,7 +138,16 @@ public class DocumentNode {
 
     public String toString(int tab) {
         StringBuilder sb = new StringBuilder();
-        sb.append(id).append(" ").append(address).append(" ").append(label).append(" ").append(startToken).append(" ").append(endToken).append("\n");
+        sb.append(id)
+                .append(" ")
+                .append(address)
+                .append(" ")
+                .append(label)
+                .append(" ")
+                .append(startToken)
+                .append(" ")
+                .append(endToken)
+                .append("\n");
 
         if (children != null) {
             for (DocumentNode node : children) {
@@ -177,7 +187,6 @@ public class DocumentNode {
         }
     }
 
-
     /*public DocumentNode nextSlibing() {
          if ( (children != null) && (children.size() > 0) ) {
              return children.get(0);
@@ -199,4 +208,3 @@ public class DocumentNode {
         this.id = id;
     }
 }
-

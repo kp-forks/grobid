@@ -2,15 +2,15 @@ package org.grobid.service.process;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.grobid.core.engines.tagging.TaggerFactory;
-import org.grobid.service.GrobidRestService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 import jakarta.ws.rs.core.UriInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.engines.tagging.TaggerFactory;
+import org.grobid.service.GrobidRestService;
 
 @Singleton
 public class GrobidRestProcessGeneric {
@@ -48,12 +48,16 @@ public class GrobidRestProcessGeneric {
 
         LOGGER.debug("called getDescription_html()...");
 
-        String htmlCode = "<h4>grobid-service documentation</h4>" +
-                "This service provides a RESTful interface for using the grobid system. grobid extracts data from pdf files. For more information see: " +
+        String htmlCode = "<h4>grobid-service documentation</h4>"
+                +
+                "This service provides a RESTful interface for using the grobid system. grobid extracts data from pdf files. For more information see: "
+                +
                 "<a href=\"http://grobid.readthedocs.org/\">http://grobid.readthedocs.org/</a>";
 
-        response = Response.status(Status.OK).entity(htmlCode)
-                .type(MediaType.TEXT_HTML).build();
+        response = Response.status(Status.OK)
+                .entity(htmlCode)
+                .type(MediaType.TEXT_HTML)
+                .build();
 
         return response;
     }

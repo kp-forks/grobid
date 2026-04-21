@@ -1,5 +1,11 @@
 package org.grobid.core.utilities.matching;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Joiner;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -7,13 +13,8 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.util.Version;
-import org.grobid.core.utilities.Pair;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
+import org.grobid.core.utilities.Pair;
 
 public class LuceneUtil {
 
@@ -36,7 +37,6 @@ public class LuceneUtil {
         return Joiner.on(' ').join(tokens);
     }
 
-
     /**
      * Convert a Reader to a List of Tokens.
      *
@@ -45,8 +45,9 @@ public class LuceneUtil {
      * @return a List of tokens
      * @throws java.io.IOException lucene exceptions
      */
-    private static List<String> readerToTokens(final Analyzer analyzer,
-                                               final Reader reader) throws IOException {
+    private static List<String> readerToTokens(
+            final Analyzer analyzer,
+            final Reader reader) throws IOException {
 
         final List<String> coll = new ArrayList<String>();
         final TokenStream ts = analyzer.tokenStream("", reader);

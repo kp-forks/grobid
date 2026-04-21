@@ -1,12 +1,13 @@
 package org.grobid.core.data;
 
-import org.grobid.core.data.util.EmailSanitizer;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import org.grobid.core.data.util.EmailSanitizer;
 
 public class EmailSanitizerTest {
     EmailSanitizer sanitizer = new EmailSanitizer();
@@ -17,12 +18,11 @@ public class EmailSanitizerTest {
         a(l("abc@gmail.com", "z.jang@gmail.com"), "abc/z.jang@gmail.com");
     }
 
-
-    private void a(String expected, String actual)  {
+    private void a(String expected, String actual) {
         assertEquals(l(expected), sanitizer.splitAndClean(l(actual)));
     }
 
-    private void a(List<String> expected, String actual)  {
+    private void a(List<String> expected, String actual) {
         assertEquals(expected, sanitizer.splitAndClean(l(actual)));
     }
 

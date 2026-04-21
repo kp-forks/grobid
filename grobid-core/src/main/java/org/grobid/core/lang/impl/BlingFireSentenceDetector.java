@@ -1,16 +1,15 @@
 package org.grobid.core.lang.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.lfoppiano.blingfire.BlingFire;
-
-import org.grobid.core.lang.SentenceDetector;
-import org.grobid.core.lang.Language;
-import org.grobid.core.utilities.OffsetPosition;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.grobid.core.lang.Language;
+import org.grobid.core.lang.SentenceDetector;
+import org.grobid.core.utilities.OffsetPosition;
 
 /**
  * Implementation of sentence segmentation via Microsoft BlingFire.

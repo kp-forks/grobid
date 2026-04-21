@@ -1,54 +1,52 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModels;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.trainer.sax.TEIFulltextSaxParser;
+import java.io.*;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
 
+import org.grobid.core.GrobidModels;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.trainer.sax.TEIFulltextSaxParser;
 
 /**
  * Trainer class for the short text model, e.g. for abstracts
  *
  */
-public class ShorttextTrainer extends AbstractTrainer{
+public class ShorttextTrainer extends AbstractTrainer {
 
     public ShorttextTrainer() {
         super(GrobidModels.SHORTTEXT);
     }
-
 
     @Override
     public int createCRFPPData(File corpusPath, File outputFile) {
         return addFeaturesShorttext(corpusPath.getAbsolutePath() + "/tei", corpusPath + "/shorttexts", outputFile);
     }
 
-	/**
-	 * Add the selected features to a full text example set 
-	 * 
-	 * @param corpusDir
-	 *            a path where corpus files are located
-	 * @param trainingOutputPath
-	 *            path where to store the temporary training data
-	 * @param evalOutputPath
-	 *            path where to store the temporary evaluation data
-	 * @param splitRatio
-	 *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80% 
-	 * @return the total number of used corpus items 
-	 */
-	@Override
-	public int createCRFPPData(final File corpusDir, 
-							final File trainingOutputPath, 
-							final File evalOutputPath, 
-							double splitRatio) {
-		return 0;						
-	}
+    /**
+     * Add the selected features to a full text example set
+     *
+     * @param corpusDir
+     *            a path where corpus files are located
+     * @param trainingOutputPath
+     *            path where to store the temporary training data
+     * @param evalOutputPath
+     *            path where to store the temporary evaluation data
+     * @param splitRatio
+     *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
+     * @return the total number of used corpus items
+     */
+    @Override
+    public int createCRFPPData(
+            final File corpusDir,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
+        return 0;
+    }
 
     /**
      * Add the selected features to the author model training for short texts
@@ -57,9 +55,10 @@ public class ShorttextTrainer extends AbstractTrainer{
      * @param outputPath output train file
      * @return number of examples
      */
-    public int addFeaturesShorttext(String sourceTEIPathLabel,
-                                   String sourceShorttextsPathLabel,
-                                   File outputPath) {
+    public int addFeaturesShorttext(
+            String sourceTEIPathLabel,
+            String sourceShorttextsPathLabel,
+            File outputPath) {
         int totalExamples = 0;
         try {
             System.out.println("sourceTEIPathLabel: " + sourceTEIPathLabel);
@@ -92,7 +91,7 @@ public class ShorttextTrainer extends AbstractTrainer{
                 String name = tf.getName();
                 System.out.println(name);
 
-				// the full text SAX parser covers also the short texts
+                // the full text SAX parser covers also the short texts
                 TEIFulltextSaxParser parser2 = new TEIFulltextSaxParser();
 
                 //get a new instance of parser
@@ -106,8 +105,9 @@ public class ShorttextTrainer extends AbstractTrainer{
                 int q = 0;
                 BufferedReader bis = new BufferedReader(
                         new InputStreamReader(new FileInputStream(
-                                sourceShorttextsPathLabel + File.separator + 
-								name.replace(".tei.xml", "")), "UTF8"));
+                                sourceShorttextsPathLabel + File.separator +
+                                        name.replace(".tei.xml", "")),
+                                "UTF8"));
 
                 StringBuilder shorttext = new StringBuilder();
 
@@ -127,8 +127,8 @@ public class ShorttextTrainer extends AbstractTrainer{
                             if (localToken.equals(token)) {
                                 String tag = st.nextToken();
                                 shorttext.append(line).append(" ").append(tag);
-//                                lastTag = tag;
-//                                found = true;
+                                //                                lastTag = tag;
+                                //                                found = true;
                                 q = pp + 1;
                                 pp = q + 10;
                             }
@@ -156,9 +156,9 @@ public class ShorttextTrainer extends AbstractTrainer{
      * Command line execution.
      *
      * @param args Command line arguments.
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(String[] args) throws Exception {
         AbstractTrainer.trainAndEvaluate(ShorttextTrainer::new);
     }
-}	
+}

@@ -26,7 +26,7 @@ public class GraphicObject {
 
     // in case of vector image, we don't have a boundingBox from pdfalto, simply the page information
     private int page = -1;
-    
+
     public boolean used;
 
     public GraphicObject() {
@@ -46,7 +46,7 @@ public class GraphicObject {
     }
 
     /**
-     * Return an URI for the file corresponding to the graphic object, in practice a 
+     * Return an URI for the file corresponding to the graphic object, in practice a
      * portable relative path usable for data exchange
      */
     public String getURI() {
@@ -58,7 +58,7 @@ public class GraphicObject {
             //int ind2 = filePath.substring(0, ind-1).lastIndexOf("/");
             //if (ind2 != -1)
             //    return filePath.substring(ind2+1, filePath.length());
-            return filePath.substring(ind+1, filePath.length());
+            return filePath.substring(ind + 1, filePath.length());
         }
 
         return new File(filePath).getName();
@@ -103,35 +103,35 @@ public class GraphicObject {
     public double getX() {
         if (boundingBox != null)
             return boundingBox.getX();
-        else 
+        else
             return 0.0;
     }
 
     public double getY() {
         if (boundingBox != null)
             return boundingBox.getY();
-        else 
+        else
             return 0.0;
     }
 
     public double getWidth() {
         if (boundingBox != null)
             return boundingBox.getWidth();
-        else 
+        else
             return 0.0;
     }
 
     public double getHeight() {
         if (boundingBox != null)
             return boundingBox.getHeight();
-        else 
+        else
             return 0.0;
     }
 
     public int getPage() {
         if (boundingBox != null)
             return boundingBox.getPage();
-        else 
+        else
             return page;
     }
 

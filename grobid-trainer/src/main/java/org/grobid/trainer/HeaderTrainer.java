@@ -1,19 +1,19 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModels;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.trainer.sax.*;
-import org.grobid.core.GrobidModels.Flavor;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import java.io.*;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class HeaderTrainer extends AbstractTrainer{
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.grobid.core.GrobidModels;
+import org.grobid.core.GrobidModels.Flavor;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.utilities.UnicodeUtil;
+import org.grobid.trainer.sax.*;
+
+public class HeaderTrainer extends AbstractTrainer {
 
     private final GrobidModels.Flavor flavor;
 
@@ -30,38 +30,39 @@ public class HeaderTrainer extends AbstractTrainer{
     @Override
     public int createCRFPPData(File corpusPath, File trainingOutputPath) {
         return addFeaturesHeaders(
-            corpusPath.getAbsolutePath() + "/tei",
-            corpusPath.getAbsolutePath() + "/raw",
-            trainingOutputPath,
-            null,
-            1.0
-        );
+                corpusPath.getAbsolutePath() + "/tei",
+                corpusPath.getAbsolutePath() + "/raw",
+                trainingOutputPath,
+                null,
+                1.0);
     }
 
-	/**
-	 * Add the selected features to a header example set 
-	 * 
-	 * @param corpusDir
-	 *            a path where corpus files are located
-	 * @param trainingOutputPath
-	 *            path where to store the temporary training data
-	 * @param evalOutputPath
-	 *            path where to store the temporary evaluation data
-	 * @param splitRatio
-	 *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80% 
-	 * @return the total number of used corpus items 
-	 */
-	@Override
-	public int createCRFPPData(final File corpusDir, 
-							final File trainingOutputPath, 
-							final File evalOutputPath, 
-							double splitRatio) {
-		return addFeaturesHeaders(corpusDir.getAbsolutePath() + "/tei", 
-								corpusDir.getAbsolutePath() + "/raw", 
-								trainingOutputPath, 
-								evalOutputPath, 
-								splitRatio);	
-	}
+    /**
+     * Add the selected features to a header example set
+     *
+     * @param corpusDir
+     *            a path where corpus files are located
+     * @param trainingOutputPath
+     *            path where to store the temporary training data
+     * @param evalOutputPath
+     *            path where to store the temporary evaluation data
+     * @param splitRatio
+     *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
+     * @return the total number of used corpus items
+     */
+    @Override
+    public int createCRFPPData(
+            final File corpusDir,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
+        return addFeaturesHeaders(
+                corpusDir.getAbsolutePath() + "/tei",
+                corpusDir.getAbsolutePath() + "/raw",
+                trainingOutputPath,
+                evalOutputPath,
+                splitRatio);
+    }
 
     /**
      * Add the selected features to the header model training
@@ -70,23 +71,24 @@ public class HeaderTrainer extends AbstractTrainer{
      * @param trainingOutputPath output training file
      * @return number of corpus files
      */
-    public int addFeaturesHeaders(String sourceFile,
-                              	String headerPath,
-                               	final File trainingOutputPath,
-					  			final File evalOutputPath, 
-								double splitRatio) {
+    public int addFeaturesHeaders(
+            String sourceFile,
+            String headerPath,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
         System.out.println(sourceFile);
-        System.out.println(headerPath); 
+        System.out.println(headerPath);
         System.out.println(trainingOutputPath);
-		System.out.println(evalOutputPath);
-		
-		System.out.println("TEI files: " + sourceFile);
-		System.out.println("header info files: " + headerPath);
-		if (trainingOutputPath != null)
-			System.out.println("outputPath for training data: " + trainingOutputPath);
-		if (evalOutputPath != null)
-			System.out.println("outputPath for evaluation data: " + evalOutputPath);
-		
+        System.out.println(evalOutputPath);
+
+        System.out.println("TEI files: " + sourceFile);
+        System.out.println("header info files: " + headerPath);
+        if (trainingOutputPath != null)
+            System.out.println("outputPath for training data: " + trainingOutputPath);
+        if (evalOutputPath != null)
+            System.out.println("outputPath for evaluation data: " + evalOutputPath);
+
         int nbExamples = 0;
         try {
             File pathh = new File(sourceFile);
@@ -102,22 +104,22 @@ public class HeaderTrainer extends AbstractTrainer{
 
             nbExamples = refFiles.length;
             System.out.println(nbExamples + " tei files");
- 
-			// the file for writing the training data
-			OutputStream os2 = null;
-			Writer writer2 = null;
-			if (trainingOutputPath != null) {
-				os2 = new FileOutputStream(trainingOutputPath);
-				writer2 = new OutputStreamWriter(os2, "UTF8");
-			}
-		
-			// the file for writing the evaluation data
-			OutputStream os3 = null;
-			Writer writer3 = null;
-			if (evalOutputPath != null) {
-				os3 = new FileOutputStream(evalOutputPath);
-				writer3 = new OutputStreamWriter(os3, "UTF8");
-			}
+
+            // the file for writing the training data
+            OutputStream os2 = null;
+            Writer writer2 = null;
+            if (trainingOutputPath != null) {
+                os2 = new FileOutputStream(trainingOutputPath);
+                writer2 = new OutputStreamWriter(os2, "UTF8");
+            }
+
+            // the file for writing the evaluation data
+            OutputStream os3 = null;
+            Writer writer3 = null;
+            if (evalOutputPath != null) {
+                os3 = new FileOutputStream(evalOutputPath);
+                writer3 = new OutputStreamWriter(os3, "UTF8");
+            }
 
             for (File teifile : refFiles) {
                 String name = teifile.getName();
@@ -148,18 +150,18 @@ public class HeaderTrainer extends AbstractTrainer{
                     String localFileName = aRefFiles2.getName();
                     if (parser.getPDFName() != null) {
                         if (localFileName.equals(parser.getPDFName() + ".header") ||
-                            localFileName.equals(parser.getPDFName() + ".training.header")) {
+                                localFileName.equals(parser.getPDFName() + ".training.header")) {
                             headerFile = localFileName;
                             break;
                         }
                         if ((localFileName.startsWith(parser.getPDFName() + "._")) &&
-                                (localFileName.endsWith(".header") || localFileName.endsWith(".training.header") )) {
+                                (localFileName.endsWith(".header") || localFileName.endsWith(".training.header"))) {
                             headerFile = localFileName;
                             break;
                         }
-                    } 
+                    }
                     if (headerFile == null) {
-                        if (localFileName.equals(name.replace(".tei.xml", ""))) {                            
+                        if (localFileName.equals(name.replace(".tei.xml", ""))) {
                             headerFile = localFileName;
                         }
                     }
@@ -206,7 +208,7 @@ public class HeaderTrainer extends AbstractTrainer{
                                 pp = p + 10;
                             } /*else {
                                 System.out.println("feature:"+token + " / tei:" + localToken);
-                            }*/
+                              }*/
                         }
                         if (pp - p > 5) {
                             break;
@@ -264,7 +266,7 @@ public class HeaderTrainer extends AbstractTrainer{
                         }
                     }
 
-//                    previousPreviousLine = previousLine;
+                    //                    previousPreviousLine = previousLine;
                     previousLine = linee;
 
                     lastLastLabel = lastLabel;
@@ -275,32 +277,32 @@ public class HeaderTrainer extends AbstractTrainer{
                     header2.append(previousLine);
                     header2.append("\n");
                 }
- 
-				if ( (writer2 == null) && (writer3 != null) )
-					writer3.write(header2.toString() + "\n");
-				if ( (writer2 != null) && (writer3 == null) )
-					writer2.write(header2.toString() + "\n");
-				else {		
-					if (Math.random() <= splitRatio)
-						writer2.write(header2.toString() + "\n");
-					else 
-						writer3.write(header2.toString() + "\n");
-				}
+
+                if ((writer2 == null) && (writer3 != null))
+                    writer3.write(header2.toString() + "\n");
+                if ((writer2 != null) && (writer3 == null))
+                    writer2.write(header2.toString() + "\n");
+                else {
+                    if (Math.random() <= splitRatio)
+                        writer2.write(header2.toString() + "\n");
+                    else
+                        writer3.write(header2.toString() + "\n");
+                }
             }
 
             if (writer2 != null) {
-				writer2.close();
+                writer2.close();
                 if (os2 != null) {
                     os2.close();
                 }
-			}
+            }
 
-			if (writer3 != null) {
-				writer3.close();
+            if (writer3 != null) {
+                writer3.close();
                 if (os3 != null) {
                     os3.close();
                 }
-			}
+            }
 
         } catch (Exception e) {
             throw new GrobidException("An exception occured while running Grobid.", e);

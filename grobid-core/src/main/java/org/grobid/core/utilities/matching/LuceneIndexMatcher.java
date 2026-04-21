@@ -1,5 +1,13 @@
 package org.grobid.core.utilities.matching;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Function;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.ClassicAnalyzer;
@@ -18,14 +26,6 @@ import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class LuceneIndexMatcher<T, V> implements Closeable {
     private Analyzer analyzer = new ClassicAnalyzer(Version.LUCENE_45);
@@ -47,7 +47,6 @@ public class LuceneIndexMatcher<T, V> implements Closeable {
         this.searchedFieldSelector = searchedFieldSelector;
     }
 
-
     public void load(Iterable<T> entities) throws EntityMatcherException {
         close();
 
@@ -66,9 +65,13 @@ public class LuceneIndexMatcher<T, V> implements Closeable {
                 }
 
                 cache.put(idCounter, entity);
-                doc.add(new Field(ID_LUCENE_FIELD_NAME, String.valueOf(idCounter), Field.Store.YES, Field.Index.NOT_ANALYZED));
+                doc.add(
+                        new Field(ID_LUCENE_FIELD_NAME, String.valueOf(idCounter), Field.Store.YES,
+                                Field.Index.NOT_ANALYZED));
 
-                doc.add(new Field(INDEXED_LUCENE_FIELD_NAME, indexedFieldObj.toString(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(
+                        new Field(INDEXED_LUCENE_FIELD_NAME, indexedFieldObj.toString(), Field.Store.YES,
+                                Field.Index.ANALYZED));
                 writer.addDocument(doc);
                 if (debug) {
                     System.out.println("Doc added: " + doc);
@@ -97,7 +100,6 @@ public class LuceneIndexMatcher<T, V> implements Closeable {
         }
     }
 
-
     public List<T> match(V entity) throws EntityMatcherException {
         try {
             Query query = createLuceneQuery(getSearchedObject(entity));
@@ -119,11 +121,11 @@ public class LuceneIndexMatcher<T, V> implements Closeable {
                 searcher.getIndexReader().close();
             } catch (IOException ignored) {
             }
-//            try {
-//
-//                searcher.close();
-//            } catch (IOException ignored) {
-//            }
+            //            try {
+            //
+            //                searcher.close();
+            //            } catch (IOException ignored) {
+            //            }
             throw new EntityMatcherException("Error searching lucene Index: " + e.getMessage(), e);
         }
     }
@@ -141,7 +143,7 @@ public class LuceneIndexMatcher<T, V> implements Closeable {
             return null;
         }
         BooleanQuery query = new BooleanQuery();
-//        final Term term = new Term(INDEXED_LUCENE_FIELD_NAME);
+        //        final Term term = new Term(INDEXED_LUCENE_FIELD_NAME);
         List<String> luceneTokens = LuceneUtil.tokenizeString(analyzer, indexedObj.toString());
 
         for (String luceneToken : luceneTokens) {

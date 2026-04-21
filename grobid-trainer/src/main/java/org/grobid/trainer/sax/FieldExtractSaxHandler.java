@@ -1,10 +1,10 @@
 package org.grobid.trainer.sax;
 
+import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import java.util.ArrayList;
 
 /**
  * Utility SAX parser which extracts all the text content under a given TEI tag name or
@@ -17,8 +17,8 @@ public class FieldExtractSaxHandler extends DefaultHandler {
     private StringBuffer accumulator = new StringBuffer(); // Accumulate parsed text
 
     private String field = null;
-	
-	private String xmlPath = null;
+
+    private String xmlPath = null;
 
     private ArrayList<String> values = null; // store the content values for each tag occurrence
 
@@ -46,9 +46,10 @@ public class FieldExtractSaxHandler extends DefaultHandler {
         return values;
     }
 
-    public void endElement(String uri,
-                           String localName,
-                           String qName) throws SAXException {
+    public void endElement(
+            String uri,
+            String localName,
+            String qName) throws SAXException {
         if (field != null) {
             if (qName.equals(field)) {
                 values.add(getText());
@@ -58,10 +59,11 @@ public class FieldExtractSaxHandler extends DefaultHandler {
 
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
         if (field != null) {
             if (qName.equals(field)) {

@@ -1,16 +1,16 @@
 package org.grobid.trainer.evaluation;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
+import java.nio.charset.StandardCharsets;
+import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.nio.charset.StandardCharsets;
-import java.util.TreeMap;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class ModelStatsTest {
 
@@ -21,7 +21,6 @@ public class ModelStatsTest {
         target = new ModelStats();
     }
 
-
     @Test
     public void test_empty() throws Exception {
         assertThat(target.getInstanceRecall(), is(0.0));
@@ -29,19 +28,19 @@ public class ModelStatsTest {
 
     @Test
     public void testInstantiation_realCase() throws Exception {
-        String result = IOUtils.toString(this.getClass().getResourceAsStream("/sample.wapiti.output.3.txt"), StandardCharsets.UTF_8);
+        String result = IOUtils
+                .toString(this.getClass().getResourceAsStream("/sample.wapiti.output.3.txt"), StandardCharsets.UTF_8);
 
         Pair<Integer, Integer> instanceStatistics = target.computeInstanceStatistics(result);
-
 
         assertThat(instanceStatistics.getRight(), is(1));
         assertThat(instanceStatistics.getLeft(), is(4));
     }
 
-
     @Test
     public void testTokenLevelStats3_realCase() throws Exception {
-        String result = IOUtils.toString(this.getClass().getResourceAsStream("/sample.wapiti.output.3.txt"), StandardCharsets.UTF_8);
+        String result = IOUtils
+                .toString(this.getClass().getResourceAsStream("/sample.wapiti.output.3.txt"), StandardCharsets.UTF_8);
 
         Stats fieldStats = target.fieldLevelStats(result);
 
@@ -53,7 +52,8 @@ public class ModelStatsTest {
 
     @Test
     public void testFieldLevelStats_realCase() throws Exception {
-        String result = IOUtils.toString(this.getClass().getResourceAsStream("/sample.wapiti.output.1.txt"), StandardCharsets.UTF_8);
+        String result = IOUtils
+                .toString(this.getClass().getResourceAsStream("/sample.wapiti.output.1.txt"), StandardCharsets.UTF_8);
 
         Stats fieldStats = target.fieldLevelStats(result);
         LabelStat labelstat1 = fieldStats.getLabelStat("<body>");

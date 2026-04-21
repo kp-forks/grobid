@@ -1,16 +1,16 @@
 package org.grobid.core.data;
 
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.OffsetPosition;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.utilities.LayoutTokensUtil;
-import org.grobid.core.utilities.KeyGen;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.KeyGen;
+import org.grobid.core.utilities.LayoutTokensUtil;
+import org.grobid.core.utilities.OffsetPosition;
+import org.grobid.core.utilities.TextUtilities;
 
 /**
  * Class for representing a funding/grant.
@@ -28,7 +28,7 @@ public class Funding {
     private String programAbbreviatedName = null;
     private List<LayoutToken> programAbbreviatedNameLayoutTokens = new ArrayList<>();
 
-    private String grantNumber  = null;
+    private String grantNumber = null;
     private List<LayoutToken> grantNumberLayoutTokens = new ArrayList<>();
 
     private String grantName = null;
@@ -197,13 +197,13 @@ public class Funding {
 
     public boolean isValid() {
         if (funder != null ||
-            grantNumber != null ||
-            grantName != null ||
-            projectFullName != null ||
-            projectAbbreviatedName != null ||
-            programFullName != null ||
-            programAbbreviatedName != null ||
-            url != null)
+                grantNumber != null ||
+                grantName != null ||
+                projectFullName != null ||
+                projectAbbreviatedName != null ||
+                programFullName != null ||
+                programAbbreviatedName != null ||
+                url != null)
             return true;
         else
             return false;
@@ -211,17 +211,16 @@ public class Funding {
 
     public boolean isNonEmptyFunding() {
         if (grantNumber != null ||
-            grantName != null ||
-            projectFullName != null ||
-            projectAbbreviatedName != null ||
-            programFullName != null ||
-            programAbbreviatedName != null ||
-            url != null)
+                grantName != null ||
+                projectFullName != null ||
+                projectAbbreviatedName != null ||
+                programFullName != null ||
+                programAbbreviatedName != null ||
+                url != null)
             return true;
         else
             return false;
     }
-
 
     /**
      * For the given funder instance, try to define the acronym, either as part of the current
@@ -233,7 +232,8 @@ public class Funding {
         //System.out.println(LayoutTokensUtil.toText(funder.getFullNameLayoutTokens()));
 
         // check if full name contains acronym
-        Pair<OffsetPosition, OffsetPosition> acronymCandidate = TextUtilities.fieldAcronymCandidate(funder.getFullNameLayoutTokens());
+        Pair<OffsetPosition, OffsetPosition> acronymCandidate = TextUtilities
+                .fieldAcronymCandidate(funder.getFullNameLayoutTokens());
         if (acronymCandidate != null) {
             OffsetPosition acronymPosition = acronymCandidate.getLeft();
             OffsetPosition basePosition = acronymCandidate.getRight();
@@ -244,18 +244,19 @@ public class Funding {
             // post validate acronym candidate: we need matching with base component
             // get first letter profile for the tokens
             StringBuilder profileBase = new StringBuilder();
-            for(LayoutToken token : funder.getFullNameLayoutTokens()) {
-                if (token.getText() == null || token.getText().length() ==0)
+            for (LayoutToken token : funder.getFullNameLayoutTokens()) {
+                if (token.getText() == null || token.getText().length() == 0)
                     continue;
                 profileBase.append(token.getText().charAt(0));
             }
-            String acronymString = LayoutTokensUtil.toText(funder.getFullNameLayoutTokens().subList(acronymPosition.start, acronymPosition.end));
+            String acronymString = LayoutTokensUtil
+                    .toText(funder.getFullNameLayoutTokens().subList(acronymPosition.start, acronymPosition.end));
             String profileBaseString = profileBase.toString();
             boolean validAcronym = true;
             int profilePosIndex = 0;
-            for (int i=0; i<acronymString.length(); i++) {
+            for (int i = 0; i < acronymString.length(); i++) {
                 char theChar = acronymString.charAt(i);
-                int posMatch = profileBaseString.indexOf(""+theChar, profilePosIndex);
+                int posMatch = profileBaseString.indexOf("" + theChar, profilePosIndex);
                 if (posMatch == -1) {
                     validAcronym = false;
                     break;
@@ -266,17 +267,21 @@ public class Funding {
 
             if (validAcronym) {
                 this.funder.setAbbreviatedName(acronymString);
-                this.funder.setAbbreviatedNameLayoutTokens(funder.getFullNameLayoutTokens().subList(acronymPosition.start, acronymPosition.end));
+                this.funder.setAbbreviatedNameLayoutTokens(
+                        funder.getFullNameLayoutTokens().subList(acronymPosition.start, acronymPosition.end));
 
-                this.funder.setFullName(LayoutTokensUtil.toText(funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end)));
-                this.funder.setFullNameLayoutTokens(funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end));
+                this.funder.setFullName(
+                        LayoutTokensUtil.toText(
+                                funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end)));
+                this.funder.setFullNameLayoutTokens(
+                        funder.getFullNameLayoutTokens().subList(basePosition.start, basePosition.end));
             }
         }
 
         // check the grant number prefix
         if (funder.getAbbreviatedName() == null && grantNumber != null) {
-            for (Map.Entry<String,String> entry : Funder.prefixFounders.entrySet()) {
-                if (grantNumber.startsWith(entry.getKey()+"-")) {
+            for (Map.Entry<String, String> entry : Funder.prefixFounders.entrySet()) {
+                if (grantNumber.startsWith(entry.getKey() + "-")) {
                     this.funder.setAbbreviatedName(entry.getKey());
                     this.funder.setAbbreviatedNameLayoutTokens(null);
                     this.funder.setFullName(entry.getValue());
@@ -288,7 +293,7 @@ public class Funding {
 
         // check if full name is an acronym
         if (funder.getAbbreviatedName() == null && funder.getFullName() != null) {
-            for (Map.Entry<String,String> entry : Funder.prefixFounders.entrySet()) {
+            for (Map.Entry<String, String> entry : Funder.prefixFounders.entrySet()) {
                 if (funder.getFullName().equals(entry.getKey())) {
                     this.funder.setAbbreviatedName(entry.getKey());
                     this.funder.setAbbreviatedNameLayoutTokens(this.funder.getFullNameLayoutTokens());
@@ -341,7 +346,7 @@ public class Funding {
             if (start)
                 json.append(",\n");
             json.append("\"grantNumber\": \"");
-            json.append(grantNumber+ "\"");
+            json.append(grantNumber + "\"");
             start = true;
         }
         // to be completed...
@@ -366,63 +371,75 @@ public class Funding {
             this.identifier = "_" + localId;
         }
 
-        for(int i=0; i<nbIndent; i++)
+        for (int i = 0; i < nbIndent; i++)
             tei.append("\t");
-        tei.append("<org type=\""+localType+"\" xml:id=\""+this.identifier+"\">\n");
+        tei.append("<org type=\"" + localType + "\" xml:id=\"" + this.identifier + "\">\n");
 
         if (grantNumber != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<idno type=\"grant-number\">"+TextUtilities.HTMLEncode(grantNumber)+"</idno>\n");
+            tei.append("<idno type=\"grant-number\">" + TextUtilities.HTMLEncode(grantNumber) + "</idno>\n");
         }
 
         if (grantName != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"grant-name\">"+TextUtilities.HTMLEncode(grantName)+"</orgName>\n");
+            tei.append("<orgName type=\"grant-name\">" + TextUtilities.HTMLEncode(grantName) + "</orgName>\n");
         }
 
         if (projectFullName != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"project\" subtype=\"full\">"+TextUtilities.HTMLEncode(projectFullName)+"</orgName>\n");
+            tei.append(
+                    "<orgName type=\"project\" subtype=\"full\">"
+                            + TextUtilities.HTMLEncode(projectFullName)
+                            + "</orgName>\n");
         }
         if (projectAbbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"project\" subtype=\"abbreviated\">"+TextUtilities.HTMLEncode(projectAbbreviatedName)+"</orgName>\n");
+            tei.append(
+                    "<orgName type=\"project\" subtype=\"abbreviated\">"
+                            + TextUtilities.HTMLEncode(projectAbbreviatedName)
+                            + "</orgName>\n");
         }
         if (programFullName != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"program\" subtype=\"full\">"+TextUtilities.HTMLEncode(programFullName)+"</orgName>\n");
+            tei.append(
+                    "<orgName type=\"program\" subtype=\"full\">"
+                            + TextUtilities.HTMLEncode(programFullName)
+                            + "</orgName>\n");
         }
         if (programAbbreviatedName != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
-            tei.append("<orgName type=\"program\" subtype=\"abbreviated\">"+TextUtilities.HTMLEncode(programAbbreviatedName)+"</orgName>\n");
+            tei.append(
+                    "<orgName type=\"program\" subtype=\"abbreviated\">"
+                            + TextUtilities.HTMLEncode(programAbbreviatedName)
+                            + "</orgName>\n");
         }
         if (url != null) {
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
             tei.append("<ptr target=\"").append(TextUtilities.HTMLEncode(url)).append("\" />\n");
         }
         if (start != null) {
             String dateString = start.toTEI();
             dateString = dateString.replace("<date ", "<date type=\"start\" ");
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
             tei.append(dateString);
         }
         if (end != null) {
             String dateString = end.toTEI();
             dateString = dateString.replace("<date ", "<date type=\"end\" ");
-            for(int i=0; i<nbIndent+1; i++)
+            for (int i = 0; i < nbIndent + 1; i++)
                 tei.append("\t");
             tei.append(dateString);
         }
 
-        for(int i=0; i<nbIndent; i++)
+        for (int i = 0; i < nbIndent; i++)
             tei.append("\t");
         tei.append("</org>\n");
 

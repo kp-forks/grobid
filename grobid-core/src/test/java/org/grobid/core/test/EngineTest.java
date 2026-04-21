@@ -1,9 +1,10 @@
 package org.grobid.core.test;
 
-import org.grobid.core.engines.Engine;
-import org.grobid.core.factory.GrobidFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import org.grobid.core.engines.Engine;
+import org.grobid.core.factory.GrobidFactory;
 
 public abstract class EngineTest {
     protected static Engine engine;

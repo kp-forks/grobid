@@ -1,8 +1,5 @@
 package org.grobid.core.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.grobid.core.utilities.TextUtilities;
 
 /**
@@ -13,14 +10,14 @@ public class Keyword {
     private String keyword = null;
     private String type = null;
 
- 	public Keyword(String key) {
- 		keyword = key;
- 	}
+    public Keyword(String key) {
+        keyword = key;
+    }
 
- 	public Keyword(String key, String typ) {
- 		keyword = key;
-		type = typ;
- 	}
+    public Keyword(String key, String typ) {
+        keyword = key;
+        type = typ;
+    }
 
     public String getKeyword() {
         return keyword;

@@ -1,16 +1,17 @@
 package org.grobid.core.engines.tagging;
 
-import org.grobid.core.GrobidModel;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.utilities.GrobidProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.GrobidModels;
+import org.grobid.core.utilities.GrobidProperties;
 
 /**
  * Factory for a sequence labelling, aka a tagger, instance.
@@ -23,7 +24,8 @@ public class TaggerFactory {
     private static Map<GrobidModel, GenericTagger> cache = new HashMap<>();
     private static Map<String, String> failedModels = new LinkedHashMap<>();
 
-    private TaggerFactory() {}
+    private TaggerFactory() {
+    }
 
     public static synchronized GenericTagger getTagger(GrobidModel model) {
         return getTagger(model, GrobidProperties.getGrobidEngine(model), GrobidProperties.getDelftArchitecture(model));
@@ -36,24 +38,25 @@ public class TaggerFactory {
     public static synchronized GenericTagger getTagger(GrobidModel model, GrobidCRFEngine engine, String architecture) {
         GenericTagger t = cache.get(model);
         if (t == null) {
-            if(model.equals(GrobidModels.DUMMY)) {
+            if (model.equals(GrobidModels.DUMMY)) {
                 return new DummyTagger(model);
             }
 
-            if(engine != null) {
+            if (engine != null) {
                 try {
                     switch (engine) {
-                        case CRFPP:
+                        case CRFPP :
                             t = new CRFPPTagger(model);
                             break;
-                        case WAPITI:
+                        case WAPITI :
                             t = new WapitiTagger(model);
                             break;
-                        case DELFT:
+                        case DELFT :
                             t = new DeLFTTagger(model, architecture);
                             break;
-                        default:
-                            throw new IllegalStateException("Unsupported Grobid sequence labelling engine: " + engine.getExt());
+                        default :
+                            throw new IllegalStateException(
+                                    "Unsupported Grobid sequence labelling engine: " + engine.getExt());
                     }
                     cache.put(model, t);
                 } catch (Exception e) {
@@ -63,7 +66,8 @@ public class TaggerFactory {
                     throw e;
                 }
             } else {
-                throw new IllegalStateException("Unsupported or null Grobid sequence labelling engine: " + engine.getExt());
+                throw new IllegalStateException(
+                        "Unsupported or null Grobid sequence labelling engine: " + engine.getExt());
             }
         }
         return t;
@@ -74,9 +78,10 @@ public class TaggerFactory {
      * Currently only supported for the Wapiti engine.
      */
     public static GenericTagger getTaggerFromPath(File modelFile, GrobidCRFEngine engine) {
-        if (engine == GrobidCRFEngine.WAPITI) return new WapitiTagger(modelFile);
+        if (engine == GrobidCRFEngine.WAPITI)
+            return new WapitiTagger(modelFile);
         throw new IllegalArgumentException(
-            "Custom model path is only supported for Wapiti engine, got: " + engine);
+                "Custom model path is only supported for Wapiti engine, got: " + engine);
     }
 
     /**

@@ -1,18 +1,19 @@
 package org.grobid.core.data;
 
-import nu.xom.Attribute;
-import nu.xom.Element;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.document.xml.XmlBuilderUtils;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.utilities.LayoutTokensUtil;
-import org.grobid.core.utilities.TextUtilities;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import nu.xom.Attribute;
+import nu.xom.Element;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.grobid.core.document.xml.XmlBuilderUtils;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.LayoutTokensUtil;
+import org.grobid.core.utilities.TextUtilities;
 
 /**
  * Class for representing and exchanging person information, e.g. author or editor.
@@ -61,11 +62,11 @@ public class Person {
     }
 
     public String getRawName() {
-         return rawName;
+        return rawName;
     }
 
     public void setRawName(String name) {
-         rawName = name;
+        rawName = name;
     }
 
     public String getTitle() {
@@ -75,11 +76,11 @@ public class Person {
     public void setTitle(String f) {
         if (f != null) {
             while (f.startsWith("(")) {
-                f = f.substring(1,f.length());
+                f = f.substring(1, f.length());
             }
 
             while (f.endsWith(")")) {
-                f = f.substring(0,f.length()-1);
+                f = f.substring(0, f.length() - 1);
             }
         }
 
@@ -169,7 +170,7 @@ public class Person {
     public void addMarker(String f) {
         if (markers == null)
             markers = new ArrayList<String>();
-		f = f.replace(" ", "");
+        f = f.replace(" ", "");
         markers.add(f);
     }
 
@@ -185,8 +186,7 @@ public class Person {
         if ((firstName == null) &&
                 (middleName == null) &&
                 (lastName == null) &&
-                (title == null)
-                )
+                (title == null))
             return false;
         else
             return true;
@@ -197,7 +197,7 @@ public class Person {
      */
     public Person clonePerson() {
         Person person = new Person();
-        person.firstName = this.firstName ;
+        person.firstName = this.firstName;
         person.middleName = this.middleName;
         person.lastName = this.lastName;
         person.title = this.title;
@@ -271,8 +271,8 @@ public class Person {
     }
 
     public String toTEI(boolean withCoordinates) {
-        if ( (firstName == null) && (middleName == null) &&
-                (lastName == null) ) {
+        if ((firstName == null) && (middleName == null) &&
+                (lastName == null)) {
             return null;
         }
 
@@ -309,7 +309,7 @@ public class Person {
      * the formatting.
      */
     public String toTEI(boolean withCoordinates, int indent) {
-        if ( (firstName == null) && (middleName == null) && (lastName == null) ) {
+        if ((firstName == null) && (middleName == null) && (lastName == null)) {
             return null;
         }
 
@@ -326,38 +326,38 @@ public class Person {
         tei.append(">\n");
 
         if (!StringUtils.isEmpty(title)) {
-            for (int i = 0; i < indent+1; i++) {
+            for (int i = 0; i < indent + 1; i++) {
                 tei.append("\t");
             }
-            tei.append("<roleName>"+TextUtilities.HTMLEncode(title)+"</roleName>\n");
+            tei.append("<roleName>" + TextUtilities.HTMLEncode(title) + "</roleName>\n");
         }
 
         if (!StringUtils.isEmpty(firstName)) {
-            for (int i = 0; i < indent+1; i++) {
+            for (int i = 0; i < indent + 1; i++) {
                 tei.append("\t");
             }
-            tei.append("<forename type=\"first\">"+TextUtilities.HTMLEncode(firstName)+"</forename>\n");
+            tei.append("<forename type=\"first\">" + TextUtilities.HTMLEncode(firstName) + "</forename>\n");
         }
 
         if (!StringUtils.isEmpty(middleName)) {
-            for (int i = 0; i < indent+1; i++) {
+            for (int i = 0; i < indent + 1; i++) {
                 tei.append("\t");
             }
-            tei.append("<forename type=\"middle\">"+TextUtilities.HTMLEncode(middleName)+"</forename>\n");
+            tei.append("<forename type=\"middle\">" + TextUtilities.HTMLEncode(middleName) + "</forename>\n");
         }
 
         if (!StringUtils.isEmpty(lastName)) {
-            for (int i = 0; i < indent+1; i++) {
+            for (int i = 0; i < indent + 1; i++) {
                 tei.append("\t");
             }
-            tei.append("<surname>"+TextUtilities.HTMLEncode(lastName)+"</surname>\n");
+            tei.append("<surname>" + TextUtilities.HTMLEncode(lastName) + "</surname>\n");
         }
 
         if (!StringUtils.isEmpty(suffix)) {
-            for (int i = 0; i < indent+1; i++) {
+            for (int i = 0; i < indent + 1; i++) {
                 tei.append("\t");
             }
-            tei.append("<genName>"+TextUtilities.HTMLEncode(suffix)+"</genName>\n");
+            tei.append("<genName>" + TextUtilities.HTMLEncode(suffix) + "</genName>\n");
         }
 
         for (int i = 0; i < indent; i++) {
@@ -369,10 +369,10 @@ public class Person {
     }
 
     // list of character delimiters for capitalising names
- 	private static final String NAME_DELIMITERS = "-.,;:/_ ";
+    private static final String NAME_DELIMITERS = "-.,;:/_ ";
 
     /*static public String normalizeName(String inputName) {
-		return TextUtilities.capitalizeFully(inputName, NAME_DELIMITERS);
+    	return TextUtilities.capitalizeFully(inputName, NAME_DELIMITERS);
     }*/
 
     /**
@@ -383,9 +383,9 @@ public class Person {
      */
     public void normalizeName() {
         if (StringUtils.isEmpty(middleName) && !StringUtils.isEmpty(firstName) &&
-            (firstName.length() == 2) && (TextUtilities.isAllUpperCase(firstName)) ) {
-            middleName = firstName.substring(1,2);
-            firstName = firstName.substring(0,1);
+                (firstName.length() == 2) && (TextUtilities.isAllUpperCase(firstName))) {
+            middleName = firstName.substring(1, 2);
+            firstName = firstName.substring(0, 1);
         }
 
         firstName = TextUtilities.capitalizeFully(firstName, NAME_DELIMITERS);
@@ -433,19 +433,19 @@ public class Person {
 
         // check first the specific case "Zs. Biró" - given the we've never observed three
         // letters first name like "Zsv. Biró"
-        if ( firstName.endsWith(".") && (firstName.length() == 3) &&
-            Character.isUpperCase(firstName.charAt(0)) && Character.isLowerCase(firstName.charAt(1)) ) {
-            middleName = firstName.substring(1,2);
-            firstName = firstName.substring(0,1);
+        if (firstName.endsWith(".") && (firstName.length() == 3) &&
+                Character.isUpperCase(firstName.charAt(0)) && Character.isLowerCase(firstName.charAt(1))) {
+            middleName = firstName.substring(1, 2);
+            firstName = firstName.substring(0, 1);
         }
 
         // check the specific case of composed forenames which are often but not always lost
         // ex: "J.-L. Arsuag"
-        if ( (firstName.indexOf("-") != -1) ) {
+        if ((firstName.indexOf("-") != -1)) {
             String tokens[] = firstName.replace(" ", "").split("-");
             if (tokens.length == 2) {
                 if (tokens[0].endsWith(".") && (tokens[0].length() == 2))
-                    first = ""+tokens[0].charAt(0);
+                    first = "" + tokens[0].charAt(0);
                 else if (tokens[0].length() == 1)
                     first = tokens[0];
                 if (tokens[1].endsWith(".") && (tokens[1].length() == 2))
@@ -455,7 +455,7 @@ public class Person {
             }
         } else {
             String tokens[] = firstName.split(" ");
-            for(int i=tokens.length-1; i>=0; i--) {
+            for (int i = tokens.length - 1; i >= 0; i--) {
                 if (i != 0) {
                     if (first != null) {
                         if (tokens[i].endsWith(".") && (tokens[i].length() == 2)) {
@@ -465,24 +465,24 @@ public class Person {
                             // multiple token first name
                             first = tokens[i] + " " + first;
                         }
-                    } else if ( (tokens[i].endsWith(".") && (tokens[i].length() == 2)) ||
-                        (tokens[i].length() == 1) ) {
+                    } else if ((tokens[i].endsWith(".") && (tokens[i].length() == 2)) ||
+                            (tokens[i].length() == 1)) {
                         // we have an initials in secondary position, this is a middle name
                         if (middle == null)
-                            middle = ""+tokens[i].charAt(0);
+                            middle = "" + tokens[i].charAt(0);
                         else
-                           middle = tokens[i].charAt(0) + " " + middle;
+                            middle = tokens[i].charAt(0) + " " + middle;
                     } else {
                         if (middle == null)
                             middle = tokens[i];
                         else
-                           middle = tokens[i] + " " + middle;
+                            middle = tokens[i] + " " + middle;
                     }
                 } else {
                     // we check if we have an initial at the beginning (case "G. Arjen")
                     if (tokens[i].endsWith(".") && (tokens[i].length() == 2)) {
                         if (first == null)
-                            first = ""+tokens[i].charAt(0);
+                            first = "" + tokens[i].charAt(0);
                         else
                             first = tokens[i] + " " + first;
                     } else {
@@ -501,23 +501,22 @@ public class Person {
             middleName = middle;
 
         // dirty case <forename type="first">HermanHG</forename><surname>Teerink</surname>
-        if ( (firstName != null) && (middleName == null) && (firstName.length()>2) &&
-             Character.isUpperCase(firstName.charAt(firstName.length()-1)) &&
-             Character.isLowerCase(firstName.charAt(1)) ) {
-            int i = firstName.length()-1;
-            while(i>1) {
+        if ((firstName != null) && (middleName == null) && (firstName.length() > 2) &&
+                Character.isUpperCase(firstName.charAt(firstName.length() - 1)) &&
+                Character.isLowerCase(firstName.charAt(1))) {
+            int i = firstName.length() - 1;
+            while (i > 1) {
                 if (Character.isUpperCase(firstName.charAt(i))) {
                     if (middleName == null)
-                        middleName = ""+firstName.charAt(i);
+                        middleName = "" + firstName.charAt(i);
                     else
                         middleName = firstName.charAt(i) + " " + middleName;
                 } else
                     break;
                 i--;
             }
-            firstName = firstName.substring(0, i+1);
+            firstName = firstName.substring(0, i + 1);
         }
-
 
         // for cases like JM Smith and for case normalisation
         normalizeName();
@@ -534,17 +533,16 @@ public class Person {
         // e.g. H Von Allmen, J De
     }
 
-	/**
-	 *  Return true if the person structure is a valid person name, in our case
-	 *  with at least a lastname or a raw name.
-	 */
-	public boolean isValid() {
-		if ( (lastName == null) && (rawName == null) )
-			return false;
-		else
-			return true;
-	}
-
+    /**
+     *  Return true if the person structure is a valid person name, in our case
+     *  with at least a lastname or a raw name.
+     */
+    public boolean isValid() {
+        if ((lastName == null) && (rawName == null))
+            return false;
+        else
+            return true;
+    }
 
     /**
      *  Deduplicate person names, optionally attached to affiliations, based
@@ -557,16 +555,16 @@ public class Person {
             return persons;
 
         // we create a signature per person based on lastname and first name first letter
-        Map<String,List<Person>> signatures = new TreeMap<String,List<Person>>();
+        Map<String, List<Person>> signatures = new TreeMap<String, List<Person>>();
 
-        for(Person person : persons) {
+        for (Person person : persons) {
             if (person.getLastName() == null || person.getLastName().trim().length() == 0) {
                 // the minimal information to deduplicate is not available
                 continue;
             }
             String signature = person.getLastName().toLowerCase();
             if (person.getFirstName() != null && person.getFirstName().trim().length() != 0) {
-                signature += "_" + person.getFirstName().substring(0,1);
+                signature += "_" + person.getFirstName().substring(0, 1);
             }
             List<Person> localPersons = signatures.get(signature);
             if (localPersons == null) {
@@ -577,13 +575,13 @@ public class Person {
         }
 
         // match signature and check possible affiliation information
-        for (Map.Entry<String,List<Person>> entry : signatures.entrySet()) {
+        for (Map.Entry<String, List<Person>> entry : signatures.entrySet()) {
             List<Person> localPersons = entry.getValue();
             if (localPersons.size() > 1) {
                 // candidate for deduplication, check full forenames and middlenames to check if there is a clash
                 List<Person> newLocalPersons = new ArrayList<Person>();
-                for(int j=0; j < localPersons.size(); j++) {
-                    Person localPerson =  localPersons.get(j);
+                for (int j = 0; j < localPersons.size(); j++) {
+                    Person localPerson = localPersons.get(j);
                     String localFirstName = localPerson.getFirstName();
                     if (localFirstName != null) {
                         localFirstName = localFirstName.toLowerCase();
@@ -595,7 +593,7 @@ public class Person {
                         localMiddleName = localMiddleName.replaceAll("[\\-\\.]", "");
                     }
                     int nbClash = 0;
-                    for(int k=0; k < localPersons.size(); k++) {
+                    for (int k = 0; k < localPersons.size(); k++) {
                         boolean clash = false;
                         if (k == j)
                             continue;
@@ -619,9 +617,8 @@ public class Person {
                                 }
                             } else {
                                 if (!localFirstName.equals(otherFirstName) &&
-                                    !localFirstName.startsWith(otherFirstName) &&
-                                    !otherFirstName.startsWith(localFirstName)
-                                    ) {
+                                        !localFirstName.startsWith(otherFirstName) &&
+                                        !otherFirstName.startsWith(localFirstName)) {
                                     clash = true;
                                 }
                             }
@@ -636,11 +633,10 @@ public class Person {
                                     }
                                 } else {
                                     if (!localMiddleName.equals(otherMiddleName) &&
-                                        !localMiddleName.startsWith(otherMiddleName) &&
-                                        !otherMiddleName.startsWith(localMiddleName)
-                                    ) {
-                                    clash = true;
-                                }
+                                            !localMiddleName.startsWith(otherMiddleName) &&
+                                            !otherMiddleName.startsWith(localMiddleName)) {
+                                        clash = true;
+                                    }
                                 }
                             }
                         }
@@ -661,7 +657,7 @@ public class Person {
                 if (localPersons.size() > 1) {
                     // if identified duplication, keep the most complete person form and the most complete
                     // affiliation information
-                    Person localPerson =  localPersons.get(0);
+                    Person localPerson = localPersons.get(0);
                     String localFirstName = localPerson.getFirstName();
                     if (localFirstName != null)
                         localFirstName = localFirstName.toLowerCase();
@@ -675,7 +671,7 @@ public class Person {
                     if (localSuffix != null)
                         localSuffix = localSuffix.toLowerCase();
                     List<Affiliation> aff = localPerson.getAffiliations();
-                    for (int i=1; i<localPersons.size(); i++) {
+                    for (int i = 1; i < localPersons.size(); i++) {
                         Person otherPerson = localPersons.get(i);
                         // try to enrich first Person object
                         String otherFirstName = otherPerson.getFirstName();
@@ -692,29 +688,29 @@ public class Person {
                             otherSuffix = otherSuffix.toLowerCase();
 
                         if ((localFirstName == null && otherFirstName != null) ||
-                            (localFirstName != null && otherFirstName != null &&
-                            otherFirstName.length() > localFirstName.length())) {
+                                (localFirstName != null && otherFirstName != null &&
+                                        otherFirstName.length() > localFirstName.length())) {
                             localPerson.setFirstName(otherPerson.getFirstName());
                             localFirstName = localPerson.getFirstName().toLowerCase();
                         }
 
                         if ((localMiddleName == null && otherMiddleName != null) ||
-                            (localMiddleName != null && otherMiddleName != null &&
-                            otherMiddleName.length() > localMiddleName.length())) {
+                                (localMiddleName != null && otherMiddleName != null &&
+                                        otherMiddleName.length() > localMiddleName.length())) {
                             localPerson.setMiddleName(otherPerson.getMiddleName());
                             localMiddleName = localPerson.getMiddleName().toLowerCase();
                         }
 
                         if ((localTitle == null && otherTitle != null) ||
-                            (localTitle != null && otherTitle != null &&
-                            otherTitle.length() > localTitle.length())) {
+                                (localTitle != null && otherTitle != null &&
+                                        otherTitle.length() > localTitle.length())) {
                             localPerson.setTitle(otherPerson.getTitle());
                             localTitle = localPerson.getTitle().toLowerCase();
                         }
 
                         if ((localSuffix == null && otherSuffix != null) ||
-                            (localSuffix != null && otherSuffix != null &&
-                            otherSuffix.length() > localSuffix.length())) {
+                                (localSuffix != null && otherSuffix != null &&
+                                        otherSuffix.length() > localSuffix.length())) {
                             localPerson.setSuffix(otherPerson.getSuffix());
                             localSuffix = localPerson.getSuffix().toLowerCase();
                         }
@@ -724,19 +720,19 @@ public class Person {
                             localPerson.setORCID(otherOrcid);
 
                         if (otherPerson.getAffiliations() != null) {
-                            for(Affiliation affOther : otherPerson.getAffiliations()) {
+                            for (Affiliation affOther : otherPerson.getAffiliations()) {
                                 localPerson.addAffiliation(affOther);
                             }
                         }
 
                         if (otherPerson.getAffiliationBlocks() != null) {
-                            for(String block : otherPerson.getAffiliationBlocks()) {
+                            for (String block : otherPerson.getAffiliationBlocks()) {
                                 localPerson.addAffiliationBlocks(block);
                             }
                         }
 
                         if (otherPerson.getMarkers() != null) {
-                            for(String marker : otherPerson.getMarkers()) {
+                            for (String marker : otherPerson.getMarkers()) {
                                 if (localPerson.getMarkers() == null || !localPerson.getMarkers().contains(marker))
                                     localPerson.addMarker(marker);
                             }
@@ -755,7 +751,6 @@ public class Person {
         return persons;
     }
 
-
     /**
      *  Remove invalid/impossible person names (no last names, noise, etc.)
      */
@@ -770,7 +765,7 @@ public class Person {
 
         List<Person> result = new ArrayList<>();
 
-        for(Person person : persons) {
+        for (Person person : persons) {
             if (StringUtils.isNotBlank(person.getLastName())) {
                 result.add(person);
             }

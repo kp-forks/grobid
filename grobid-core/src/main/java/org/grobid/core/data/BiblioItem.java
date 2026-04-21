@@ -1,29 +1,6 @@
 package org.grobid.core.data;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.apache.commons.collections4.CollectionUtils;
-
-import org.grobid.core.data.util.AuthorEmailAssigner;
-import org.grobid.core.data.util.ClassicAuthorEmailAssigner;
-import org.grobid.core.data.util.EmailSanitizer;
-import org.grobid.core.document.*;
-import org.grobid.core.engines.config.GrobidAnalysisConfig;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.lang.Language;
-import org.grobid.core.layout.BoundingBox;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.tokenization.TaggingTokenCluster;
-import org.grobid.core.tokenization.TaggingTokenClusteror;
-import org.grobid.core.engines.label.TaggingLabel;
-import org.grobid.core.lexicon.Lexicon;
-import org.grobid.core.utilities.LanguageUtilities;
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.KeyGen;
-import org.grobid.core.utilities.LayoutTokensUtil;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.engines.label.TaggingLabels;
+import static org.grobid.core.utilities.Consolidation.CONSOLIDATION_STATUS_EXTRACTED;
 
 import java.net.URLEncoder;
 import java.util.*;
@@ -31,10 +8,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.grobid.core.utilities.Consolidation.CONSOLIDATION_STATUS_EXTRACTED;
+import org.grobid.core.GrobidModels;
+import org.grobid.core.data.util.AuthorEmailAssigner;
+import org.grobid.core.data.util.ClassicAuthorEmailAssigner;
+import org.grobid.core.data.util.EmailSanitizer;
+import org.grobid.core.document.*;
+import org.grobid.core.engines.config.GrobidAnalysisConfig;
+import org.grobid.core.engines.label.TaggingLabel;
+import org.grobid.core.engines.label.TaggingLabels;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.lang.Language;
+import org.grobid.core.layout.BoundingBox;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.lexicon.Lexicon;
+import org.grobid.core.tokenization.TaggingTokenCluster;
+import org.grobid.core.tokenization.TaggingTokenClusteror;
+import org.grobid.core.utilities.KeyGen;
+import org.grobid.core.utilities.LanguageUtilities;
+import org.grobid.core.utilities.LayoutTokensUtil;
+import org.grobid.core.utilities.TextUtilities;
 
 /**
  * Class for representing and exchanging a bibliographical item.
@@ -269,12 +268,37 @@ public class BiblioItem {
     private List<String> discardedPieces = new ArrayList<>();
     private List<List<LayoutToken>> discardedPiecesTokens = new ArrayList<>();
 
-    public static final List<String> confPrefixes = Arrays.asList("Proceedings of", "proceedings of",
-            "In Proceedings of the", "In: Proceeding of", "In Proceedings, ", "In Proceedings of",
-            "In Proceeding of", "in Proceeding of", "in Proceeding", "In Proceeding", "Proceedings",
-            "proceedings", "In Proc", "in Proc", "In Proc.", "in Proc.", "In proc.", "in proc", "in proc.",
-            "In proc", "Proc", "proc", "Proc.", "proc.", "Acte de la", "Acte de", "Acte", "acte de la",
-            "acte de", "acte");
+    public static final List<String> confPrefixes = Arrays.asList(
+            "Proceedings of",
+            "proceedings of",
+            "In Proceedings of the",
+            "In: Proceeding of",
+            "In Proceedings, ",
+            "In Proceedings of",
+            "In Proceeding of",
+            "in Proceeding of",
+            "in Proceeding",
+            "In Proceeding",
+            "Proceedings",
+            "proceedings",
+            "In Proc",
+            "in Proc",
+            "In Proc.",
+            "in Proc.",
+            "In proc.",
+            "in proc",
+            "in proc.",
+            "In proc",
+            "Proc",
+            "proc",
+            "Proc.",
+            "proc.",
+            "Acte de la",
+            "Acte de",
+            "Acte",
+            "acte de la",
+            "acte de",
+            "acte");
 
     public BiblioItem() {
     }
@@ -813,7 +837,7 @@ public class BiblioItem {
     }
 
     public void mergeNormalizedPublicationDate(Date theDate) {
-        this.normalized_publication_date = Date.merge(this.normalized_publication_date , theDate);
+        this.normalized_publication_date = Date.merge(this.normalized_publication_date, theDate);
     }
 
     public void setEditors(String theEditors) {
@@ -934,14 +958,14 @@ public class BiblioItem {
         // 367-74.DOI:10.1080/14034940210165064
         // (pages concatenated to the DOI) - easy/safe to fix
         if (StringUtils.containsIgnoreCase(doi, "doi:10.")) {
-            doi = doi.substring(StringUtils.indexOfIgnoreCase(doi, "doi:10.")+4);
+            doi = doi.substring(StringUtils.indexOfIgnoreCase(doi, "doi:10.") + 4);
         }
 
         // for DOI coming from PDF links, we have some prefix cleaning to make
         if (doi.startsWith("file://") || doi.startsWith("https://") || doi.startsWith("http://")) {
             int ind = doi.indexOf("/10.");
             if (ind != -1)
-                doi = doi.substring(ind+1);
+                doi = doi.substring(ind + 1);
         }
 
         doi = doi.trim();
@@ -958,7 +982,7 @@ public class BiblioItem {
             doi = doi.substring(1);
 
         if (doi.endsWith(")") || doi.endsWith("]") || doi.endsWith("⟩"))
-            doi = doi.substring(0,doi.length()-1);
+            doi = doi.substring(0, doi.length() - 1);
 
         return doi;
     }
@@ -1074,7 +1098,7 @@ public class BiblioItem {
         if (fullAffiliations != null) {
             for (Affiliation affiliation : fullAffiliations) {
                 if (affiliation.getKey() == null) {
-                    affiliation.setKey("aff"+num);
+                    affiliation.setKey("aff" + num);
                 }
                 num++;
             }
@@ -1214,14 +1238,14 @@ public class BiblioItem {
     public void addKeyword(String k) {
         if (keywords == null)
             keywords = new ArrayList<>();
-		String theKey = cleanKeywords(k);
-		if (theKey.toLowerCase().contains("introduction")) {
-			// if the keyword contains introduction, this is normally a segmentation error
-			theKey = null;
-		}
-		if (theKey != null) {
-        	keywords.add(new Keyword(theKey));
-		}
+        String theKey = cleanKeywords(k);
+        if (theKey.toLowerCase().contains("introduction")) {
+            // if the keyword contains introduction, this is normally a segmentation error
+            theKey = null;
+        }
+        if (theKey != null) {
+            keywords.add(new Keyword(theKey));
+        }
     }
 
     public void setKeywords(List<Keyword> k) {
@@ -1681,7 +1705,7 @@ public class BiblioItem {
             return tokens;
 
         int n = 0;
-        while(n < tokens.size()) {
+        while (n < tokens.size()) {
             String tokenString = StringUtils.normalizeSpace(tokens.get(n).getText().toLowerCase());
             if (tokenString.length() == 0 || TextUtilities.delimiters.contains(tokenString)) {
                 n++;
@@ -1759,37 +1783,35 @@ public class BiblioItem {
             return null;
         if (string.length() == 0)
             return null;
-		String type = null;
+        String type = null;
         if (string.startsWith("Categories and Subject Descriptors")) {
             type = "subject-headers";
-			string = string.replace("Categories and Subject Descriptors", "").trim();
-        }
-		else if (string.startsWith("PACS Numbers") || string.startsWith("PACS") ) {
+            string = string.replace("Categories and Subject Descriptors", "").trim();
+        } else if (string.startsWith("PACS Numbers") || string.startsWith("PACS")) {
             type = "pacs";
             string = string.replace("PACS Numbers", "").replace("PACS", "").trim();
-			if (string.startsWith(":")) {
-	            string = string.substring(1);
-			}
+            if (string.startsWith(":")) {
+                string = string.substring(1);
+            }
+        } else {
+            type = "author";
         }
-		else {
-			type = "author";
-		}
 
-		List<Keyword> result = new ArrayList<Keyword>();
-		// the list of possible keyword separators
-		List<String> separators = Arrays.asList(";","■", "•", "ㆍ", "Á", "\n", ",", ".", ":", "/", "|");
+        List<Keyword> result = new ArrayList<Keyword>();
+        // the list of possible keyword separators
+        List<String> separators = Arrays.asList(";", "■", "•", "ㆍ", "Á", "\n", ",", ".", ":", "/", "|");
         List<String> separatorsSecondary = Arrays.asList("•", "■");
-		for(String separator : separators) {
-	        StringTokenizer st = new StringTokenizer(string, separator);
-	        if (st.countTokens() > 2) {
-	            while (st.hasMoreTokens()) {
-					String res = st.nextToken().trim();
-					if (res.startsWith(":")) {
-			            res = res.substring(1);
-			        }
+        for (String separator : separators) {
+            StringTokenizer st = new StringTokenizer(string, separator);
+            if (st.countTokens() > 2) {
+                while (st.hasMoreTokens()) {
+                    String res = st.nextToken().trim();
+                    if (res.startsWith(":")) {
+                        res = res.substring(1);
+                    }
                     boolean noSecondary = true;
-					res = res.replace("\n", " ").replaceAll("( )+", " ");
-                    for(String separatorSecondary : separatorsSecondary) {
+                    res = res.replace("\n", " ").replaceAll("( )+", " ");
+                    for (String separatorSecondary : separatorsSecondary) {
                         StringTokenizer st2 = new StringTokenizer(res, separatorSecondary);
                         if (st2.countTokens() > 1) {
                             while (st2.hasMoreTokens()) {
@@ -1802,16 +1824,16 @@ public class BiblioItem {
                         }
                     }
                     if (noSecondary) {
-    					Keyword keyw = new Keyword(res, type);
-	       				result.add(keyw);
+                        Keyword keyw = new Keyword(res, type);
+                        result.add(keyw);
                     }
-	            }
-				break;
-	        }
-		}
+                }
+                break;
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
     /**
      * Format initials by appending a dot to single-letter tokens.
@@ -1916,8 +1938,8 @@ public class BiblioItem {
      * Export to BibTeX format using an auto-generated key.
      */
     public String toBibTeX() {
-		return toBibTeX(generateBibTeXKey());
-	}
+        return toBibTeX(generateBibTeXKey());
+    }
 
     /**
      * Export to BibTeX format
@@ -1941,11 +1963,12 @@ public class BiblioItem {
             type = "techreport";
         } else if (bookTitle != null) {
             if (StringUtils.containsIgnoreCase(bookTitle, "proceedings") ||
-                (bookTitle.startsWith("proc")) || (bookTitle.startsWith("Proc")) ||
-                (bookTitle.startsWith("In Proc")) || (bookTitle.startsWith("In proc"))) {
+                    (bookTitle.startsWith("proc")) || (bookTitle.startsWith("Proc")) ||
+                    (bookTitle.startsWith("In Proc")) || (bookTitle.startsWith("In proc"))) {
                 type = "inproceedings";
             } else {
-                LOGGER.debug("No journal given, but a booktitle. However, the booktitle does not start with \"proc\" or similar strings. Returning inbook");
+                LOGGER.debug(
+                        "No journal given, but a booktitle. However, the booktitle does not start with \"proc\" or similar strings. Returning inbook");
                 type = "inbook";
             }
         } else {
@@ -1965,13 +1988,13 @@ public class BiblioItem {
                 StringJoiner authors = new StringJoiner(" and ", "  author = {", "}");
                 if (CollectionUtils.isNotEmpty(fullAuthors)) {
                     fullAuthors.stream()
-                       .filter(Objects::nonNull)
-                       .forEachOrdered(person -> {
-                           String author = formatPersonNameBibTeX(person);
-                           if (StringUtils.isNotBlank(author)) {
-                               authors.add(author);
-                           }
-                       });
+                            .filter(Objects::nonNull)
+                            .forEachOrdered(person -> {
+                                String author = formatPersonNameBibTeX(person);
+                                if (StringUtils.isNotBlank(author)) {
+                                    authors.add(author);
+                                }
+                            });
                 } else if (this.authors != null) {
                     StringTokenizer st = new StringTokenizer(this.authors, ";");
                     while (st.hasMoreTokens()) {
@@ -2013,10 +2036,10 @@ public class BiblioItem {
             boolean editorsAdded = false;
             if (CollectionUtils.isNotEmpty(fullEditors)) {
                 String editorStr = fullEditors.stream()
-                       .filter(Objects::nonNull)
-                       .map(BiblioItem::formatPersonNameBibTeX)
-                       .filter(StringUtils::isNotBlank)
-                       .collect(Collectors.joining(" and "));
+                        .filter(Objects::nonNull)
+                        .map(BiblioItem::formatPersonNameBibTeX)
+                        .filter(StringUtils::isNotBlank)
+                        .collect(Collectors.joining(" and "));
                 if (StringUtils.isNotBlank(editorStr)) {
                     bibtex.add("  editor = {" + editorStr + "}");
                     editorsAdded = true;
@@ -2058,15 +2081,15 @@ public class BiblioItem {
                 bibtex.add("  pages = {" + pageRange + "}");
             }
 
-			// volume
-			if (volumeBlock != null) {
+            // volume
+            if (volumeBlock != null) {
                 bibtex.add("  volume = {" + volumeBlock + "}");
-			}
+            }
 
-			// issue (named number in BibTeX)
-			if (issue != null) {
+            // issue (named number in BibTeX)
+            if (issue != null) {
                 bibtex.add("  number = {" + issue + "}");
-			}
+            }
 
             // DOI
             if (!StringUtils.isEmpty(doi)) {
@@ -2099,7 +2122,7 @@ public class BiblioItem {
                 bibtex.add(value);
             }
 
-            if (config.getIncludeRawCitations() && !StringUtils.isEmpty(reference) ) {
+            if (config.getIncludeRawCitations() && !StringUtils.isEmpty(reference)) {
                 // escape all " signs
                 bibtex.add("  raw = {" + reference + "}");
             }
@@ -2153,7 +2176,7 @@ public class BiblioItem {
             if (pmcidMatcher.find()) {
                 // last group gives the PMC ID digits, but the prefix PMC must be added to follow the NIH guidelines
                 String digits = pmcidMatcher.group(pmcidMatcher.groupCount());
-                setPMCID("PMC"+digits);
+                setPMCID("PMC" + digits);
                 setPubnum(null);
             }
         }
@@ -2230,7 +2253,8 @@ public class BiblioItem {
                 tei.append("\t");
             }
             tei.append("<biblStruct");
-            boolean withCoords = (config.getGenerateTeiCoordinates() != null) && (config.getGenerateTeiCoordinates().contains("biblStruct"));
+            boolean withCoords = (config.getGenerateTeiCoordinates() != null)
+                    && (config.getGenerateTeiCoordinates().contains("biblStruct"));
             tei.append(" ");
             if (withCoords)
                 tei.append(TEIFormatter.getCoordsAttribute(coordinates, withCoords)).append(" ");
@@ -2258,8 +2282,9 @@ public class BiblioItem {
             }
 
             boolean openAnalytic = false;
-            if ( ((bookTitle == null) && (journal == null) && (serieTitle == null)) ||
-                ((bookTitle != null) && (title == null) && (articleTitle == null) && (journal == null) && (serieTitle == null)) ) {
+            if (((bookTitle == null) && (journal == null) && (serieTitle == null)) ||
+                    ((bookTitle != null) && (title == null) && (articleTitle == null) && (journal == null)
+                            && (serieTitle == null))) {
                 for (int i = 0; i < indent + 1; i++) {
                     tei.append("\t");
                 }
@@ -2283,13 +2308,13 @@ public class BiblioItem {
                     if (config.isGenerateTeiCoordinates("title")) {
                         // title for articles or chapters
                         List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_BOOKTITLE);
-                        if (titleTokens == null || titleTokens.size()==0) {
+                        if (titleTokens == null || titleTokens.size() == 0) {
                             titleTokens = getLayoutTokens(TaggingLabels.CITATION_TITLE);
                         }
 
-                        if (titleTokens != null && titleTokens.size()>0) {
+                        if (titleTokens != null && titleTokens.size() > 0) {
                             String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                            if (coords != null && coords.length()>0) {
+                            if (coords != null && coords.length() > 0) {
                                 tei.append(" coords=\"" + coords + "\"");
                             }
                         }
@@ -2300,33 +2325,35 @@ public class BiblioItem {
                     if (config.isGenerateTeiCoordinates("title")) {
                         // title for articles or chapters
                         List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_TITLE);
-                        if (titleTokens != null && titleTokens.size()>0) {
+                        if (titleTokens != null && titleTokens.size() > 0) {
                             String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                            if (coords != null && coords.length()>0) {
+                            if (coords != null && coords.length() > 0) {
                                 tei.append(" coords=\"" + coords + "\"");
                             }
                         }
                     }
                 }
-				if (generateIDs) {
-					String divID = KeyGen.getKey().substring(0,7);
-					tei.append(" xml:id=\"_" + divID + "\"");
-				}
+                if (generateIDs) {
+                    String divID = KeyGen.getKey().substring(0, 7);
+                    tei.append(" xml:id=\"_" + divID + "\"");
+                }
 
                 // here check the language ?
                 if (StringUtils.isEmpty(english_title)) {
                     tei.append(">").append(TextUtilities.HTMLEncode(title)).append("</title>\n");
                 } else {
-                    tei.append(" xml:lang=\"").append(language)
-						.append("\">").append(TextUtilities.HTMLEncode(title)).append("</title>\n");
+                    tei.append(" xml:lang=\"")
+                            .append(language)
+                            .append("\">")
+                            .append(TextUtilities.HTMLEncode(title))
+                            .append("</title>\n");
                 }
-            }
-			else if (bookTitle == null) {
+            } else if (bookTitle == null) {
                 for (int i = 0; i < indent + 2; i++) {
                     tei.append("\t");
                 }
                 tei.append("<title/>\n");
-			}
+            }
             boolean hasEnglishTitle = false;
             if (english_title != null) {
                 // here do check the language !
@@ -2344,13 +2371,14 @@ public class BiblioItem {
                         } else {
                             tei.append(" level=\"a\"");
                         }
-						if (generateIDs) {
-							String divID = KeyGen.getKey().substring(0,7);
-							tei.append(" xml:id=\"_" + divID + "\"");
-						}
+                        if (generateIDs) {
+                            String divID = KeyGen.getKey().substring(0, 7);
+                            tei.append(" xml:id=\"_" + divID + "\"");
+                        }
 
                         tei.append(" xml:lang=\"en\">")
-							.append(TextUtilities.HTMLEncode(english_title)).append("</title>\n");
+                                .append(TextUtilities.HTMLEncode(english_title))
+                                .append("</title>\n");
                     }
                 }
                 // if it's not something in English, we will write it anyway as note without type at the end
@@ -2425,7 +2453,9 @@ public class BiblioItem {
                 for (int i = 0; i < indent + 2; i++) {
                     tei.append("\t");
                 }
-                tei.append("<ptr type=\"open-access\" target=\"").append(TextUtilities.HTMLEncode(oaUrl)).append("\" />\n");
+                tei.append("<ptr type=\"open-access\" target=\"")
+                        .append(TextUtilities.HTMLEncode(oaUrl))
+                        .append("\" />\n");
             }
 
             if (!StringUtils.isEmpty(web)) {
@@ -2451,21 +2481,21 @@ public class BiblioItem {
                     tei.append("\t");
                 }
                 tei.append("<title level=\"m\"");
-				if (generateIDs) {
-					String divID = KeyGen.getKey().substring(0,7);
-					tei.append(" xml:id=\"_" + divID + "\"");
-				}
+                if (generateIDs) {
+                    String divID = KeyGen.getKey().substring(0, 7);
+                    tei.append(" xml:id=\"_" + divID + "\"");
+                }
                 if (config.isGenerateTeiCoordinates("title")) {
                     List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_BOOKTITLE);
-                    if (titleTokens != null && titleTokens.size()>0) {
+                    if (titleTokens != null && titleTokens.size() > 0) {
                         String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                        if (coords != null && coords.length()>0) {
+                        if (coords != null && coords.length() > 0) {
                             tei.append(" coords=\"" + coords + "\"");
                         }
                     }
                 }
 
-				tei.append(">" + TextUtilities.HTMLEncode(bookTitle) + "</title>\n");
+                tei.append(">" + TextUtilities.HTMLEncode(bookTitle) + "</title>\n");
 
                 if (!StringUtils.isEmpty(serieTitle)) {
                     // in case the book is part of an indicated series
@@ -2474,16 +2504,16 @@ public class BiblioItem {
                     }
                     tei.append("<title level=\"s\"");
                     if (generateIDs) {
-                        String divID = KeyGen.getKey().substring(0,7);
+                        String divID = KeyGen.getKey().substring(0, 7);
                         tei.append(" xml:id=\"_" + divID + "\"");
                     }
 
                     if (config.isGenerateTeiCoordinates("title")) {
                         // title for articles or chapters
                         List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_SERIES);
-                        if (titleTokens != null && titleTokens.size()>0) {
+                        if (titleTokens != null && titleTokens.size() > 0) {
                             String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                            if (coords != null && coords.length()>0) {
+                            if (coords != null && coords.length() > 0) {
                                 tei.append(" coords=\"" + coords + "\"");
                             }
                         }
@@ -2492,8 +2522,8 @@ public class BiblioItem {
                     tei.append(">" + TextUtilities.HTMLEncode(serieTitle) + "</title>\n");
                 }
 
-                if (fullEditors != null && fullEditors.size()>0) {
-                    for(Person editor : fullEditors) {
+                if (fullEditors != null && fullEditors.size() > 0) {
+                    for (Person editor : fullEditors) {
                         String localString = editor.toTEI(false);
                         if (localString == null || localString.length() == 0)
                             continue;
@@ -2597,9 +2627,8 @@ public class BiblioItem {
                 }
                 if ((publication_date != null) || (pageRange != null) || (publisher != null) || (volumeBlock != null)) {
                     tei.append("<imprint>\n");
-                }
-				else
-					tei.append("<imprint/>\n");
+                } else
+                    tei.append("<imprint/>\n");
 
                 if (publisher != null) {
                     for (int i = 0; i < indent + 3; i++) {
@@ -2612,43 +2641,43 @@ public class BiblioItem {
                     if (normalized_publication_date.getYear() != -1) {
                         String when = Date.toISOString(normalized_publication_date);
                         if (when != null) {
-	                        for (int i = 0; i < indent + 3; i++) {
-	                            tei.append("\t");
-	                        }
-	                        tei.append("<date type=\"published\" when=\"");
-	                        tei.append(when + "\"");
+                            for (int i = 0; i < indent + 3; i++) {
+                                tei.append("\t");
+                            }
+                            tei.append("<date type=\"published\" when=\"");
+                            tei.append(when + "\"");
 
                             if (publication_date != null && publication_date.length() > 0) {
                                 tei.append(">");
-                                tei.append(TextUtilities.HTMLEncode(publication_date) );
+                                tei.append(TextUtilities.HTMLEncode(publication_date));
                                 tei.append("</date>\n");
                             } else {
                                 tei.append(" />\n");
                             }
-						}
+                        }
                     } else if (this.getYear() != null) {
-						String when = "";
-						if (this.getYear().length() == 1)
-							when += "000" + this.getYear();
-						else if (this.getYear().length() == 2)
-							when += "00" + this.getYear();
-						else if (this.getYear().length() == 3)
-							when += "0" + this.getYear();
-						else if (this.getYear().length() == 4)
-							when += this.getYear();
+                        String when = "";
+                        if (this.getYear().length() == 1)
+                            when += "000" + this.getYear();
+                        else if (this.getYear().length() == 2)
+                            when += "00" + this.getYear();
+                        else if (this.getYear().length() == 3)
+                            when += "0" + this.getYear();
+                        else if (this.getYear().length() == 4)
+                            when += this.getYear();
 
-		                if (this.getMonth() != null) {
-							if (this.getMonth().length() == 1)
-								when += "-0" + this.getMonth();
-							else
-								when += "-" + this.getMonth();
-		                    if (this.getDay() != null) {
-								if (this.getDay().length() == 1)
-									when += "-0" + this.getDay();
-								else
-									when += "-" + this.getDay();
-		                    }
-		                }
+                        if (this.getMonth() != null) {
+                            if (this.getMonth().length() == 1)
+                                when += "-0" + this.getMonth();
+                            else
+                                when += "-" + this.getMonth();
+                            if (this.getDay() != null) {
+                                if (this.getDay().length() == 1)
+                                    when += "-0" + this.getDay();
+                                else
+                                    when += "-" + this.getDay();
+                            }
+                        }
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
@@ -2657,7 +2686,7 @@ public class BiblioItem {
 
                         if (publication_date != null && publication_date.length() > 0) {
                             tei.append(">");
-                            tei.append(TextUtilities.HTMLEncode(publication_date) );
+                            tei.append(TextUtilities.HTMLEncode(publication_date));
                             tei.append("</date>\n");
                         } else {
                             tei.append(" />\n");
@@ -2679,7 +2708,8 @@ public class BiblioItem {
                     for (int i = 0; i < indent + 3; i++) {
                         tei.append("\t");
                     }
-                    tei.append("<biblScope unit=\"volume\">" + TextUtilities.HTMLEncode(volumeBlock) + "</biblScope>\n");
+                    tei.append(
+                            "<biblScope unit=\"volume\">" + TextUtilities.HTMLEncode(volumeBlock) + "</biblScope>\n");
                 }
 
                 if (!StringUtils.isEmpty(pageRange)) {
@@ -2688,19 +2718,24 @@ public class BiblioItem {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
-						tei.append("<biblScope unit=\"page\" from=\"" + TextUtilities.HTMLEncode(st.nextToken()) + "\" to=\""
-								+ TextUtilities.HTMLEncode(st.nextToken()) + "\" />\n");
+                        tei.append(
+                                "<biblScope unit=\"page\" from=\""
+                                        + TextUtilities.HTMLEncode(st.nextToken())
+                                        + "\" to=\""
+                                        + TextUtilities.HTMLEncode(st.nextToken())
+                                        + "\" />\n");
                     } else {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
-                        tei.append("<biblScope unit=\"page\">" + TextUtilities.HTMLEncode(pageRange) + "</biblScope>\n");
+                        tei.append(
+                                "<biblScope unit=\"page\">" + TextUtilities.HTMLEncode(pageRange) + "</biblScope>\n");
                     }
                 }
                 if ((publication_date != null) || (pageRange != null) || (publisher != null) || (volumeBlock != null)) {
-	                for (int i = 0; i < indent + 2; i++) {
-	                    tei.append("\t");
-	                }
+                    for (int i = 0; i < indent + 2; i++) {
+                        tei.append("\t");
+                    }
                     tei.append("</imprint>\n");
                 }
             } else if (!StringUtils.isEmpty(journal) || !StringUtils.isEmpty(serieTitle)) {
@@ -2709,44 +2744,46 @@ public class BiblioItem {
                 }
                 if (!StringUtils.isEmpty(journal)) {
                     tei.append("<title level=\"j\"");
-    				if (generateIDs) {
-    					String divID = KeyGen.getKey().substring(0,7);
-    					tei.append(" xml:id=\"_" + divID + "\"");
-    				}
+                    if (generateIDs) {
+                        String divID = KeyGen.getKey().substring(0, 7);
+                        tei.append(" xml:id=\"_" + divID + "\"");
+                    }
 
                     if (config.isGenerateTeiCoordinates("title")) {
                         // title for articles or chapters
                         List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_JOURNAL);
-                        if (titleTokens != null && titleTokens.size()>0) {
+                        if (titleTokens != null && titleTokens.size() > 0) {
                             String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                            if (coords != null && coords.length()>0) {
+                            if (coords != null && coords.length() > 0) {
                                 tei.append(" coords=\"" + coords + "\"");
                             }
                         }
                     }
 
-    				tei.append(">" + TextUtilities.HTMLEncode(journal) + "</title>\n");
+                    tei.append(">" + TextUtilities.HTMLEncode(journal) + "</title>\n");
 
                     if (!StringUtils.isEmpty(getJournalAbbrev())) {
                         for (int i = 0; i < indent + 2; i++) {
                             tei.append("\t");
                         }
-                        tei.append("<title level=\"j\" type=\"abbrev\">"
-                                + TextUtilities.HTMLEncode(getJournalAbbrev()) + "</title>\n");
+                        tei.append(
+                                "<title level=\"j\" type=\"abbrev\">"
+                                        + TextUtilities.HTMLEncode(getJournalAbbrev())
+                                        + "</title>\n");
                     }
                 } else if (!StringUtils.isEmpty(serieTitle)) {
                     tei.append("<title level=\"s\"");
                     if (generateIDs) {
-                        String divID = KeyGen.getKey().substring(0,7);
+                        String divID = KeyGen.getKey().substring(0, 7);
                         tei.append(" xml:id=\"_" + divID + "\"");
                     }
 
                     if (config.isGenerateTeiCoordinates("title")) {
                         // title for articles or chapters
                         List<LayoutToken> titleTokens = getLayoutTokens(TaggingLabels.CITATION_SERIES);
-                        if (titleTokens != null && titleTokens.size()>0) {
+                        if (titleTokens != null && titleTokens.size() > 0) {
                             String coords = LayoutTokensUtil.getCoordsString(titleTokens);
-                            if (coords != null && coords.length()>0) {
+                            if (coords != null && coords.length() > 0) {
                                 tei.append(" coords=\"" + coords + "\"");
                             }
                         }
@@ -2755,8 +2792,8 @@ public class BiblioItem {
                     tei.append(">" + TextUtilities.HTMLEncode(serieTitle) + "</title>\n");
                 }
 
-                if (fullEditors != null && fullEditors.size()>0) {
-                    for(Person editor : fullEditors) {
+                if (fullEditors != null && fullEditors.size() > 0) {
+                    for (Person editor : fullEditors) {
                         for (int i = 0; i < indent + 2; i++) {
                             tei.append("\t");
                         }
@@ -2818,12 +2855,15 @@ public class BiblioItem {
                     for (int i = 0; i < indent + 2; i++) {
                         tei.append("\t");
                     }
-					tei.append("<imprint>\n");
+                    tei.append("<imprint>\n");
                     if (volumeBlock != null) {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
-                        tei.append("<biblScope unit=\"volume\">" + TextUtilities.HTMLEncode(volumeBlock) + "</biblScope>\n");
+                        tei.append(
+                                "<biblScope unit=\"volume\">"
+                                        + TextUtilities.HTMLEncode(volumeBlock)
+                                        + "</biblScope>\n");
                     }
                     if (issue != null) {
                         for (int i = 0; i < indent + 3; i++) {
@@ -2837,14 +2877,22 @@ public class BiblioItem {
                             for (int i = 0; i < indent + 3; i++) {
                                 tei.append("\t");
                             }
-							tei.append("<biblScope unit=\"page\" from=\"" +
-								TextUtilities.HTMLEncode(st.nextToken()) + "\" to=\"" +
-								TextUtilities.HTMLEncode(st.nextToken()) + "\" />\n");
+                            tei.append(
+                                    "<biblScope unit=\"page\" from=\""
+                                            +
+                                            TextUtilities.HTMLEncode(st.nextToken())
+                                            + "\" to=\""
+                                            +
+                                            TextUtilities.HTMLEncode(st.nextToken())
+                                            + "\" />\n");
                         } else {
                             for (int i = 0; i < indent + 3; i++) {
                                 tei.append("\t");
                             }
-                            tei.append("<biblScope unit=\"page\">" + TextUtilities.HTMLEncode(pageRange) + "</biblScope>\n");
+                            tei.append(
+                                    "<biblScope unit=\"page\">"
+                                            + TextUtilities.HTMLEncode(pageRange)
+                                            + "</biblScope>\n");
                         }
                     }
 
@@ -2853,43 +2901,43 @@ public class BiblioItem {
                         if (normalized_publication_date.getYear() != -1) {
                             String when = Date.toISOString(normalized_publication_date);
                             if (when != null) {
-	                            for (int i = 0; i < indent + 3; i++) {
-	                                tei.append("\t");
-	                            }
-	                            tei.append("<date type=\"published\" when=\"");
+                                for (int i = 0; i < indent + 3; i++) {
+                                    tei.append("\t");
+                                }
+                                tei.append("<date type=\"published\" when=\"");
                                 tei.append(when + "\"");
 
                                 if (publication_date != null && publication_date.length() > 0) {
                                     tei.append(">");
-                                    tei.append(TextUtilities.HTMLEncode(publication_date) );
+                                    tei.append(TextUtilities.HTMLEncode(publication_date));
                                     tei.append("</date>\n");
                                 } else {
                                     tei.append(" />\n");
                                 }
-							}
+                            }
                         } else if (this.getYear() != null) {
-							String when = "";
-							if (this.getYear().length() == 1)
-								when += "000" + this.getYear();
-							else if (this.getYear().length() == 2)
-								when += "00" + this.getYear();
-							else if (this.getYear().length() == 3)
-								when += "0" + this.getYear();
-							else if (this.getYear().length() == 4)
-								when += this.getYear();
+                            String when = "";
+                            if (this.getYear().length() == 1)
+                                when += "000" + this.getYear();
+                            else if (this.getYear().length() == 2)
+                                when += "00" + this.getYear();
+                            else if (this.getYear().length() == 3)
+                                when += "0" + this.getYear();
+                            else if (this.getYear().length() == 4)
+                                when += this.getYear();
 
-			                if (this.getMonth() != null) {
-								if (this.getMonth().length() == 1)
-									when += "-0" + this.getMonth();
-								else
-									when += "-" + this.getMonth();
-			                    if (this.getDay() != null) {
-									if (this.getDay().length() == 1)
-										when += "-0" + this.getDay();
-									else
-										when += "-" + this.getDay();
-			                    }
-			                }
+                            if (this.getMonth() != null) {
+                                if (this.getMonth().length() == 1)
+                                    when += "-0" + this.getMonth();
+                                else
+                                    when += "-" + this.getMonth();
+                                if (this.getDay() != null) {
+                                    if (this.getDay().length() == 1)
+                                        when += "-0" + this.getDay();
+                                    else
+                                        when += "-" + this.getDay();
+                                }
+                            }
                             for (int i = 0; i < indent + 3; i++) {
                                 tei.append("\t");
                             }
@@ -2898,7 +2946,7 @@ public class BiblioItem {
 
                             if (publication_date != null && publication_date.length() > 0) {
                                 tei.append(">");
-                                tei.append(TextUtilities.HTMLEncode(publication_date) );
+                                tei.append(TextUtilities.HTMLEncode(publication_date));
                                 tei.append("</date>\n");
                             } else {
                                 tei.append(" />\n");
@@ -2923,7 +2971,7 @@ public class BiblioItem {
                         tei.append("<publisher>" + TextUtilities.HTMLEncode(getPublisher()) + "</publisher>\n");
                     }
 
-                    if (location != null && location.length()>0) {
+                    if (location != null && location.length() > 0) {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
@@ -2934,13 +2982,12 @@ public class BiblioItem {
                         tei.append("\t");
                     }
                     tei.append("</imprint>\n");
-                }
-				else {
+                } else {
                     for (int i = 0; i < indent + 2; i++) {
                         tei.append("\t");
                     }
-					tei.append("<imprint/>\n");
-				}
+                    tei.append("<imprint/>\n");
+                }
             } else {
                 // not a journal and not something in a book...
                 if (editors != null) {
@@ -2972,58 +3019,57 @@ public class BiblioItem {
                     tei.append("\t");
                 }
                 if (normalized_publication_date != null ||
-                    publication_date != null ||
-                    pageRange != null ||
-                    location != null ||
-                    publisher != null ||
-                    volumeBlock != null) {
+                        publication_date != null ||
+                        pageRange != null ||
+                        location != null ||
+                        publisher != null ||
+                        volumeBlock != null) {
                     tei.append("<imprint>\n");
+                } else {
+                    tei.append("<imprint/>\n");
                 }
-				else {
-					tei.append("<imprint/>\n");
-				}
                 // date
                 if (normalized_publication_date != null) {
                     if (normalized_publication_date.getYear() != -1) {
                         String when = Date.toISOString(normalized_publication_date);
                         if (when != null) {
-	                        for (int i = 0; i < indent + 3; i++) {
-	                            tei.append("\t");
-	                        }
-	                        tei.append("<date type=\"published\" when=\"");
-	                        tei.append(when + "\"");
+                            for (int i = 0; i < indent + 3; i++) {
+                                tei.append("\t");
+                            }
+                            tei.append("<date type=\"published\" when=\"");
+                            tei.append(when + "\"");
 
                             if (publication_date != null && publication_date.length() > 0) {
                                 tei.append(">");
-                                tei.append(TextUtilities.HTMLEncode(publication_date) );
+                                tei.append(TextUtilities.HTMLEncode(publication_date));
                                 tei.append("</date>\n");
                             } else {
                                 tei.append(" />\n");
                             }
-						}
+                        }
                     } else if (this.getYear() != null) {
-						String when = "";
-						if (this.getYear().length() == 1)
-							when += "000" + this.getYear();
-						else if (this.getYear().length() == 2)
-							when += "00" + this.getYear();
-						else if (this.getYear().length() == 3)
-							when += "0" + this.getYear();
-						else if (this.getYear().length() == 4)
-							when += this.getYear();
+                        String when = "";
+                        if (this.getYear().length() == 1)
+                            when += "000" + this.getYear();
+                        else if (this.getYear().length() == 2)
+                            when += "00" + this.getYear();
+                        else if (this.getYear().length() == 3)
+                            when += "0" + this.getYear();
+                        else if (this.getYear().length() == 4)
+                            when += this.getYear();
 
-		                if (this.getMonth() != null) {
-							if (this.getMonth().length() == 1)
-								when += "-0" + this.getMonth();
-							else
-								when += "-" + this.getMonth();
-		                    if (this.getDay() != null) {
-								if (this.getDay().length() == 1)
-									when += "-0" + this.getDay();
-								else
-									when += "-" + this.getDay();
-		                    }
-		                }
+                        if (this.getMonth() != null) {
+                            if (this.getMonth().length() == 1)
+                                when += "-0" + this.getMonth();
+                            else
+                                when += "-" + this.getMonth();
+                            if (this.getDay() != null) {
+                                if (this.getDay().length() == 1)
+                                    when += "-0" + this.getDay();
+                                else
+                                    when += "-" + this.getDay();
+                            }
+                        }
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
@@ -3032,7 +3078,7 @@ public class BiblioItem {
 
                         if (publication_date != null && publication_date.length() > 0) {
                             tei.append(">");
-                            tei.append(TextUtilities.HTMLEncode(publication_date) );
+                            tei.append(TextUtilities.HTMLEncode(publication_date));
                             tei.append("</date>\n");
                         } else {
                             tei.append(" />\n");
@@ -3060,7 +3106,8 @@ public class BiblioItem {
                     for (int i = 0; i < indent + 3; i++) {
                         tei.append("\t");
                     }
-                    tei.append("<biblScope unit=\"volume\">" + TextUtilities.HTMLEncode(volumeBlock) + "</biblScope>\n");
+                    tei.append(
+                            "<biblScope unit=\"volume\">" + TextUtilities.HTMLEncode(volumeBlock) + "</biblScope>\n");
                 }
                 if (pageRange != null) {
                     StringTokenizer st = new StringTokenizer(pageRange, "--");
@@ -3068,14 +3115,20 @@ public class BiblioItem {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
-						tei.append("<biblScope unit=\"page\" from=\"" +
-							TextUtilities.HTMLEncode(st.nextToken()) +
-								"\" to=\"" + TextUtilities.HTMLEncode(st.nextToken()) + "\" />\n");
+                        tei.append(
+                                "<biblScope unit=\"page\" from=\""
+                                        +
+                                        TextUtilities.HTMLEncode(st.nextToken())
+                                        +
+                                        "\" to=\""
+                                        + TextUtilities.HTMLEncode(st.nextToken())
+                                        + "\" />\n");
                     } else {
                         for (int i = 0; i < indent + 3; i++) {
                             tei.append("\t");
                         }
-                        tei.append("<biblScope unit=\"page\">" + TextUtilities.HTMLEncode(pageRange) + "</biblScope>\n");
+                        tei.append(
+                                "<biblScope unit=\"page\">" + TextUtilities.HTMLEncode(pageRange) + "</biblScope>\n");
                     }
                 }
                 if (location != null) {
@@ -3085,7 +3138,8 @@ public class BiblioItem {
                     tei.append("<pubPlace>" + TextUtilities.HTMLEncode(location) + "</pubPlace>\n");
                 }
 
-                if ((publication_date != null) || (pageRange != null) || (location != null) || (publisher != null) || (volumeBlock != null)) {
+                if ((publication_date != null) || (pageRange != null) || (location != null) || (publisher != null)
+                        || (volumeBlock != null)) {
                     for (int i = 0; i < indent + 2; i++) {
                         tei.append("\t");
                     }
@@ -3187,7 +3241,10 @@ public class BiblioItem {
                         for (int i = 0; i < indent + 1; i++) {
                             tei.append("\t");
                         }
-                        tei.append("<keywords type=\"subject-headers\">" + TextUtilities.HTMLEncode(keywords1) + "</keywords>\n");
+                        tei.append(
+                                "<keywords type=\"subject-headers\">"
+                                        + TextUtilities.HTMLEncode(keywords1)
+                                        + "</keywords>\n");
                         for (int i = 0; i < indent + 1; i++) {
                             tei.append("\t");
                         }
@@ -3238,7 +3295,7 @@ public class BiblioItem {
                 }
             }
 
-            if (config.getIncludeRawCitations() && !StringUtils.isEmpty(reference) ) {
+            if (config.getIncludeRawCitations() && !StringUtils.isEmpty(reference)) {
                 for (int i = 0; i < indent + 1; i++) {
                     tei.append("\t");
                 }
@@ -3253,7 +3310,8 @@ public class BiblioItem {
             }
             tei.append("</biblStruct>\n");
         } catch (Exception e) {
-            throw new GrobidException("Cannot convert  bibliographical item into a TEI, " +
+            throw new GrobidException("Cannot convert  bibliographical item into a TEI, "
+                    +
                     "because of nested exception.", e);
         }
 
@@ -3338,7 +3396,6 @@ public class BiblioItem {
         return openurl;
     }
 
-
     /**
      * Export the bibliographical item into a COinS (OpenURL ContextObject in SPAN).
      */
@@ -3347,13 +3404,16 @@ public class BiblioItem {
         return res;
     }
 
-
     /**
      * Export the bibliographical item into an OpenURL with given link resolver address.
      */
     public String toFullOpenURL(String linkResolver, String imageLinkResolver) {
-        String res = "<a href=\"" + linkResolver + toOpenURL(authors)
-                + "\"  target=\"_blank\"><img src=\"" + imageLinkResolver + "\"/></a>";
+        String res = "<a href=\""
+                + linkResolver
+                + toOpenURL(authors)
+                + "\"  target=\"_blank\"><img src=\""
+                + imageLinkResolver
+                + "\"/></a>";
         return res;
     }
 
@@ -3497,7 +3557,7 @@ public class BiblioItem {
                 if (indexAffiliation > 60)
                     break;
 
-                if (aff.getMarker() != null && aff.getMarker().length()>0) {
+                if (aff.getMarker() != null && aff.getMarker().length() > 0) {
                     String marker = aff.getMarker();
                     int from = 0;
                     int ind = 0;
@@ -3627,7 +3687,7 @@ public class BiblioItem {
                 System.out.println(fullAuthors.get(p));
                 fullAffiliations.get(p).setFailAffiliation(false);
             }
-        }*/
+          }*/
     }
 
     /**
@@ -3651,17 +3711,17 @@ public class BiblioItem {
             withCoordinates = config.getGenerateTeiCoordinates().contains("persName");
         }
 
-        if ( (collaboration != null) &&
-            ( (fullAuthors == null) || (fullAuthors.size() == 0) ) ) {
+        if ((collaboration != null) &&
+                ((fullAuthors == null) || (fullAuthors.size() == 0))) {
             // collaboration plays at the same time the role of author and affiliation
             TextUtilities.appendN(tei, '\t', nbTag);
             tei.append("<author>").append("\n");
-            TextUtilities.appendN(tei, '\t', nbTag+1);
+            TextUtilities.appendN(tei, '\t', nbTag + 1);
             tei.append("<orgName type=\"collaboration\"");
-            if (withCoordinates && (labeledTokens != null) ) {
+            if (withCoordinates && (labeledTokens != null)) {
                 List<LayoutToken> collabTokens = labeledTokens.get("<collaboration>");
                 if (withCoordinates && (collabTokens != null) && (!collabTokens.isEmpty())) {
-                   tei.append(" coords=\"" + LayoutTokensUtil.getCoordsString(collabTokens) + "\"");
+                    tei.append(" coords=\"" + LayoutTokensUtil.getCoordsString(collabTokens) + "\"");
                 }
             }
             tei.append(">").append(TextUtilities.HTMLEncode(collaboration)).append("</orgName>").append("\n");
@@ -3711,10 +3771,10 @@ public class BiblioItem {
                             continue;
                     }
 
-			        if ( (author.getFirstName() == null) && (author.getMiddleName() == null) &&
-			                (author.getLastName() == null) ) {
-						continue;
-					}
+                    if ((author.getFirstName() == null) && (author.getMiddleName() == null) &&
+                            (author.getLastName() == null)) {
+                        continue;
+                    }
 
                     TextUtilities.appendN(tei, '\t', nbTag);
                     tei.append("<author");
@@ -3747,8 +3807,11 @@ public class BiblioItem {
                         tei.append("<affiliation>\n");
 
                         TextUtilities.appendN(tei, '\t', nbTag + 2);
-                        tei.append("<orgName type=\"collaboration\">" +
-                                            TextUtilities.HTMLEncode(collaboration) + "</orgName>\n");
+                        tei.append(
+                                "<orgName type=\"collaboration\">"
+                                        +
+                                        TextUtilities.HTMLEncode(collaboration)
+                                        + "</orgName>\n");
                         TextUtilities.appendN(tei, '\t', nbTag + 1);
                         tei.append("</affiliation>\n");
                     }
@@ -3780,9 +3843,9 @@ public class BiblioItem {
                 String aff = st2.nextToken();
                 TextUtilities.appendN(tei, '\t', nbTag);
                 tei.append("<author>\n");
-                TextUtilities.appendN(tei, '\t', nbTag+1);
+                TextUtilities.appendN(tei, '\t', nbTag + 1);
                 tei.append("<affiliation>\n");
-                TextUtilities.appendN(tei, '\t', nbTag+2);
+                TextUtilities.appendN(tei, '\t', nbTag + 2);
                 tei.append("<orgName>" + TextUtilities.HTMLEncode(aff) + "</orgName>\n");
                 if (nbAddresses == nbAffiliations) {
                     int addressRank = 0;
@@ -3792,15 +3855,17 @@ public class BiblioItem {
                             String add = st3.nextToken();
                             if (addressRank == affiliationRank) {
                                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                                tei.append("<address><addrLine>" + TextUtilities.HTMLEncode(add)
-                                        + "</addrLine></address>\n");
+                                tei.append(
+                                        "<address><addrLine>"
+                                                + TextUtilities.HTMLEncode(add)
+                                                + "</addrLine></address>\n");
                                 break;
                             }
                             addressRank++;
                         }
                     }
                 }
-                TextUtilities.appendN(tei, '\t', nbTag+1);
+                TextUtilities.appendN(tei, '\t', nbTag + 1);
                 tei.append("</affiliation>\n");
 
                 TextUtilities.appendN(tei, '\t', nbTag);
@@ -3814,18 +3879,17 @@ public class BiblioItem {
     }
 
     private void appendAffiliation(
-        StringBuffer tei,
-        int nbTag,
-        Affiliation aff,
-        GrobidAnalysisConfig config,
-        Lexicon lexicon
-    ) {
+            StringBuffer tei,
+            int nbTag,
+            Affiliation aff,
+            GrobidAnalysisConfig config,
+            Lexicon lexicon) {
         boolean affiliationWithCoords = (config != null) &&
-                                        (config.getGenerateTeiCoordinates() != null) &&
-                                        (config.getGenerateTeiCoordinates().contains("affiliation"));
+                (config.getGenerateTeiCoordinates() != null) &&
+                (config.getGenerateTeiCoordinates().contains("affiliation"));
         boolean orgnameWithCoords = (config != null) &&
-                                    (config.getGenerateTeiCoordinates() != null) &&
-                                    (config.getGenerateTeiCoordinates().contains("orgName"));
+                (config.getGenerateTeiCoordinates() != null) &&
+                (config.getGenerateTeiCoordinates().contains("orgName"));
 
         TextUtilities.appendN(tei, '\t', nbTag);
         tei.append("<affiliation");
@@ -3834,20 +3898,17 @@ public class BiblioItem {
         if (affiliationWithCoords) {
             // we serialize the coordinates for the whole affiliation block
             String coords = LayoutTokensUtil.getCoordsString(aff.getLayoutTokens());
-            if (coords != null && coords.length()>0) {
+            if (coords != null && coords.length() > 0) {
                 tei.append(" coords=\"" + coords + "\"");
             }
         }
         tei.append(">\n");
 
-        if (
-            config.getIncludeRawAffiliations()
-            && !StringUtils.isEmpty(aff.getRawAffiliationString())
-        ) {
+        if (config.getIncludeRawAffiliations()
+                && !StringUtils.isEmpty(aff.getRawAffiliationString())) {
             TextUtilities.appendN(tei, '\t', nbTag + 1);
             String encodedRawAffiliationString = TextUtilities.HTMLEncode(
-                aff.getRawAffiliationString()
-            );
+                    aff.getRawAffiliationString());
             tei.append("<note type=\"raw_affiliation\">");
             LOGGER.debug("marker: {}", aff.getMarker());
             if (StringUtils.isNotEmpty(aff.getMarker())) {
@@ -3862,14 +3923,17 @@ public class BiblioItem {
         if (aff.getDepartments() != null) {
             if (aff.getDepartments().size() == 1) {
                 TextUtilities.appendN(tei, '\t', nbTag + 1);
-                tei.append("<orgName type=\"department\">" +
-                        TextUtilities.HTMLEncode(aff.getDepartments().get(0)) + "</orgName>\n");
+                tei.append(
+                        "<orgName type=\"department\">"
+                                +
+                                TextUtilities.HTMLEncode(aff.getDepartments().get(0))
+                                + "</orgName>\n");
             } else {
                 int q = 1;
                 for (String depa : aff.getDepartments()) {
                     TextUtilities.appendN(tei, '\t', nbTag + 1);
                     tei.append("<orgName type=\"department\" key=\"dep" + q + "\"");
-                    tei.append(">" +TextUtilities.HTMLEncode(depa) + "</orgName>\n");
+                    tei.append(">" + TextUtilities.HTMLEncode(depa) + "</orgName>\n");
                     q++;
                 }
             }
@@ -3878,14 +3942,22 @@ public class BiblioItem {
         if (aff.getLaboratories() != null) {
             if (aff.getLaboratories().size() == 1) {
                 TextUtilities.appendN(tei, '\t', nbTag + 1);
-                tei.append("<orgName type=\"laboratory\">" +
-                        TextUtilities.HTMLEncode(aff.getLaboratories().get(0)) + "</orgName>\n");
+                tei.append(
+                        "<orgName type=\"laboratory\">"
+                                +
+                                TextUtilities.HTMLEncode(aff.getLaboratories().get(0))
+                                + "</orgName>\n");
             } else {
                 int q = 1;
                 for (String labo : aff.getLaboratories()) {
                     TextUtilities.appendN(tei, '\t', nbTag + 1);
-                    tei.append("<orgName type=\"laboratory\" key=\"lab" + q + "\">" +
-                            TextUtilities.HTMLEncode(labo) + "</orgName>\n");
+                    tei.append(
+                            "<orgName type=\"laboratory\" key=\"lab"
+                                    + q
+                                    + "\">"
+                                    +
+                                    TextUtilities.HTMLEncode(labo)
+                                    + "</orgName>\n");
                     q++;
                 }
             }
@@ -3894,27 +3966,33 @@ public class BiblioItem {
         if (aff.getInstitutions() != null) {
             if (aff.getInstitutions().size() == 1) {
                 TextUtilities.appendN(tei, '\t', nbTag + 1);
-                tei.append("<orgName type=\"institution\">" +
-                        TextUtilities.HTMLEncode(aff.getInstitutions().get(0)) + "</orgName>\n");
+                tei.append(
+                        "<orgName type=\"institution\">"
+                                +
+                                TextUtilities.HTMLEncode(aff.getInstitutions().get(0))
+                                + "</orgName>\n");
             } else {
                 int q = 1;
                 for (String inst : aff.getInstitutions()) {
                     TextUtilities.appendN(tei, '\t', nbTag + 1);
-                    tei.append("<orgName type=\"institution\" key=\"instit" + q + "\">" +
-                            TextUtilities.HTMLEncode(inst) + "</orgName>\n");
+                    tei.append(
+                            "<orgName type=\"institution\" key=\"instit"
+                                    + q
+                                    + "\">"
+                                    +
+                                    TextUtilities.HTMLEncode(inst)
+                                    + "</orgName>\n");
                     q++;
                 }
             }
         }
 
-        if (
-                aff.getAddrLine() != null ||
+        if (aff.getAddrLine() != null ||
                 aff.getPostBox() != null ||
                 aff.getPostCode() != null ||
                 aff.getSettlement() != null ||
                 aff.getRegion() != null ||
-                aff.getCountry() != null
-            ) {
+                aff.getCountry() != null) {
             TextUtilities.appendN(tei, '\t', nbTag + 1);
 
             tei.append("<address>\n");
@@ -3925,28 +4003,43 @@ public class BiblioItem {
             }*/
             if (aff.getAddrLine() != null) {
                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                tei.append("<addrLine>" + TextUtilities.HTMLEncode(aff.getAddrLine()) +
-                        "</addrLine>\n");
+                tei.append(
+                        "<addrLine>"
+                                + TextUtilities.HTMLEncode(aff.getAddrLine())
+                                +
+                                "</addrLine>\n");
             }
             if (aff.getPostBox() != null) {
                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                tei.append("<postBox>" + TextUtilities.HTMLEncode(aff.getPostBox()) +
-                        "</postBox>\n");
+                tei.append(
+                        "<postBox>"
+                                + TextUtilities.HTMLEncode(aff.getPostBox())
+                                +
+                                "</postBox>\n");
             }
             if (aff.getPostCode() != null) {
                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                tei.append("<postCode>" + TextUtilities.HTMLEncode(aff.getPostCode()) +
-                        "</postCode>\n");
+                tei.append(
+                        "<postCode>"
+                                + TextUtilities.HTMLEncode(aff.getPostCode())
+                                +
+                                "</postCode>\n");
             }
             if (aff.getSettlement() != null) {
                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                tei.append("<settlement>" + TextUtilities.HTMLEncode(aff.getSettlement()) +
-                        "</settlement>\n");
+                tei.append(
+                        "<settlement>"
+                                + TextUtilities.HTMLEncode(aff.getSettlement())
+                                +
+                                "</settlement>\n");
             }
             if (aff.getRegion() != null) {
                 TextUtilities.appendN(tei, '\t', nbTag + 2);
-                tei.append("<region>" + TextUtilities.HTMLEncode(aff.getRegion()) +
-                        "</region>\n");
+                tei.append(
+                        "<region>"
+                                + TextUtilities.HTMLEncode(aff.getRegion())
+                                +
+                                "</region>\n");
             }
             if (aff.getCountry() != null) {
                 String code = lexicon.getCountryCode(aff.getCountry());
@@ -3954,8 +4047,11 @@ public class BiblioItem {
                 tei.append("<country");
                 if (code != null)
                     tei.append(" key=\"" + code + "\"");
-                tei.append(">" + TextUtilities.HTMLEncode(aff.getCountry()) +
-                        "</country>\n");
+                tei.append(
+                        ">"
+                                + TextUtilities.HTMLEncode(aff.getCountry())
+                                +
+                                "</country>\n");
             }
 
             TextUtilities.appendN(tei, '\t', nbTag + 1);
@@ -3968,7 +4064,8 @@ public class BiblioItem {
 
     private static volatile String possiblePreFixPageNumber = "[A-Ze]?";
     private static volatile String possiblePostFixPageNumber = "[A-Z]?";
-    private static volatile Pattern page = Pattern.compile("("+possiblePreFixPageNumber+"\\d+"+possiblePostFixPageNumber+")");
+    private static volatile Pattern page = Pattern
+            .compile("(" + possiblePreFixPageNumber + "\\d+" + possiblePostFixPageNumber + ")");
     private static volatile Pattern pageDigits = Pattern.compile("\\d+");
 
     /**
@@ -4005,8 +4102,8 @@ public class BiblioItem {
                     } catch (Exception e) {
                         beginPage = -1;
                     }
-					if (beginPage != -1) {
-						pageRange = "" + beginPage;
+                    if (beginPage != -1) {
+                        pageRange = "" + beginPage;
                     } else {
                         pageRange = firstPage;
 
@@ -4016,12 +4113,13 @@ public class BiblioItem {
                             try {
                                 beginPage = Integer.parseInt(matcher2.group());
                                 if (firstPage.length() > 0) {
-                                    alphaPrefixStart = firstPage.substring(0,1);
+                                    alphaPrefixStart = firstPage.substring(0, 1);
                                     // is it really alphabetical character?
                                     if (!Pattern.matches(possiblePreFixPageNumber, alphaPrefixStart)) {
                                         alphaPrefixStart = null;
                                         // look at postfix
-                                        alphaPostfixStart = firstPage.substring(firstPage.length()-1,firstPage.length());
+                                        alphaPostfixStart = firstPage
+                                                .substring(firstPage.length() - 1, firstPage.length());
                                         if (!Pattern.matches(possiblePostFixPageNumber, alphaPostfixStart)) {
                                             alphaPostfixStart = null;
                                         }
@@ -4052,12 +4150,13 @@ public class BiblioItem {
                                     try {
                                         endPage = Integer.parseInt(matcher2.group());
                                         if (lastPage.length() > 0) {
-                                            alphaPrefixEnd = lastPage.substring(0,1);
+                                            alphaPrefixEnd = lastPage.substring(0, 1);
                                             // is it really alphabetical character?
                                             if (!Pattern.matches(possiblePreFixPageNumber, alphaPrefixEnd)) {
                                                 alphaPrefixEnd = null;
                                                 // look at postfix
-                                                alphaPostfixEnd = lastPage.substring(lastPage.length()-1,lastPage.length());
+                                                alphaPostfixEnd = lastPage
+                                                        .substring(lastPage.length() - 1, lastPage.length());
                                                 if (!Pattern.matches(possiblePostFixPageNumber, alphaPostfixEnd)) {
                                                     alphaPostfixEnd = null;
                                                 }
@@ -4069,7 +4168,7 @@ public class BiblioItem {
                                 }
                             }
 
-							if ( (endPage != -1) && (endPage < beginPage)) {
+                            if ((endPage != -1) && (endPage < beginPage)) {
                                 // there are two possibilities:
                                 // - the substitution, e.g. 433–8 -> 433--438, for example American Medical Association citation style
                                 // - the addition, e.g. 433–8 -> 433--441
@@ -4081,7 +4180,7 @@ public class BiblioItem {
                                     // we assume no journal articles have more than 49 pages and is expressed as addition,
                                     // so it's a substitution
                                     int upperBound = firstPage.length() - lastPage.length();
-                                    if (upperBound<firstPage.length() && upperBound > 0)
+                                    if (upperBound < firstPage.length() && upperBound > 0)
                                         lastPage = firstPage.substring(0, upperBound) + lastPage;
                                     pageRange += "--" + lastPage;
                                 } else {
@@ -4119,7 +4218,7 @@ public class BiblioItem {
                                     else
                                         pageRange += "--" + endPage;
                                 }
-							} else if ((endPage != -1)) {
+                            } else if ((endPage != -1)) {
                                 if (alphaPrefixEnd != null)
                                     pageRange += "--" + alphaPrefixEnd + endPage;
                                 else if (alphaPostfixEnd != null)
@@ -4218,12 +4317,11 @@ public class BiblioItem {
         if (bibo.getNormalizedPublicationDate() != null) {
             if (bib.getNormalizedPublicationDate() != null) {
                 bib.mergeNormalizedPublicationDate(bibo.getNormalizedPublicationDate());
-            }
-            else {
+            } else {
                 bib.setNormalizedPublicationDate(bibo.getNormalizedPublicationDate());
             }
         }
-         if (bibo.getYear() != null)
+        if (bibo.getYear() != null)
             bib.setYear(bibo.getYear());
         if (bibo.getMonth() != null)
             bib.setMonth(bibo.getMonth());
@@ -4301,15 +4399,18 @@ public class BiblioItem {
                         if (StringUtils.isNotBlank(aut.getLastName()) && StringUtils.isNotBlank(auto.getLastName())) {
                             if (aut.getLastName().toLowerCase().equals(auto.getLastName().toLowerCase())) {
                                 if (StringUtils.isBlank(aut.getFirstName()) ||
-                                   (auto.getFirstName() != null &&
-                                    aut.getFirstName().length() <= auto.getFirstName().length() &&
-                                         auto.getFirstName().toLowerCase().startsWith(aut.getFirstName().toLowerCase()))) {
+                                        (auto.getFirstName() != null &&
+                                                aut.getFirstName().length() <= auto.getFirstName().length() &&
+                                                auto.getFirstName()
+                                                        .toLowerCase()
+                                                        .startsWith(aut.getFirstName().toLowerCase()))) {
                                     aut.setFirstName(auto.getFirstName());
                                     aut.setCorresp(true);
                                     if (StringUtils.isNotBlank(auto.getEmail()))
                                         aut.setEmail(auto.getEmail());
                                     // should we also check the country ? affiliation?
-                                    if (StringUtils.isNotBlank(auto.getMiddleName()) && (StringUtils.isBlank(aut.getMiddleName())))
+                                    if (StringUtils.isNotBlank(auto.getMiddleName())
+                                            && (StringUtils.isBlank(aut.getMiddleName())))
                                         aut.setMiddleName(auto.getMiddleName());
                                     // crossref is considered more reliable than PDF annotations
                                     aut.setORCID(auto.getORCID());
@@ -4326,7 +4427,6 @@ public class BiblioItem {
                     // try to find the author in the first item (we know it's not empty)
                     for (Person aut2 : bib.getFullAuthors()) {
 
-
                         if (StringUtils.isNotBlank(aut2.getLastName())) {
                             String aut2_lastname = aut2.getLastName().toLowerCase();
 
@@ -4335,20 +4435,21 @@ public class BiblioItem {
 
                                 if (aut_lastname.equals(aut2_lastname)) {
                                     // check also first name if present - at least for the initial
-                                    if ( StringUtils.isBlank(aut2.getFirstName()) ||
-                                         (StringUtils.isNotBlank(aut2.getFirstName()) && StringUtils.isNotBlank(aut.getFirstName())) ) {
+                                    if (StringUtils.isBlank(aut2.getFirstName()) ||
+                                            (StringUtils.isNotBlank(aut2.getFirstName())
+                                                    && StringUtils.isNotBlank(aut.getFirstName()))) {
                                         // we have no first name or a match (full first name)
 
-                                        if ( StringUtils.isBlank(aut2.getFirstName())
-                                            ||
-                                             aut.getFirstName().equals(aut2.getFirstName())
-                                            ||
-                                             ( aut.getFirstName().length() == 1 &&
-                                               aut.getFirstName().equals(aut2.getFirstName().substring(0,1)) )
-                                            ) {
+                                        if (StringUtils.isBlank(aut2.getFirstName())
+                                                ||
+                                                aut.getFirstName().equals(aut2.getFirstName())
+                                                ||
+                                                (aut.getFirstName().length() == 1 &&
+                                                        aut.getFirstName()
+                                                                .equals(aut2.getFirstName().substring(0, 1)))) {
                                             // we have a match (full or initial)
                                             if (StringUtils.isNotBlank(aut2.getFirstName()) &&
-                                                aut2.getFirstName().length() > aut.getFirstName().length())
+                                                    aut2.getFirstName().length() > aut.getFirstName().length())
                                                 aut.setFirstName(aut2.getFirstName());
                                             if (StringUtils.isBlank(aut.getMiddleName()))
                                                 aut.setMiddleName(aut2.getMiddleName());
@@ -4358,7 +4459,7 @@ public class BiblioItem {
                                                 aut.setSuffix(aut2.getSuffix());
                                             if (StringUtils.isBlank(aut.getEmail()))
                                                 aut.setEmail(aut2.getEmail());
-                                            if(!CollectionUtils.isEmpty(aut2.getAffiliations()))
+                                            if (!CollectionUtils.isEmpty(aut2.getAffiliations()))
                                                 aut.setAffiliations(aut2.getAffiliations());
                                             if (!CollectionUtils.isEmpty(aut2.getAffiliationBlocks()))
                                                 aut.setAffiliationBlocks(aut2.getAffiliationBlocks());
@@ -4369,7 +4470,8 @@ public class BiblioItem {
                                             if (!CollectionUtils.isEmpty(aut2.getLayoutTokens()))
                                                 aut.setLayoutTokens(aut2.getLayoutTokens());
                                             // preserve PDF-extracted ORCID when crossref doesn't have one
-                                            if (StringUtils.isBlank(aut.getORCID()) && StringUtils.isNotBlank(aut2.getORCID()))
+                                            if (StringUtils.isBlank(aut.getORCID())
+                                                    && StringUtils.isNotBlank(aut2.getORCID()))
                                                 aut.setORCID(aut2.getORCID());
                                             break;
                                         }
@@ -4386,25 +4488,25 @@ public class BiblioItem {
         bib.setConsolidationService(bibo.getConsolidationService());
     }
 
-	/**
+    /**
      *  Check is the biblio item can be considered as a minimally valid bibliographical reference.
-	 *  A certain minimal number of core metadata have to be instanciated. Otherwise, the biblio
-	 *  item can be considered as "garbage" extracted incorrectly.
-	 */
-	public boolean rejectAsReference() {
-		boolean titleSet = true;
-		if ( (title == null) && (bookTitle == null) && (journal == null) &&
-				(ISSN == null) && (ISBN13 == null)  && (ISBN10 == null))
-			titleSet = false;
-		boolean authorSet = true;
-		if (fullAuthors == null && collaboration == null)
-			authorSet = false;
-		// normally properties authors and authorList are null in the current Grobid version
-		if (!titleSet && !authorSet && url == null && doi == null && halId ==null)
-			return true;
-		else
-			return false;
-	}
+     *  A certain minimal number of core metadata have to be instanciated. Otherwise, the biblio
+     *  item can be considered as "garbage" extracted incorrectly.
+     */
+    public boolean rejectAsReference() {
+        boolean titleSet = true;
+        if ((title == null) && (bookTitle == null) && (journal == null) &&
+                (ISSN == null) && (ISBN13 == null) && (ISBN10 == null))
+            titleSet = false;
+        boolean authorSet = true;
+        if (fullAuthors == null && collaboration == null)
+            authorSet = false;
+        // normally properties authors and authorList are null in the current Grobid version
+        if (!titleSet && !authorSet && url == null && doi == null && halId == null)
+            return true;
+        else
+            return false;
+    }
 
     public String getTeiId() {
         return teiId;
@@ -4471,7 +4573,8 @@ public class BiblioItem {
             theList.addAll(clusterTokens);
             labeledTokens.put(clusterLabel.getLabel(), theList);
 
-            if (clusterLabel.equals(TaggingLabels.HEADER_AFFILIATION) || clusterLabel.equals(TaggingLabels.HEADER_ADDRESS)) {
+            if (clusterLabel.equals(TaggingLabels.HEADER_AFFILIATION)
+                    || clusterLabel.equals(TaggingLabels.HEADER_ADDRESS)) {
                 if (affiliationAddresslabeledTokens == null)
                     affiliationAddresslabeledTokens = new ArrayList<>();
                 if (!affiliationAddresslabeledTokens.contains(clusterTokens))
@@ -4484,7 +4587,8 @@ public class BiblioItem {
         if (labeledTokens == null)
             labeledTokens = new TreeMap<>();
 
-        TaggingTokenClusteror clusteror = new TaggingTokenClusteror(GrobidModels.CITATION, labeledResult, tokenizations);
+        TaggingTokenClusteror clusteror = new TaggingTokenClusteror(GrobidModels.CITATION, labeledResult,
+                tokenizations);
         List<TaggingTokenCluster> clusters = clusteror.cluster();
         for (TaggingTokenCluster cluster : clusters) {
             if (cluster == null) {

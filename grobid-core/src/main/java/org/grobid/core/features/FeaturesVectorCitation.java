@@ -1,14 +1,13 @@
 package org.grobid.core.features;
 
+import java.util.List;
+import java.util.regex.Matcher;
+
 import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.layout.LayoutToken;
 import org.grobid.core.utilities.OffsetPosition;
 import org.grobid.core.utilities.TextUtilities;
 import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.core.engines.label.TaggingLabel;
-import org.grobid.core.layout.LayoutToken;
-
-import java.util.List;
-import java.util.regex.Matcher;
 
 /**
  * Class for features used for header parsing.
@@ -51,8 +50,10 @@ public class FeaturesVectorCitation {
     public boolean isKnownIdentifier = false;
 
     public String printVector() {
-        if (string == null) return null;
-        if (string.length() == 0) return null;
+        if (string == null)
+            return null;
+        if (string.length() == 0)
+            return null;
         StringBuilder res = new StringBuilder();
 
         // token string (1)
@@ -173,20 +174,20 @@ public class FeaturesVectorCitation {
         return res.toString();
     }
 
-
     /**
      * Add feature for citation parsing.
      */
-    static public String addFeaturesCitation(List<LayoutToken> tokens,
-                                             List<String> labels,
-                                             List<OffsetPosition> journalPositions,
-                                             List<OffsetPosition> abbrevJournalPositions,
-                                             List<OffsetPosition> conferencePositions,
-                                             List<OffsetPosition> publisherPositions,
-                                             List<OffsetPosition> locationPositions,
-                                             List<OffsetPosition> collaborationPositions,
-                                             List<OffsetPosition> identifierPositions, 
-                                             List<OffsetPosition> urlPositions) throws Exception {
+    static public String addFeaturesCitation(
+            List<LayoutToken> tokens,
+            List<String> labels,
+            List<OffsetPosition> journalPositions,
+            List<OffsetPosition> abbrevJournalPositions,
+            List<OffsetPosition> conferencePositions,
+            List<OffsetPosition> publisherPositions,
+            List<OffsetPosition> locationPositions,
+            List<OffsetPosition> collaborationPositions,
+            List<OffsetPosition> identifierPositions,
+            List<OffsetPosition> urlPositions) throws Exception {
         if ((journalPositions == null) ||
                 (abbrevJournalPositions == null) ||
                 (conferencePositions == null) ||
@@ -225,10 +226,10 @@ public class FeaturesVectorCitation {
         String previousText = null;
         FeaturesVectorCitation features = null;
         int sentenceLenth = tokens.size(); // length of the current sentence
-        for (int n=0; n < tokens.size(); n++) {
+        for (int n = 0; n < tokens.size(); n++) {
             LayoutToken token = tokens.get(n);
             String tag = null;
-            if ( (labels != null) && (labels.size() > 0) && (n < labels.size()) )
+            if ((labels != null) && (labels.size() > 0) && (n < labels.size()))
                 tag = labels.get(n);
 
             boolean outputLineStatus = false;
@@ -254,7 +255,7 @@ public class FeaturesVectorCitation {
 
             // parano normalisation
             text = UnicodeUtil.normaliseTextAndRemoveSpaces(text);
-            if (text.trim().length() == 0 ) {
+            if (text.trim().length() == 0) {
                 continue;
             }
 
@@ -478,12 +479,12 @@ public class FeaturesVectorCitation {
                     features.lineStatus = "LINESTART";
                     outputLineStatus = true;
                 }
-            } else if (tokens.size() == n+1) {
+            } else if (tokens.size() == n + 1) {
                 if (!outputLineStatus) {
                     features.lineStatus = "LINEEND";
                     outputLineStatus = true;
                 }
-            } 
+            }
 
             if (!outputLineStatus) {
                 features.lineStatus = "LINEIN";
@@ -538,7 +539,7 @@ public class FeaturesVectorCitation {
 
             if (isCollaborationToken)
                 features.isKnownCollaboration = true;
-            
+
             /*Matcher m5 = featureFactory.ACRONYM.matcher(text);
                if (m5.find()) {
                    features.acronym = true;

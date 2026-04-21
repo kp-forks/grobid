@@ -25,8 +25,10 @@ public class Pair<A, B> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Pair)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof Pair))
+            return false;
         Pair<?, ?> that = (Pair<?, ?>) o;
         return new EqualsBuilder()
                 .append(a, that.a)

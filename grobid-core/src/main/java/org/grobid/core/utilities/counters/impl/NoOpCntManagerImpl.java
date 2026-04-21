@@ -1,11 +1,11 @@
 package org.grobid.core.utilities.counters.impl;
 
+import java.util.Map;
+
 import org.grobid.core.engines.counters.Countable;
 import org.grobid.core.utilities.counters.CntManager;
 import org.grobid.core.utilities.counters.CntsMetric;
 import org.grobid.core.utilities.counters.Counter;
-
-import java.util.Map;
 
 class NoOpCntManagerImpl implements CntManager {
     @Override

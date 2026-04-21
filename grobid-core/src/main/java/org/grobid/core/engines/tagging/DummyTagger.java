@@ -1,13 +1,14 @@
 package org.grobid.core.engines.tagging;
 
-import com.google.common.base.Joiner;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.exceptions.GrobidException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.base.Joiner;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.GrobidModels;
+import org.grobid.core.exceptions.GrobidException;
 
 /**
  * This tagger just return one label <dummy>
@@ -17,8 +18,9 @@ public class DummyTagger implements GenericTagger {
     public static final String DUMMY_LABEL = "<dummy>";
 
     public DummyTagger(GrobidModel model) {
-        if(!model.equals(GrobidModels.DUMMY)) {
-            throw new GrobidException("Cannot use a non-dummy model with the dummy tagger. All dummies or no dummies. ");
+        if (!model.equals(GrobidModels.DUMMY)) {
+            throw new GrobidException(
+                    "Cannot use a non-dummy model with the dummy tagger. All dummies or no dummies. ");
         }
     }
 

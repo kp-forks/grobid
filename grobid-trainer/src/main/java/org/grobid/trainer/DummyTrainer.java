@@ -1,8 +1,8 @@
 package org.grobid.trainer;
 
-import org.grobid.core.GrobidModel;
-
 import java.io.File;
+
+import org.grobid.core.GrobidModel;
 
 /**
  * Dummy trainer which won't do anything.
@@ -14,7 +14,13 @@ public class DummyTrainer implements GenericTrainer {
     }
 
     @Override
-    public void train(File template, File trainingData, File outputModel, int numThreads, GrobidModel model, boolean incremental) {
+    public void train(
+            File template,
+            File trainingData,
+            File outputModel,
+            int numThreads,
+            GrobidModel model,
+            boolean incremental) {
 
     }
 

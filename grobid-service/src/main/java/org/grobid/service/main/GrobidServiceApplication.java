@@ -1,8 +1,10 @@
 package org.grobid.service.main;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.google.inject.AbstractModule;
+import java.io.File;
+import java.util.Arrays;
+import java.util.EnumSet;
 
+import com.google.inject.AbstractModule;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
@@ -15,23 +17,18 @@ import jakarta.servlet.FilterRegistration;
 import jakarta.servlet.ServletRegistration;
 import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.grobid.service.GrobidServiceConfiguration;
-import org.grobid.service.modules.GrobidServiceModule;
-import org.grobid.service.resources.HealthResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.EnumSet;
-
+import org.grobid.service.GrobidServiceConfiguration;
+import org.grobid.service.modules.GrobidServiceModule;
+import org.grobid.service.resources.HealthResource;
 
 public final class GrobidServiceApplication extends Application<GrobidServiceConfiguration> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GrobidServiceApplication.class);
     private static final String[] DEFAULT_CONF_LOCATIONS = {"grobid-home/config/grobid.yaml"};
     private static final String RESOURCES = "/api";
-
 
     // ========== Application ==========
 
@@ -40,12 +37,11 @@ public final class GrobidServiceApplication extends Application<GrobidServiceCon
         return "grobid-service";
     }
 
-
     @Override
     public void initialize(Bootstrap<GrobidServiceConfiguration> bootstrap) {
         GuiceBundle guiceBundle = GuiceBundle.builder()
-            .modules(getGuiceModules())
-            .build();
+                .modules(getGuiceModules())
+                .build();
         bootstrap.addBundle(guiceBundle);
 
         /*bootstrap.addBundle(GuiceBundle.builder()
@@ -75,8 +71,7 @@ public final class GrobidServiceApplication extends Application<GrobidServiceCon
         String allowedHeaders = configuration.getGrobid().getCorsAllowedHeaders();
 
         // Enable CORS headers
-        final FilterRegistration.Dynamic cors =
-            environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+        final FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
         // Configure CORS parameters
         cors.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, allowedOrigins);
@@ -87,9 +82,9 @@ public final class GrobidServiceApplication extends Application<GrobidServiceCon
         cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, RESOURCES + "/*");
 
         //Error handling
-//        environment.jersey().register(new GrobidExceptionMapper());
-//        environment.jersey().register(new GrobidServiceExceptionMapper());
-//        environment.jersey().register(new WebApplicationExceptionMapper());
+        //        environment.jersey().register(new GrobidExceptionMapper());
+        //        environment.jersey().register(new GrobidServiceExceptionMapper());
+        //        environment.jersey().register(new WebApplicationExceptionMapper());
     }
 
     // ========== static ==========
@@ -111,8 +106,9 @@ public final class GrobidServiceApplication extends Application<GrobidServiceCon
                 //LOGGER.info("Running with default arguments: \"server\" \"{}\"", foundConf);
                 args = new String[]{"server", foundConf};
             } else {
-                throw new RuntimeException("No explicit config provided and cannot find in one of the default locations: "
-                    + Arrays.toString(DEFAULT_CONF_LOCATIONS));
+                throw new RuntimeException(
+                        "No explicit config provided and cannot find in one of the default locations: "
+                                + Arrays.toString(DEFAULT_CONF_LOCATIONS));
             }
         }
 

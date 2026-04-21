@@ -10,9 +10,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 /**
  * Class representing a pointer within a PDF document, basically a block index and then a token index within a block (not global token index)
  */
-public class DocumentPointer implements Comparable<DocumentPointer>{
-    public static final DocumentPointer START_DOCUMENT_POINTER = new DocumentPointer(0, 0 , 0);
-
+public class DocumentPointer implements Comparable<DocumentPointer> {
+    public static final DocumentPointer START_DOCUMENT_POINTER = new DocumentPointer(0, 0, 0);
 
     private final int blockPtr;
     private final int tokenBlockPos;
@@ -58,8 +57,10 @@ public class DocumentPointer implements Comparable<DocumentPointer>{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DocumentPointer)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof DocumentPointer))
+            return false;
         DocumentPointer that = (DocumentPointer) o;
         return new EqualsBuilder()
                 .append(blockPtr, that.blockPtr)

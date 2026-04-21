@@ -1,20 +1,21 @@
 package org.grobid.core.utilities.counters.impl;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import org.grobid.core.engines.counters.Countable;
-import org.grobid.core.utilities.counters.CntManager;
-import org.grobid.core.utilities.counters.CntsMetric;
-import org.grobid.core.utilities.counters.Counter;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import org.grobid.core.engines.counters.Countable;
+import org.grobid.core.utilities.counters.CntManager;
+import org.grobid.core.utilities.counters.CntsMetric;
+import org.grobid.core.utilities.counters.Counter;
 
 class CntManagerImpl implements CntManager {
     private static final long serialVersionUID = 2305126306757162275L;
@@ -31,7 +32,8 @@ class CntManagerImpl implements CntManager {
 
     private void checkClass(String class1) {
         if (strCnts.containsKey(class1)) {
-            throw new IllegalStateException("Enum class name " + class1 + " coincides with the string type counter name");
+            throw new IllegalStateException(
+                    "Enum class name " + class1 + " coincides with the string type counter name");
         }
     }
 
@@ -199,8 +201,10 @@ class CntManagerImpl implements CntManager {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof CntManagerImpl)) return false;
+        if (this == o)
+            return true;
+        if (!(o instanceof CntManagerImpl))
+            return false;
         CntManagerImpl that = (CntManagerImpl) o;
         return new EqualsBuilder()
                 .append(classCounters, that.classCounters)

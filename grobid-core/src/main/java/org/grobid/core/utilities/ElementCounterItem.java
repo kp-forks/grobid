@@ -4,7 +4,6 @@ public class ElementCounterItem<T> {
     private T item;
     private Integer cnt;
 
-
     //for Jackson
     public ElementCounterItem() {
     }

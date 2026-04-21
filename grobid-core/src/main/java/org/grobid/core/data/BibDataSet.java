@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
 import org.grobid.core.engines.config.GrobidAnalysisConfig;
 
 /**
@@ -110,9 +111,9 @@ public class BibDataSet {
     public String toTEI() {
         return toTEI(false);
     }
-    
-	public String toTEI(boolean includeRawCitations) {
-		if (resBib != null) {
+
+    public String toTEI(boolean includeRawCitations) {
+        if (resBib != null) {
             GrobidAnalysisConfig config = GrobidAnalysisConfig.builder()
                     .includeRawCitations(includeRawCitations)
                     .build();
@@ -120,14 +121,14 @@ public class BibDataSet {
         } else {
             return "";
         }
-	}
-    
+    }
+
     public String toTEI(int p) {
         return toTEI(p, false);
     }
 
-	public String toTEI(int p, boolean includeRawCitations) {
-		if (resBib != null) {
+    public String toTEI(int p, boolean includeRawCitations) {
+        if (resBib != null) {
             GrobidAnalysisConfig config = GrobidAnalysisConfig.builder()
                     .includeRawCitations(includeRawCitations)
                     .build();
@@ -135,5 +136,5 @@ public class BibDataSet {
         } else {
             return "";
         }
-	}
+    }
 }

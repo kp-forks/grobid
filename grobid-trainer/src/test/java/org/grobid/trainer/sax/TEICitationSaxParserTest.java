@@ -1,22 +1,21 @@
 package org.grobid.trainer.sax;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
+import java.io.InputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import java.io.InputStream;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TEICitationSaxParserTest {
 
     TEICitationSaxParser target;
     SAXParserFactory spf;
-
 
     @Before
     public void setUp() throws Exception {

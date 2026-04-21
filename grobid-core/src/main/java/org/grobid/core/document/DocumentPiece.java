@@ -3,7 +3,7 @@ package org.grobid.core.document;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-public class DocumentPiece implements Comparable<DocumentPiece>{
+public class DocumentPiece implements Comparable<DocumentPiece> {
     //for easier access make them final, but public
     private final DocumentPointer a;
     private final DocumentPointer b;

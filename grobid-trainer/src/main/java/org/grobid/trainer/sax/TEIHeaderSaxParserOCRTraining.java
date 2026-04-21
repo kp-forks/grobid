@@ -1,13 +1,14 @@
 package org.grobid.trainer.sax;
 
-import org.grobid.core.exceptions.GrobidException;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.StringTokenizer;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.StringTokenizer;
+import org.grobid.core.exceptions.GrobidException;
 
 /**
  * SAX parser for the TEI format header data. Normally all training data should be in this unique format which
@@ -37,10 +38,10 @@ public class TEIHeaderSaxParserOCRTraining extends DefaultHandler {
     }
 
     public TEIHeaderSaxParserOCRTraining(Writer writ1,
-                                         Writer writ2,
-                                         Writer writ3,
-                                         Writer writ4,
-                                         Writer writ5) {
+            Writer writ2,
+            Writer writ3,
+            Writer writ4,
+            Writer writ5) {
         writer_affiliations = writ1;
         writer_addresses = writ2;
         writer_keywords = writ3;
@@ -56,12 +57,12 @@ public class TEIHeaderSaxParserOCRTraining extends DefaultHandler {
         return accumulator.toString().trim();
     }
 
-    public void endElement(java.lang.String uri, java.lang.String localName, java.lang.String qName) throws SAXException {
+    public void endElement(java.lang.String uri, java.lang.String localName, java.lang.String qName)
+            throws SAXException {
         if ((qName.equals("titlePart")) | (qName.equals("note")) | (qName.equals("byline")) |
                 (qName.equals("affiliation")) | (qName.equals("address")) | (qName.equals("email")) |
                 (qName.equals("idno")) | (qName.equals("date")) | (qName.equals("biblScope")) |
-                (qName.equals("keywords")) | (qName.equals("ptr")) | (qName.equals("div")) | (qName.equals("title"))
-                ) {
+                (qName.equals("keywords")) | (qName.equals("ptr")) | (qName.equals("div")) | (qName.equals("title"))) {
             // we register in the DB the new entry
             String text = getText();
             Writer writer = null;
@@ -83,10 +84,10 @@ public class TEIHeaderSaxParserOCRTraining extends DefaultHandler {
                     StringTokenizer st = new StringTokenizer(text, " \n\t");
                     while (st.hasMoreTokens()) {
                         String tok = st.nextToken().trim();
-                        if (tok.length() == 0) continue;
+                        if (tok.length() == 0)
+                            continue;
 
                         boolean punct1 = false;
-
 
                         if (tok.equals("+L+")) {
                             writer.write("\n");
@@ -142,7 +143,7 @@ public class TEIHeaderSaxParserOCRTraining extends DefaultHandler {
                     }
                     writer.write("\n");
                 } catch (IOException e) {
-//					e.printStackTrace();
+                    //					e.printStackTrace();
                     throw new GrobidException("An exception occured while running Grobid.", e);
                 }
             }
@@ -174,11 +175,11 @@ public class TEIHeaderSaxParserOCRTraining extends DefaultHandler {
         //accumulator.setLength(0);
     }
 
-
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
         if (qName.equals("div")) {
             int length = atts.getLength();

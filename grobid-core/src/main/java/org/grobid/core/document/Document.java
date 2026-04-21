@@ -1,5 +1,30 @@
 package org.grobid.core.document;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Serializable;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -11,6 +36,12 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SortedSetMultimap;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import org.grobid.core.analyzers.Analyzer;
 import org.grobid.core.analyzers.GrobidAnalyzer;
 import org.grobid.core.data.*;
@@ -35,40 +66,6 @@ import org.grobid.core.sax.*;
 import org.grobid.core.utilities.*;
 import org.grobid.core.utilities.matching.EntityMatcherException;
 import org.grobid.core.utilities.matching.ReferenceMarkerMatcher;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 /**
  * Class for representing, processing and exchanging a document item.
@@ -181,7 +178,7 @@ public class Document implements Serializable {
             try {
                 final byte[] utf8Bytes = text.getBytes(StandardCharsets.UTF_8);
                 doc.byteSize = utf8Bytes.length;
-            } catch(Exception e) {
+            } catch (Exception e) {
                 LOGGER.warn("Could not set the original text document size in bytes for UTF-8 encoding");
             }
         }
@@ -302,7 +299,7 @@ public class Document implements Serializable {
     *  @author Daniel Ecer
     */
     protected static void parseInputStream(InputStream in, SAXParser saxParser, DefaultHandler handler)
-        throws SAXException, IOException {
+            throws SAXException, IOException {
         CharsetDecoder utf8Decoder = StandardCharsets.UTF_8.newDecoder();
         utf8Decoder.onMalformedInput(CodingErrorAction.IGNORE);
         utf8Decoder.onUnmappableCharacter(CodingErrorAction.IGNORE);
@@ -310,7 +307,7 @@ public class Document implements Serializable {
     }
 
     protected static void parseInputStream(InputStream in, SAXParserFactory saxParserFactory, DefaultHandler handler)
-        throws SAXException, IOException, ParserConfigurationException {
+            throws SAXException, IOException, ParserConfigurationException {
         parseInputStream(in, saxParserFactory.newSAXParser(), handler);
     }
 
@@ -341,9 +338,9 @@ public class Document implements Serializable {
         tokenizations = null;
 
         File file = new File(pathXML);
-		File fileAnnot = new File(pathXML+"_annot.xml");
-        File fileOutline = new File(pathXML+"_outline.xml");
-        File fileMetadata = new File(pathXML+"_metadata.xml");
+        File fileAnnot = new File(pathXML + "_annot.xml");
+        File fileOutline = new File(pathXML + "_outline.xml");
+        File fileMetadata = new File(pathXML + "_metadata.xml");
         FileInputStream in = null;
         try {
             // parsing of the pdfalto file
@@ -428,7 +425,8 @@ public class Document implements Serializable {
                     images.add(o);
                 }
             } catch (Exception e) {
-                throw new GrobidException("Cannot process vector graphics: " + file, e, GrobidExceptionStatus.PARSING_ERROR);
+                throw new GrobidException("Cannot process vector graphics: " + file, e,
+                        GrobidExceptionStatus.PARSING_ERROR);
             }
         }
 
@@ -508,17 +506,32 @@ public class Document implements Serializable {
             int pageHeight = getCoordItem(bottom, false) - pageY + 1;
             for (Page page : pages) {
                 if (page.isEven()) {
-                    page.setMainArea(BoundingBox.fromPointAndDimensions(page.getNumber(),
-                            pageEvenX, pageY, pageEvenWidth, pageHeight));
+                    page.setMainArea(
+                            BoundingBox.fromPointAndDimensions(
+                                    page.getNumber(),
+                                    pageEvenX,
+                                    pageY,
+                                    pageEvenWidth,
+                                    pageHeight));
                 } else {
-                    page.setMainArea(BoundingBox.fromPointAndDimensions(page.getNumber(),
-                            pageOddX, pageY, pageOddWidth, pageHeight));
+                    page.setMainArea(
+                            BoundingBox.fromPointAndDimensions(
+                                    page.getNumber(),
+                                    pageOddX,
+                                    pageY,
+                                    pageOddWidth,
+                                    pageHeight));
                 }
             }
         } else {
             for (Page page : pages) {
-                page.setMainArea(BoundingBox.fromPointAndDimensions(page.getNumber(),
-                        0, 0, page.getWidth(), page.getHeight()));
+                page.setMainArea(
+                        BoundingBox.fromPointAndDimensions(
+                                page.getNumber(),
+                                0,
+                                0,
+                                page.getWidth(),
+                                page.getHeight()));
             }
         }
     }
@@ -526,9 +539,9 @@ public class Document implements Serializable {
     protected ArrayList<GraphicObject> glueImagesIfNecessary(Integer pageNum, List<GraphicObject> graphicObjects) {
 
         List<Pair<Integer, Integer>> toGlue = new ArrayList<>();
-//        List<GraphicObject> cur = new ArrayList<>();
+        //        List<GraphicObject> cur = new ArrayList<>();
 
-//        List<GraphicObject> graphicObjects = new ArrayList<>(objs);
+        //        List<GraphicObject> graphicObjects = new ArrayList<>(objs);
 
         int start = 0, end = 0;
         for (int i = 1; i < graphicObjects.size(); i++) {
@@ -548,7 +561,7 @@ public class Document implements Serializable {
             if (Utilities.doubleEquals(prev.getBoundingBox().getWidth(), cur.getBoundingBox().getWidth(), 0.0001)
                     && Utilities.doubleEquals(prev.getBoundingBox().getY2(), cur.getBoundingBox().getY(), 0.0001)
 
-                    ) {
+            ) {
                 end++;
             } else {
                 if (start != end) {
@@ -587,7 +600,6 @@ public class Document implements Serializable {
             }
         };
         return Lists.newArrayList(Iterables.filter(graphicObjects, validGraphicObjectPredicate));
-
 
     }
 
@@ -822,8 +834,9 @@ public class Document implements Serializable {
      * Give the list of LayoutToken corresponding to some document parts and
      * a global document tokenization.
      */
-    public static List<LayoutToken> getTokenizationParts(SortedSet<DocumentPiece> documentParts,
-                                                         List<LayoutToken> tokenizations) {
+    public static List<LayoutToken> getTokenizationParts(
+            SortedSet<DocumentPiece> documentParts,
+            List<LayoutToken> tokenizations) {
         if (documentParts == null)
             return null;
 
@@ -857,10 +870,10 @@ public class Document implements Serializable {
                 continue;
             if (((Math.abs((image.getY() + image.getHeight()) - block.getY()) < MIN_DISTANCE) ||
                     (Math.abs(image.getY() - (block.getY() + block.getHeight())) < MIN_DISTANCE)) //||
-                //( (Math.abs((image.x+image.getWidth()) - block.getX()) < MIN_DISTANCE) ||
-                //  (Math.abs(image.x - (block.getX()+block.getWidth())) < MIN_DISTANCE) )
-                    ) {
-                // the image is at a distance of at least MIN_DISTANCE from one border 
+            //( (Math.abs((image.x+image.getWidth()) - block.getX()) < MIN_DISTANCE) ||
+            //  (Math.abs(image.x - (block.getX()+block.getWidth())) < MIN_DISTANCE) )
+            ) {
+                // the image is at a distance of at least MIN_DISTANCE from one border
                 // of the block on the vertical/horizontal axis
                 if (images == null)
                     images = new ArrayList<GraphicObject>();
@@ -943,7 +956,8 @@ public class Document implements Serializable {
         for (Integer pageNum : figureMap.keySet()) {
             List<Figure> pageFigures = new ArrayList<>();
             for (Figure f : figureMap.get(pageNum)) {
-                org.apache.commons.lang3.tuple.Pair<List<LayoutToken>, List<List<LayoutToken>>> figureLayoutTokens = getFigureLayoutTokens(f);
+                org.apache.commons.lang3.tuple.Pair<List<LayoutToken>, List<List<LayoutToken>>> figureLayoutTokens = getFigureLayoutTokens(
+                        f);
                 List<LayoutToken> realCaptionTokens = figureLayoutTokens.getLeft();
                 if (CollectionUtils.isNotEmpty(realCaptionTokens)) {
                     Figure oldFigure = new Figure();
@@ -952,11 +966,14 @@ public class Document implements Serializable {
                     oldFigure.setTextArea(f.getTextArea());
                     f.setTextArea(BoundingBoxCalculator.calculate(realCaptionTokens));
                     oldFigure.setCaption(new StringBuilder(f.getCaption()));
-                    f.setCaption(new StringBuilder(LayoutTokensUtil.toText(LayoutTokensUtil.dehyphenize(realCaptionTokens))));
+                    f.setCaption(
+                            new StringBuilder(
+                                    LayoutTokensUtil.toText(LayoutTokensUtil.dehyphenize(realCaptionTokens))));
                     oldFigure.setCaptionLayoutTokens(f.getCaptionLayoutTokens());
                     f.setCaptionLayoutTokens(realCaptionTokens);
                     pageFigures.add(f);
-                    differences.add(org.apache.commons.lang3.tuple.Triple.of(oldFigure, f, figureLayoutTokens.getRight()));
+                    differences
+                            .add(org.apache.commons.lang3.tuple.Triple.of(oldFigure, f, figureLayoutTokens.getRight()));
                 }
             }
 
@@ -964,7 +981,8 @@ public class Document implements Serializable {
                 continue;
             }
 
-            List<GraphicObject> it = Lists.newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.GRAPHIC_OBJECT_PREDICATE));
+            List<GraphicObject> it = Lists
+                    .newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.GRAPHIC_OBJECT_PREDICATE));
 
             // filtering those images that for some reason are outside of main area
             it = it.stream().filter(go -> {
@@ -972,14 +990,15 @@ public class Document implements Serializable {
                 return mainArea.intersect(go.getBoundingBox());
             }).collect(Collectors.toList());
 
-            List<GraphicObject> vectorBoxGraphicObjects =
-                    Lists.newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
+            List<GraphicObject> vectorBoxGraphicObjects = Lists.newArrayList(
+                    Iterables.filter(imagesPerPage.get(pageNum), Figure.VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
 
             // case where figure caption is covered almost precisely but the vector graphics box -- filter those out - they are covered by caption anyway
             vectorBoxGraphicObjects = vectorBoxGraphicObjects.stream().filter(go -> {
                 for (Figure f : pageFigures) {
-                    BoundingBox intersection = BoundingBoxCalculator.calculateOneBox(f.getLayoutTokens(), true).boundingBoxIntersection(go.getBoundingBox());
-                    if(intersection != null && intersection.area() / go.getBoundingBox().area() > 0.5) {
+                    BoundingBox intersection = BoundingBoxCalculator.calculateOneBox(f.getLayoutTokens(), true)
+                            .boundingBoxIntersection(go.getBoundingBox());
+                    if (intersection != null && intersection.area() / go.getBoundingBox().area() > 0.5) {
                         return false;
                     }
                 }
@@ -988,8 +1007,7 @@ public class Document implements Serializable {
 
             List<GraphicObject> graphicObjects = new ArrayList<>();
 
-            l:
-            for (GraphicObject bgo : it) {
+            l : for (GraphicObject bgo : it) {
                 for (GraphicObject vgo : vectorBoxGraphicObjects) {
                     if (bgo.getBoundingBox().intersect(vgo.getBoundingBox())) {
                         continue l;
@@ -1004,8 +1022,7 @@ public class Document implements Serializable {
             if (vectorBoxGraphicObjects.isEmpty()) {
                 for (Figure figure : pageFigures) {
                     List<LayoutToken> tokens = figure.getLayoutTokens();
-                    final BoundingBox figureBox =
-                            BoundingBoxCalculator.calculateOneBox(tokens, true);
+                    final BoundingBox figureBox = BoundingBoxCalculator.calculateOneBox(tokens, true);
 
                     double minDist = MAX_FIG_BOX_DISTANCE * 100;
 
@@ -1042,14 +1059,14 @@ public class Document implements Serializable {
                 }
             } else {
                 if (pageFigures.size() != graphicObjects.size()) {
-                    Engine.getCntManager().i(FigureCounters.SKIPPED_DUE_TO_MISMATCH_OF_CAPTIONS_AND_VECTOR_AND_BITMAP_GRAPHICS);
+                    Engine.getCntManager()
+                            .i(FigureCounters.SKIPPED_DUE_TO_MISMATCH_OF_CAPTIONS_AND_VECTOR_AND_BITMAP_GRAPHICS);
                     continue;
                 }
 
                 for (Figure figure : pageFigures) {
                     List<LayoutToken> tokens = figure.getLayoutTokens();
-                    final BoundingBox figureBox =
-                            BoundingBoxCalculator.calculateOneBox(tokens, true);
+                    final BoundingBox figureBox = BoundingBoxCalculator.calculateOneBox(tokens, true);
 
                     double minDist = MAX_FIG_BOX_DISTANCE * 100;
 
@@ -1062,7 +1079,8 @@ public class Document implements Serializable {
 
                             BoundingBox goBox = go.getBoundingBox();
 
-                            if (!getPage(goBox.getPage()).getMainArea().contains(goBox) && go.getWidth() * go.getHeight() < 10000) {
+                            if (!getPage(goBox.getPage()).getMainArea().contains(goBox)
+                                    && go.getWidth() * go.getHeight() < 10000) {
                                 continue;
                             }
 
@@ -1103,15 +1121,15 @@ public class Document implements Serializable {
         for (int pageNum = 1; pageNum <= maxPage; pageNum++) {
             if (!figureMap.containsKey(pageNum)) {
 
-                ArrayList<GraphicObject> it = Lists.newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.GRAPHIC_OBJECT_PREDICATE));
+                ArrayList<GraphicObject> it = Lists
+                        .newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.GRAPHIC_OBJECT_PREDICATE));
 
-                List<GraphicObject> vectorBoxGraphicObjects =
-                    Lists.newArrayList(Iterables.filter(imagesPerPage.get(pageNum), Figure.VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
+                List<GraphicObject> vectorBoxGraphicObjects = Lists.newArrayList(
+                        Iterables.filter(imagesPerPage.get(pageNum), Figure.VECTOR_BOX_GRAPHIC_OBJECT_PREDICATE));
 
                 List<GraphicObject> graphicObjects = new ArrayList<>();
 
-                l:
-                for (GraphicObject bgo : it) {
+                l : for (GraphicObject bgo : it) {
                     // intersecting with vector graphics is dangerous, so better skip than have a false positive
                     for (GraphicObject vgo : vectorBoxGraphicObjects) {
                         if (bgo.getBoundingBox().intersect(vgo.getBoundingBox())) {
@@ -1210,7 +1228,6 @@ public class Document implements Serializable {
             double fy1 = originalGoBox.getY();
             double fy2 = originalGoBox.getY2();
 
-
             m = 5;
             BoundingBox bestBox = null;
             try {
@@ -1254,11 +1271,11 @@ public class Document implements Serializable {
             }
         }
 
-//        if (captionBox.intersect(originalGoBox)) {
-//            if (originalGoBox.getY() < captionBox.getY() - 5) {
-//                g.setBoundingBox(BoundingBox.fromTwoPoints(p, originalGoBox.getX(), originalGoBox.getY(), originalGoBox.getX2(), captionBox.getY() - 5));
-//            }
-//        }
+        //        if (captionBox.intersect(originalGoBox)) {
+        //            if (originalGoBox.getY() < captionBox.getY() - 5) {
+        //                g.setBoundingBox(BoundingBox.fromTwoPoints(p, originalGoBox.getX(), originalGoBox.getY(), originalGoBox.getX2(), captionBox.getY() - 5));
+        //            }
+        //        }
 
     }
 
@@ -1269,7 +1286,8 @@ public class Document implements Serializable {
      *
      * LF: To bear in mind that this method was designed assuming the figure caption comes after the figure.
      */
-    protected org.apache.commons.lang3.tuple.Pair<List<LayoutToken>, List<List<LayoutToken>>> getFigureLayoutTokens(Figure f) {
+    protected org.apache.commons.lang3.tuple.Pair<List<LayoutToken>, List<List<LayoutToken>>> getFigureLayoutTokens(
+            Figure f) {
 
         List<LayoutToken> result = new ArrayList<>();
         List<List<LayoutToken>> discardedPieces = new ArrayList<>();
@@ -1281,29 +1299,38 @@ public class Document implements Serializable {
             Block previousBlock = getBlocks().get(newBlockPtr);
             String norm = LayoutTokensUtil.toText(previousBlock.getTokens()).trim().toLowerCase();
             if (norm.startsWith("fig")
-                || norm.startsWith("abb")
-                || norm.startsWith("scheme")
-                || norm.startsWith("photo")
-                || norm.startsWith("gambar")
-                || norm.startsWith("quadro")
-                || norm.startsWith("wykres")
-                || norm.startsWith("fuente")
-                || norm.startsWith("video")
-            ) {
+                    || norm.startsWith("abb")
+                    || norm.startsWith("scheme")
+                    || norm.startsWith("photo")
+                    || norm.startsWith("gambar")
+                    || norm.startsWith("quadro")
+                    || norm.startsWith("wykres")
+                    || norm.startsWith("fuente")
+                    || norm.startsWith("video")) {
                 result.addAll(previousBlock.getTokens());
 
                 while (it.hasNext()) {
-                    BoundingBox prevBlockCoords = BoundingBox.fromPointAndDimensions(previousBlock.getPageNumber(), previousBlock.getX(), previousBlock.getY(), previousBlock.getWidth(), previousBlock.getHeight());
+                    BoundingBox prevBlockCoords = BoundingBox.fromPointAndDimensions(
+                            previousBlock.getPageNumber(),
+                            previousBlock.getX(),
+                            previousBlock.getY(),
+                            previousBlock.getWidth(),
+                            previousBlock.getHeight());
                     newBlockPtr = it.next();
                     Block newBlock = getBlocks().get(newBlockPtr);
-                    BoundingBox newBlockCoords = BoundingBox.fromPointAndDimensions(newBlock.getPageNumber(), newBlock.getX(), newBlock.getY(), newBlock.getWidth(), newBlock.getHeight());
+                    BoundingBox newBlockCoords = BoundingBox.fromPointAndDimensions(
+                            newBlock.getPageNumber(),
+                            newBlock.getX(),
+                            newBlock.getY(),
+                            newBlock.getWidth(),
+                            newBlock.getHeight());
                     if (newBlockCoords.distanceTo(prevBlockCoords) < 15) {
                         result.addAll(newBlock.getTokens());
                         previousBlock = newBlock;
                     } else {
                         // LF: The first temporary trick was to iterate to all the following blocks
                         // and place them into the discarded token list of the figure
-//                        f.addDiscardedPieceTokens(b.getTokens());
+                        //                        f.addDiscardedPieceTokens(b.getTokens());
 
                         List<LayoutToken> newBlockTrimmed = newBlock.getTokens();
 
@@ -1312,8 +1339,9 @@ public class Document implements Serializable {
                             // We need to keep only the common tokens, we assume the block will overrun the figure layout tokens
                             int subListSize = newBlock.getTokens().size();
 
-                            while (!figureLayoutTokens.endsWith(LayoutTokensUtil.toText(newBlock.getTokens().subList(0, subListSize)))
-                                && subListSize > 0) {
+                            while (!figureLayoutTokens
+                                    .endsWith(LayoutTokensUtil.toText(newBlock.getTokens().subList(0, subListSize)))
+                                    && subListSize > 0) {
                                 subListSize -= 1;
                             }
 
@@ -1343,8 +1371,9 @@ public class Document implements Serializable {
                                 // We need to keep only the common tokens, we assume the block will overrun the figure layout tokens
                                 int subListSize = newBlock.getTokens().size();
 
-                                while (!figureLayoutTokens.endsWith(LayoutTokensUtil.toText(newBlock.getTokens().subList(0, subListSize)))
-                                    && subListSize > 0) {
+                                while (!figureLayoutTokens
+                                        .endsWith(LayoutTokensUtil.toText(newBlock.getTokens().subList(0, subListSize)))
+                                        && subListSize > 0) {
                                     subListSize -= 1;
                                 }
                                 if (subListSize > 0) {
@@ -1371,7 +1400,10 @@ public class Document implements Serializable {
                 // If the figure is contained completely into a big block,
                 // it means that we either will have the full image somewhere or not (if it's reversed),
                 // there is no risk of losing pieces, so we don't collect the tokens
-                if (!LayoutTokensUtil.toText(previousBlock.getTokens()).trim().toLowerCase().contains(LayoutTokensUtil.toText(f.getLayoutTokens()).trim().toLowerCase())) {
+                if (!LayoutTokensUtil.toText(previousBlock.getTokens())
+                        .trim()
+                        .toLowerCase()
+                        .contains(LayoutTokensUtil.toText(f.getLayoutTokens()).trim().toLowerCase())) {
                     f.addDiscardedPieceTokens(previousBlock.getTokens());
                 }
             }
@@ -1381,9 +1413,8 @@ public class Document implements Serializable {
             // If there result is zero, we discard the discarded data, because the figure will not be changed
 
             discardedPieces.stream()
-                .forEach(
-                    f::addDiscardedPieceTokens
-                );
+                    .forEach(
+                            f::addDiscardedPieceTokens);
 
         }
 
@@ -1397,15 +1428,13 @@ public class Document implements Serializable {
 
         figure.setTextArea(BoundingBoxCalculator.calculate(tokens));
 
-//        if (LayoutTokensUtil.tooFarAwayVertically(figure.getTextArea(), 100)) {
-//            return;
-//        }
+        //        if (LayoutTokensUtil.tooFarAwayVertically(figure.getTextArea(), 100)) {
+        //            return;
+        //        }
 
-        final BoundingBox figureBox =
-                BoundingBoxCalculator.calculateOneBox(tokens, true);
+        final BoundingBox figureBox = BoundingBoxCalculator.calculateOneBox(tokens, true);
 
         double minDist = MAX_FIG_BOX_DISTANCE * 100;
-
 
         GraphicObject bestGo = null;
 
@@ -1415,9 +1444,12 @@ public class Document implements Serializable {
                     continue;
                 }
 
-                BoundingBox goBox =
-                        BoundingBox.fromPointAndDimensions(go.getPage(), go.getX(), go.getY(),
-                                go.getWidth(), go.getHeight());
+                BoundingBox goBox = BoundingBox.fromPointAndDimensions(
+                        go.getPage(),
+                        go.getX(),
+                        go.getY(),
+                        go.getWidth(),
+                        go.getHeight());
 
                 if (!getPage(goBox.getPage()).getMainArea().contains(goBox)) {
                     continue;
@@ -1441,79 +1473,79 @@ public class Document implements Serializable {
         }
     }
 
-//    public static void setConnectedGraphics(Figure figure,
-//                                            List<LayoutToken> tokenizations,
-//                                            Document doc) {
-//        try {
-//            List<GraphicObject> localImages = null;
-//            // set the intial figure area based on its layout tokens
-//            LayoutToken startToken = figure.getStartToken();
-//            LayoutToken endToken = figure.getEndToken();
-//            int start = figure.getStart();
-//            int end = figure.getEnd();
-//
-//            double maxRight = 0.0; // right border of the figure
-//            double maxLeft = 10000.0; // left border of the figure
-//            double maxUp = 10000.0; // upper border of the figure
-//            double maxDown = 0.0; // bottom border of the figure
-//            for (int i = start; i <= end; i++) {
-//                LayoutToken current = tokenizations.get(i);
-//                if ((figure.getPage() == -1) && (current.getPage() != -1))
-//                    figure.setPage(current.getPage());
-//                if ((current.x >= 0.0) && (current.x < maxLeft))
-//                    maxLeft = current.x;
-//                if ((current.y >= 0.0) && (current.y < maxUp))
-//                    maxUp = current.y;
-//                if ((current.x >= 0.0) && (current.x + current.width > maxRight))
-//                    maxRight = current.x + current.width;
-//                if ((current.y >= 0.0) && (current.y + current.height > maxDown))
-//                    maxDown = current.y + current.height;
-//            }
-//
-//            figure.setX(maxLeft);
-//            figure.setY(maxUp);
-//            figure.setWidth(maxRight - maxLeft);
-//            figure.setHeight(maxDown - maxUp);
-//
-//            // attach connected graphics based on estimated figure area
-//            for (GraphicObject image : doc.getImages()) {
-//                if (image.getType() == GraphicObjectType.VECTOR)
-//                    continue;
-//                if (figure.getPage() != image.getPage())
-//                    continue;
-////System.out.println(image.toString());
-//                if (((Math.abs((image.getY() + image.getHeight()) - figure.getY()) < MIN_DISTANCE) ||
-//                        (Math.abs(image.getY() - (figure.getY() + figure.getHeight())) < MIN_DISTANCE)) //||
-//                    //( (Math.abs((image.x+image.width) - figure.getX()) < MIN_DISTANCE) ||
-//                    //(Math.abs(image.x - (figure.getX()+figure.getWidth())) < MIN_DISTANCE) )
-//                        ) {
-//                    // the image is at a distance of at least MIN_DISTANCE from one border
-//                    // of the block on the vertical/horizontal axis
-//                    if (localImages == null)
-//                        localImages = new ArrayList<GraphicObject>();
-//                    localImages.add(image);
-//                }
-//            }
-//
-//            // re-evaluate figure area with connected graphics
-//            if (localImages != null) {
-//                for (GraphicObject image : localImages) {
-//                    if (image.getX() < maxLeft)
-//                        maxLeft = image.getX();
-//                    if (image.getY() < maxUp)
-//                        maxUp = image.getY();
-//                    if (image.getX() + image.getWidth() > maxRight)
-//                        maxRight = image.getX() + image.getWidth();
-//                    if (image.getY() + image.getHeight() > maxDown)
-//                        maxDown = image.getY() + image.getHeight();
-//                }
-//            }
-//
-//            figure.setGraphicObjects(localImages);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    //    public static void setConnectedGraphics(Figure figure,
+    //                                            List<LayoutToken> tokenizations,
+    //                                            Document doc) {
+    //        try {
+    //            List<GraphicObject> localImages = null;
+    //            // set the intial figure area based on its layout tokens
+    //            LayoutToken startToken = figure.getStartToken();
+    //            LayoutToken endToken = figure.getEndToken();
+    //            int start = figure.getStart();
+    //            int end = figure.getEnd();
+    //
+    //            double maxRight = 0.0; // right border of the figure
+    //            double maxLeft = 10000.0; // left border of the figure
+    //            double maxUp = 10000.0; // upper border of the figure
+    //            double maxDown = 0.0; // bottom border of the figure
+    //            for (int i = start; i <= end; i++) {
+    //                LayoutToken current = tokenizations.get(i);
+    //                if ((figure.getPage() == -1) && (current.getPage() != -1))
+    //                    figure.setPage(current.getPage());
+    //                if ((current.x >= 0.0) && (current.x < maxLeft))
+    //                    maxLeft = current.x;
+    //                if ((current.y >= 0.0) && (current.y < maxUp))
+    //                    maxUp = current.y;
+    //                if ((current.x >= 0.0) && (current.x + current.width > maxRight))
+    //                    maxRight = current.x + current.width;
+    //                if ((current.y >= 0.0) && (current.y + current.height > maxDown))
+    //                    maxDown = current.y + current.height;
+    //            }
+    //
+    //            figure.setX(maxLeft);
+    //            figure.setY(maxUp);
+    //            figure.setWidth(maxRight - maxLeft);
+    //            figure.setHeight(maxDown - maxUp);
+    //
+    //            // attach connected graphics based on estimated figure area
+    //            for (GraphicObject image : doc.getImages()) {
+    //                if (image.getType() == GraphicObjectType.VECTOR)
+    //                    continue;
+    //                if (figure.getPage() != image.getPage())
+    //                    continue;
+    ////System.out.println(image.toString());
+    //                if (((Math.abs((image.getY() + image.getHeight()) - figure.getY()) < MIN_DISTANCE) ||
+    //                        (Math.abs(image.getY() - (figure.getY() + figure.getHeight())) < MIN_DISTANCE)) //||
+    //                    //( (Math.abs((image.x+image.width) - figure.getX()) < MIN_DISTANCE) ||
+    //                    //(Math.abs(image.x - (figure.getX()+figure.getWidth())) < MIN_DISTANCE) )
+    //                        ) {
+    //                    // the image is at a distance of at least MIN_DISTANCE from one border
+    //                    // of the block on the vertical/horizontal axis
+    //                    if (localImages == null)
+    //                        localImages = new ArrayList<GraphicObject>();
+    //                    localImages.add(image);
+    //                }
+    //            }
+    //
+    //            // re-evaluate figure area with connected graphics
+    //            if (localImages != null) {
+    //                for (GraphicObject image : localImages) {
+    //                    if (image.getX() < maxLeft)
+    //                        maxLeft = image.getX();
+    //                    if (image.getY() < maxUp)
+    //                        maxUp = image.getY();
+    //                    if (image.getX() + image.getWidth() > maxRight)
+    //                        maxRight = image.getX() + image.getWidth();
+    //                    if (image.getY() + image.getHeight() > maxDown)
+    //                        maxDown = image.getY() + image.getHeight();
+    //                }
+    //            }
+    //
+    //            figure.setGraphicObjects(localImages);
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
 
     public void produceStatistics() {
         // document length in characters
@@ -1614,15 +1646,15 @@ public class Document implements Serializable {
         this.resHeader = resHeader;
     }
 
-
     static public List<LayoutToken> getTokens(List<LayoutToken> tokenizations, int offsetBegin, int offsetEnd) {
         return getTokensFrom(tokenizations, offsetBegin, offsetEnd, 0);
     }
 
-    static public List<LayoutToken> getTokensFrom(List<LayoutToken> tokenizations,
-                                                  int offsetBegin,
-                                                  int offsetEnd,
-                                                  int startTokenIndex) {
+    static public List<LayoutToken> getTokensFrom(
+            List<LayoutToken> tokenizations,
+            int offsetBegin,
+            int offsetEnd,
+            int startTokenIndex) {
         List<LayoutToken> result = new ArrayList<LayoutToken>();
         for (int p = startTokenIndex; p < tokenizations.size(); p++) {
             LayoutToken currentToken = tokenizations.get(p);

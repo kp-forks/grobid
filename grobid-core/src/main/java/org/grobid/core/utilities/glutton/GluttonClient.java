@@ -1,16 +1,17 @@
 package org.grobid.core.utilities.glutton;
 
-import org.grobid.core.utilities.crossref.CrossrefClient;
-import org.grobid.core.utilities.crossref.CrossrefDeserializer;
-import org.grobid.core.utilities.crossref.CrossrefRequestListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.utilities.crossref.CrossrefClient;
+import org.grobid.core.utilities.crossref.CrossrefDeserializer;
+import org.grobid.core.utilities.crossref.CrossrefRequestListener;
 
 /**
  * Client to the Glutton bibliographical service
@@ -18,11 +19,11 @@ import java.util.concurrent.Future;
  */
 public class GluttonClient extends CrossrefClient {
     public static final Logger LOGGER = LoggerFactory.getLogger(GluttonClient.class);
-    
+
     private static volatile GluttonClient instance;
 
     //private volatile ExecutorService executorService;
-        
+
     //private static boolean limitAuto = true;
     //private volatile TimedSemaphore timedSemaphore;
 
@@ -60,46 +61,52 @@ public class GluttonClient extends CrossrefClient {
         int nThreads = Runtime.getRuntime().availableProcessors();
         //int nThreads = (int) Math.ceil((double)Runtime.getRuntime().availableProcessors() / 2);
         LOGGER.debug("nThreads: " + nThreads);
-        this.executorService = Executors.newFixedThreadPool(nThreads*2);
+        this.executorService = Executors.newFixedThreadPool(nThreads * 2);
         //setLimits(20, 1000); // default calls per second
     }
 
     public static void printLog(GluttonRequest<?> request, String message) {
-        LOGGER.debug((request != null ? request+": " : "")+message);
+        LOGGER.debug((request != null ? request + ": " : "") + message);
         //System.out.println((request != null ? request+": " : "")+message);
     }
 
     /**
      * Push a request in pool to be executed as soon as possible, then wait a response through the listener.
      */
-    public <T extends Object> void pushRequest(GluttonRequest<T> request, CrossrefRequestListener<T> listener, 
-        long threadId) {
+    public <T extends Object> void pushRequest(
+            GluttonRequest<T> request,
+            CrossrefRequestListener<T> listener,
+            long threadId) {
         if (listener != null)
             request.addListener(listener);
-        synchronized(this) {
+        synchronized (this) {
             Future<?> f = executorService.submit(new GluttonRequestTask<>(this, request));
             List<Future<?>> localFutures = this.futures.get(threadId);
             if (localFutures == null)
                 localFutures = new ArrayList<>();
             localFutures.add(f);
             this.futures.put(threadId, localFutures);
-//System.out.println("add request to thread " + threadId + " / current total for the thread: " +  localFutures.size());         
+            //System.out.println("add request to thread " + threadId + " / current total for the thread: " +  localFutures.size());
         }
     }
-    
+
     /**
      * Push a request in pool to be executed soon as possible, then wait a response through the listener.
-     * 
+     *
      * @param params        query parameters, can be null, ex: ?query.title=[title]&query.author=[author]
      * @param deserializer  json response deserializer, ex: WorkDeserializer to convert Work to BiblioItem
      * @param threadId      the java identifier of the thread providing the request (e.g. via Thread.currentThread().getId())
      * @param listener      catch response from request
      */
     @Override
-    public <T> void pushRequest(String model, Map<String, String> params, CrossrefDeserializer<T> deserializer,
-                                long threadId, CrossrefRequestListener<T> listener) {
+    public <T> void pushRequest(
+            String model,
+            Map<String, String> params,
+            CrossrefDeserializer<T> deserializer,
+            long threadId,
+            CrossrefRequestListener<T> listener) {
         GluttonRequest<T> request = new GluttonRequest<>(model, params, deserializer);
-        synchronized(this) {
+        synchronized (this) {
             this.pushRequest(request, listener, threadId);
         }
     }

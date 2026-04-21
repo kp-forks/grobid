@@ -1,16 +1,17 @@
 package org.grobid.trainer;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.grobid.core.GrobidModels;
 import org.grobid.core.exceptions.GrobidException;
 import org.grobid.core.features.FeaturesVectorChemicalEntity;
 import org.grobid.core.utilities.OffsetPosition;
 import org.grobid.trainer.sax.*;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChemicalEntityTrainer extends AbstractTrainer {
 
@@ -18,52 +19,54 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
         super(GrobidModels.ENTITIES_CHEMISTRY);
     }
 
-	/**
-	 * Add the selected features to a chemical entity example set 
-	 * 
-	 * @param corpusDir
-	 *            a path where corpus files are located
-	 * @param trainingOutputPath
-	 *            path where to store the temporary training data
-	 * @return the total number of used corpus items
-	 */
-	public int createCRFPPData2(final File corpusDir, final File modelOutputPath) {
-		return createCRFPPData(corpusDir, modelOutputPath, null, 1.0);
-	}
+    /**
+     * Add the selected features to a chemical entity example set
+     *
+     * @param corpusDir
+     *            a path where corpus files are located
+     * @param trainingOutputPath
+     *            path where to store the temporary training data
+     * @return the total number of used corpus items
+     */
+    public int createCRFPPData2(final File corpusDir, final File modelOutputPath) {
+        return createCRFPPData(corpusDir, modelOutputPath, null, 1.0);
+    }
 
-	/**
-	 * Add the selected features to a chemical entity example set 
-	 * 
-	 * @param corpusDir
-	 *            a path where corpus files are located
-	 * @param trainingOutputPath
-	 *            path where to store the temporary training data
-	 * @param evalOutputPath
-	 *            path where to store the temporary evaluation data
-	 * @param splitRatio
-	 *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80% 
-	 * @return the total number of corpus items
-	 */
-	@Override
-	public int createCRFPPData(final File corpusDir, 
-							final File trainingOutputPath, 
-							final File evalOutputPath, 
-							double splitRatio) {
-		return 0;
-	}
-	
-	/**
-	 * Add the selected features to a chemical entity example set 
-	 * 
-	 * @param corpusDir
-	 *            a path where corpus files are located
-	 * @param trainingOutputPath
-	 *            path where to store the temporary training data
-	 * @return the total number of used corpus items
-	 */
-	@Override
-    public int createCRFPPData(File corpusDir,
-                               File trainingOutputPath) {
+    /**
+     * Add the selected features to a chemical entity example set
+     *
+     * @param corpusDir
+     *            a path where corpus files are located
+     * @param trainingOutputPath
+     *            path where to store the temporary training data
+     * @param evalOutputPath
+     *            path where to store the temporary evaluation data
+     * @param splitRatio
+     *            ratio to consider for separating training and evaluation data, e.g. 0.8 for 80%
+     * @return the total number of corpus items
+     */
+    @Override
+    public int createCRFPPData(
+            final File corpusDir,
+            final File trainingOutputPath,
+            final File evalOutputPath,
+            double splitRatio) {
+        return 0;
+    }
+
+    /**
+     * Add the selected features to a chemical entity example set
+     *
+     * @param corpusDir
+     *            a path where corpus files are located
+     * @param trainingOutputPath
+     *            path where to store the temporary training data
+     * @return the total number of used corpus items
+     */
+    @Override
+    public int createCRFPPData(
+            File corpusDir,
+            File trainingOutputPath) {
         int totalExamples = 0;
         try {
             System.out.println("corpusDir: " + corpusDir);
@@ -104,8 +107,10 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
                     name = thefile.getName().replace(".words.xml", "");
                     System.out.println(name);
 
-                    File theOtherFile = new File(thefile.getPath().replace(".words.xml",
-                            ".HC.chemical-names.xml"));
+                    File theOtherFile = new File(thefile.getPath()
+                            .replace(
+                                    ".words.xml",
+                                    ".HC.chemical-names.xml"));
                     if (theOtherFile.exists()) {
                         // get the chemical names first
                         ChemicalNameSaxParser parser2 = new ChemicalNameSaxParser();
@@ -118,8 +123,10 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
                         totalExamples += parser2.getNumberEntities();
                     }
 
-                    theOtherFile = new File(thefile.getPath().replace(".words.xml",
-                            ".HC.formula-names.xml"));
+                    theOtherFile = new File(thefile.getPath()
+                            .replace(
+                                    ".words.xml",
+                                    ".HC.formula-names.xml"));
                     if (theOtherFile.exists()) {
                         ChemicalFormulasSaxParser parser3 = new ChemicalFormulasSaxParser();
 
@@ -131,8 +138,10 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
                         totalExamples += parser3.getNumberEntities();
                     }
 
-                    theOtherFile = new File(thefile.getPath().replace(".words.xml",
-                            ".HC.substance-names.xml"));
+                    theOtherFile = new File(thefile.getPath()
+                            .replace(
+                                    ".words.xml",
+                                    ".HC.substance-names.xml"));
                     if (theOtherFile.exists()) {
                         ChemicalSubstancesSaxParser parser4 = new ChemicalSubstancesSaxParser();
 
@@ -144,8 +153,10 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
                         totalExamples += parser4.getNumberEntities();
                     }
 
-                    theOtherFile = new File(thefile.getPath().replace(".words.xml",
-                            ".HC.class-names.xml"));
+                    theOtherFile = new File(thefile.getPath()
+                            .replace(
+                                    ".words.xml",
+                                    ".HC.class-names.xml"));
                     if (theOtherFile.exists()) {
                         ChemicalClassNamesSaxParser parser5 = new ChemicalClassNamesSaxParser();
 
@@ -157,8 +168,10 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
                         totalExamples += parser5.getNumberEntities();
                     }
 
-                    theOtherFile = new File(thefile.getPath().replace(".words.xml",
-                            ".HC.ligand.xml"));
+                    theOtherFile = new File(thefile.getPath()
+                            .replace(
+                                    ".words.xml",
+                                    ".HC.ligand.xml"));
                     if (theOtherFile.exists()) {
                         ChemicalLigandSaxParser parser6 = new ChemicalLigandSaxParser();
 
@@ -389,24 +402,24 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
         return totalExamples;
     }
 
-
     @SuppressWarnings({"UnusedParameters"})
-    public void addFeatures(List<String> texts,
-                            Writer writer,
-                            List<OffsetPosition> chemicalTokenPositions,
-                            List<OffsetPosition> chemicalNamesTokenPositions) {
+    public void addFeatures(
+            List<String> texts,
+            Writer writer,
+            List<OffsetPosition> chemicalTokenPositions,
+            List<OffsetPosition> chemicalNamesTokenPositions) {
         int totalLine = texts.size();
         int posit = 0;
         boolean isChemicalToken = false;
         boolean isChemicalNameToken = false;
         try {
             for (String line : texts) {
-                FeaturesVectorChemicalEntity featuresVector =
-                        FeaturesVectorChemicalEntity.addFeaturesChemicalEntities(line,
-                                totalLine,
-                                posit,
-                                isChemicalToken,
-                                isChemicalNameToken);
+                FeaturesVectorChemicalEntity featuresVector = FeaturesVectorChemicalEntity.addFeaturesChemicalEntities(
+                        line,
+                        totalLine,
+                        posit,
+                        isChemicalToken,
+                        isChemicalNameToken);
                 if (featuresVector.label == null)
                     continue;
                 writer.write(featuresVector.printVector());
@@ -417,7 +430,6 @@ public class ChemicalEntityTrainer extends AbstractTrainer {
             throw new GrobidException("An exception occured while running Grobid.", e);
         }
     }
-
 
     /**
      * Command line execution.

@@ -1,15 +1,16 @@
 package org.grobid.core.engines;
 
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.grobid.core.GrobidModel;
 import org.grobid.core.analyzers.GrobidAnalyzer;
 import org.grobid.core.engines.tagging.*;
 import org.grobid.core.utilities.counters.CntManager;
 import org.grobid.core.utilities.counters.impl.CntManagerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Closeable;
-import java.io.IOException;
 
 public abstract class AbstractParser implements GenericTagger, Closeable {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractParser.class);

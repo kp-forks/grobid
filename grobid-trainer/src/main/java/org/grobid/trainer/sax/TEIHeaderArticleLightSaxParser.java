@@ -1,20 +1,19 @@
 package org.grobid.trainer.sax;
 
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.utilities.TextUtilities;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import static org.grobid.core.engines.label.TaggingLabels.AVAILABILITY_LABEL;
+import org.apache.commons.lang3.StringUtils;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import org.grobid.core.utilities.TextUtilities;
 
 /**
- * SAX parser for the TEI format header data encoded for training. Normally all training data for the header model 
- * should be in this unique format (which replaces for instance the CORA format). Segmentation of tokens must be 
+ * SAX parser for the TEI format header data encoded for training. Normally all training data for the header model
+ * should be in this unique format (which replaces for instance the CORA format). Segmentation of tokens must be
  * identical as the one from pdf2xml files so that training and online input tokens are aligned.
  *
  * @author Patrice Lopez
@@ -33,14 +32,27 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
     private ArrayList<String> labeled = null; // store line by line the labeled data
 
     private List<String> endTags = Arrays.asList(
-        "titlePart", "note", "docAuthor", "affiliation",
-        "address", "email", "idno",
-        "date", "keywords", "keyword",
-        "reference", "ptr", "div", "editor", "meeting");
+            "titlePart",
+            "note",
+            "docAuthor",
+            "affiliation",
+            "address",
+            "email",
+            "idno",
+            "date",
+            "keywords",
+            "keyword",
+            "reference",
+            "ptr",
+            "div",
+            "editor",
+            "meeting");
 
-    private List<String> intermediaryTags = Arrays.asList("byline", "front", "lb", "tei", "TEI", "teiHeader", "fileDesc", "text", "byline", "docTitle", "p");
+    private List<String> intermediaryTags = Arrays
+            .asList("byline", "front", "lb", "tei", "TEI", "teiHeader", "fileDesc", "text", "byline", "docTitle", "p");
 
-    private List<String> ignoredTags = Arrays.asList("location", "version", "web", "degree", "page", "title", "phone", "publisher");
+    private List<String> ignoredTags = Arrays
+            .asList("location", "version", "web", "degree", "page", "title", "phone", "publisher");
 
     public TEIHeaderArticleLightSaxParser() {
         labeled = new ArrayList<>();
@@ -71,9 +83,10 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
         return labeled;
     }
 
-    public void endElement(String uri,
-                           String localName,
-                           String qName) throws SAXException {
+    public void endElement(
+            String uri,
+            String localName,
+            String qName) throws SAXException {
         if (qName.equals("teiHeader")) {
             inTeiHeader = false;
             return; // Exit teiHeader and resume normal processing
@@ -105,12 +118,13 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
         }
     }
 
-    public void startElement(String namespaceURI,
-                             String localName,
-                             String qName,
-                             Attributes atts)
+    public void startElement(
+            String namespaceURI,
+            String localName,
+            String qName,
+            Attributes atts)
             throws SAXException {
-       if (inTeiHeader) {
+        if (inTeiHeader) {
             if (qName.equals("fileDesc")) {
                 //We need to get the pdf name from the xml:id attribute
                 for (int i = 0; i < atts.getLength(); i++) {
@@ -155,7 +169,7 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
             // do nothing
             currentTag = "<other>";
         } else {
-//            System.out.println("Warning: Unexpected starting tag " + qName);
+            //            System.out.println("Warning: Unexpected starting tag " + qName);
             currentTag = "<other>";
         }
     }
@@ -171,7 +185,7 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
         boolean begin = true;
         while (st.hasMoreTokens()) {
             String tok = st.nextToken().trim();
-            if (tok.length() == 0) 
+            if (tok.length() == 0)
                 continue;
 
             String content = tok;
@@ -188,5 +202,5 @@ public class TEIHeaderArticleLightSaxParser extends TEIHeaderSaxParser {
         }
         accumulator.setLength(0);
     }
-    
+
 }

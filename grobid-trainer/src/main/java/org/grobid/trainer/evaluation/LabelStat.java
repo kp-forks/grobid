@@ -1,7 +1,7 @@
 package org.grobid.trainer.evaluation;
 
-/** 
- *  Model the results for each label 
+/**
+ *  Model the results for each label
  */
 public final class LabelStat {
     private int falsePositive = 0;
@@ -98,7 +98,8 @@ public final class LabelStat {
     }
 
     public double getAccuracy() {
-        double accuracy = (double) (observed + trueNegative) / (observed + falsePositive + trueNegative + falseNegative);
+        double accuracy = (double) (observed + trueNegative)
+                / (observed + falsePositive + trueNegative + falseNegative);
         if (accuracy < 0.0)
             accuracy = 0.0;
 

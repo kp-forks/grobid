@@ -1,18 +1,18 @@
 package org.grobid.core.lexicon;
 
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.OffsetPosition;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.analyzers.GrobidAnalyzer;
-import org.junit.*;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+
+import java.io.File;
+import java.util.List;
+
+import org.junit.*;
+
+import org.grobid.core.analyzers.GrobidAnalyzer;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.GrobidProperties;
+import org.grobid.core.utilities.OffsetPosition;
 
 public class FastMatcherTest {
 
@@ -84,7 +84,7 @@ public class FastMatcherTest {
         final String input = "I'm walking in The Bronx";
         final List<OffsetPosition> positions = target.matchCharacter(input);
         assertThat(positions, hasSize(2));
-        
+
         //The Bronx
         assertThat(positions.get(0).start, is(15));
         assertThat(positions.get(0).end, is(24));
@@ -138,7 +138,7 @@ public class FastMatcherTest {
         target = new FastMatcher(this.getClass().getResourceAsStream("location.txt"));
 
         final String input = "This is <p>";
-//        final List<OffsetPosition> offsetPositions = target.matchCharacter(Arrays.asList(input.split(" ")));
+        //        final List<OffsetPosition> offsetPositions = target.matchCharacter(Arrays.asList(input.split(" ")));
         //assertThat(offsetPositions, hasSize(0));
     }
 
@@ -171,7 +171,8 @@ public class FastMatcherTest {
 
     @Test
     public void testMatchList_funder_1Match() throws Exception {
-        target = new FastMatcher(this.getClass().getResourceAsStream("funders.txt"), GrobidAnalyzer.getInstance(), true);
+        target = new FastMatcher(this.getClass().getResourceAsStream("funders.txt"), GrobidAnalyzer.getInstance(),
+                true);
 
         final String input = "Thank you Deutsche Forschungsgemeinschaft for the money.";
         List<LayoutToken> tokenisedInput = GrobidAnalyzer.getInstance().tokenizeWithLayoutToken(input);

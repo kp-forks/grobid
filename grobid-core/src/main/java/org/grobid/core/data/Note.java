@@ -1,13 +1,14 @@
 package org.grobid.core.data;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.utilities.*;
+import static com.google.common.collect.Iterables.getLast;
 
 import java.util.List;
 
-import static com.google.common.collect.Iterables.getLast;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.*;
 
 public class Note {
 

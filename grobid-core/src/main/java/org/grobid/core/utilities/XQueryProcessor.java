@@ -1,5 +1,17 @@
 package org.grobid.core.utilities;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Properties;
+
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamResult;
+
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.SequenceIterator;
@@ -11,17 +23,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.xml.sax.InputSource;
 
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Properties;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * Running XQuery queries
  */
@@ -30,12 +31,13 @@ public class XQueryProcessor {
     private final DynamicQueryContext dqc;
 
     public static String getQueryFromResources(String name) throws IOException {
-        return IOUtils.toString(XQueryProcessor.class.getResourceAsStream("/xq/" + name),UTF_8);
+        return IOUtils.toString(XQueryProcessor.class.getResourceAsStream("/xq/" + name), UTF_8);
     }
 
     public XQueryProcessor(File xmFile) throws XPathException, IOException {
-        this(FileUtils.readFileToString(xmFile,UTF_8));
+        this(FileUtils.readFileToString(xmFile, UTF_8));
     }
+
     public XQueryProcessor(String xmlContent) throws XPathException {
         Configuration c = new Configuration();
 

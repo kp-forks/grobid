@@ -1,10 +1,10 @@
 package org.grobid.core.document.xml;
 
-import nu.xom.Node;
-import nu.xom.Nodes;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import nu.xom.Node;
+import nu.xom.Nodes;
 
 public class NodesIterator implements Iterable<Node>, Iterator<Node> {
     private Nodes nodes;

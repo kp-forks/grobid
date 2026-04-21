@@ -1,9 +1,9 @@
 package org.grobid.core.features;
 
-import org.grobid.core.utilities.TextUtilities;
-
 import java.util.List;
 import java.util.regex.Matcher;
+
+import org.grobid.core.utilities.TextUtilities;
 
 /**
  * Class for features used for parsing date chunk.
@@ -24,8 +24,10 @@ public class FeaturesVectorDate {
     public boolean containPunct = false;
 
     public String printVector() {
-        if (string == null) return null;
-        if (string.length() == 0) return null;
+        if (string == null)
+            return null;
+        if (string.length() == 0)
+            return null;
         StringBuffer res = new StringBuffer();
 
         // token string (1)
@@ -240,8 +242,7 @@ public class FeaturesVectorDate {
             }
 
             if (text.length() == 1) {
-                features.singleChar = true;
-                ;
+                features.singleChar = true;;
             }
 
             if (Character.isUpperCase(text.charAt(0))) {

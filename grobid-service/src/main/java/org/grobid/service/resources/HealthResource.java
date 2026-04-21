@@ -1,13 +1,10 @@
 package org.grobid.service.resources;
 
+import java.util.Map;
+
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.grobid.core.engines.tagging.TaggerFactory;
-import org.grobid.core.factory.GrobidPoolingFactory;
-import org.grobid.service.GrobidRestService;
-import org.grobid.service.GrobidServiceConfiguration;
-
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.GET;
@@ -16,7 +13,10 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import java.util.Map;
+import org.grobid.core.engines.tagging.TaggerFactory;
+import org.grobid.core.factory.GrobidPoolingFactory;
+import org.grobid.service.GrobidRestService;
+import org.grobid.service.GrobidServiceConfiguration;
 
 @Path("health")
 @Singleton
@@ -105,7 +105,8 @@ public class HealthResource extends HealthCheck {
             return Result.unhealthy("Models failed to load: " + String.join(", ", failed.keySet()));
         }
 
-        return Result.healthy("Pool: %d/%d active engines",
+        return Result.healthy(
+                "Pool: %d/%d active engines",
                 GrobidPoolingFactory.getActiveEngineCount(),
                 GrobidPoolingFactory.getMaxActiveEngineCount());
     }

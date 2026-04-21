@@ -1,15 +1,16 @@
 package org.grobid.core.tokenization;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.engines.label.TaggingLabel;
-import org.grobid.core.layout.LayoutToken;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.engines.label.TaggingLabel;
+import org.grobid.core.layout.LayoutToken;
 
 /**
  * Cluster tokens by label
@@ -53,8 +54,9 @@ public class TaggingTokenClusteror {
     }
 
     public TaggingTokenClusteror(GrobidModel grobidModel, String result, List<LayoutToken> tokenizations,
-                                 boolean computerFeatureBlock) {
-        taggingTokenSynchronizer = new TaggingTokenSynchronizer(grobidModel, result, tokenizations, computerFeatureBlock);
+            boolean computerFeatureBlock) {
+        taggingTokenSynchronizer = new TaggingTokenSynchronizer(grobidModel, result, tokenizations,
+                computerFeatureBlock);
     }
 
     public List<TaggingTokenCluster> cluster() {

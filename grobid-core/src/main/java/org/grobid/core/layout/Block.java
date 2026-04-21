@@ -30,7 +30,9 @@ public class Block {
     // the page in the document where the block is located
     private Page page = null;
 
-    public enum Type {DEFAULT, BULLET, FIGURE, TABLE, REFERENCE}
+    public enum Type {
+        DEFAULT, BULLET, FIGURE, TABLE, REFERENCE
+    }
 
     private Type type;
 
@@ -69,7 +71,7 @@ public class Block {
             return text;
         else {
             StringBuilder localText = new StringBuilder();
-            for(LayoutToken token : tokens) {
+            for (LayoutToken token : tokens) {
                 localText.append(token.getText());
             }
             text = localText.toString();
@@ -216,10 +218,9 @@ public class Block {
     }
 
     public boolean isNull() {
-        if ( (tokens == null) && (startToken == -1) && (endToken == -1) && (type == null) ) {
+        if ((tokens == null) && (startToken == -1) && (endToken == -1) && (type == null)) {
             return true;
-        }
-        else
+        } else
             return false;
     }
 

@@ -1,24 +1,23 @@
 package org.grobid.core.lexicon;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import org.grobid.core.layout.LayoutToken;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.exceptions.GrobidResourceException;
-import org.grobid.core.utilities.OffsetPosition;
-import org.grobid.core.utilities.Pair;
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.LayoutTokensUtil;
-import org.grobid.core.utilities.UnicodeUtil;
-import org.grobid.core.lang.Language;
-import org.grobid.core.analyzers.GrobidAnalyzer;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.io.*;
 import java.util.*;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import org.grobid.core.analyzers.GrobidAnalyzer;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.exceptions.GrobidResourceException;
+import org.grobid.core.lang.Language;
+import org.grobid.core.layout.LayoutToken;
+import org.grobid.core.utilities.OffsetPosition;
+import org.grobid.core.utilities.Pair;
+import org.grobid.core.utilities.TextUtilities;
+import org.grobid.core.utilities.UnicodeUtil;
 
 /**
  * Class for fast matching of word sequences over text stream.
@@ -35,12 +34,16 @@ public final class FastMatcher {
 
     public FastMatcher(File file) {
         if (!file.exists()) {
-            throw new GrobidResourceException("Cannot add term to matcher, because file '" +
-                    file.getAbsolutePath() + "' does not exist.");
+            throw new GrobidResourceException("Cannot add term to matcher, because file '"
+                    +
+                    file.getAbsolutePath()
+                    + "' does not exist.");
         }
         if (!file.canRead()) {
-            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '" +
-                    file.getAbsolutePath() + "'.");
+            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '"
+                    +
+                    file.getAbsolutePath()
+                    + "'.");
         }
         try {
             loadTerms(file, GrobidAnalyzer.getInstance(), false);
@@ -51,12 +54,16 @@ public final class FastMatcher {
 
     public FastMatcher(File file, org.grobid.core.analyzers.Analyzer analyzer) {
         if (!file.exists()) {
-            throw new GrobidResourceException("Cannot add term to matcher, because file '" +
-                    file.getAbsolutePath() + "' does not exist.");
+            throw new GrobidResourceException("Cannot add term to matcher, because file '"
+                    +
+                    file.getAbsolutePath()
+                    + "' does not exist.");
         }
         if (!file.canRead()) {
-            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '" +
-                    file.getAbsolutePath() + "'.");
+            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '"
+                    +
+                    file.getAbsolutePath()
+                    + "'.");
         }
         try {
             loadTerms(file, analyzer, false);
@@ -67,12 +74,16 @@ public final class FastMatcher {
 
     public FastMatcher(File file, org.grobid.core.analyzers.Analyzer analyzer, boolean caseSensitive) {
         if (!file.exists()) {
-            throw new GrobidResourceException("Cannot add term to matcher, because file '" +
-                    file.getAbsolutePath() + "' does not exist.");
+            throw new GrobidResourceException("Cannot add term to matcher, because file '"
+                    +
+                    file.getAbsolutePath()
+                    + "' does not exist.");
         }
         if (!file.canRead()) {
-            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '" +
-                    file.getAbsolutePath() + "'.");
+            throw new GrobidResourceException("Cannot add terms to matcher, because cannot read file '"
+                    +
+                    file.getAbsolutePath()
+                    + "'.");
         }
         try {
             loadTerms(file, analyzer, caseSensitive);
@@ -124,7 +135,8 @@ public final class FastMatcher {
     /**
      * Load a set of terms to the fast matcher from a file listing terms one per line
      */
-    public int loadTerms(File file, org.grobid.core.analyzers.Analyzer analyzer, boolean caseSensitive) throws IOException {
+    public int loadTerms(File file, org.grobid.core.analyzers.Analyzer analyzer, boolean caseSensitive)
+            throws IOException {
         InputStream fileIn = new FileInputStream(file);
         return loadTerms(fileIn, analyzer, caseSensitive);
     }
@@ -132,16 +144,18 @@ public final class FastMatcher {
     /**
      * Load a set of term to the fast matcher from an input stream
      */
-    public int loadTerms(InputStream is, org.grobid.core.analyzers.Analyzer analyzer, boolean caseSensitive) throws IOException {
+    public int loadTerms(InputStream is, org.grobid.core.analyzers.Analyzer analyzer, boolean caseSensitive)
+            throws IOException {
         if (terms == null) {
             terms = new HashMap();
         }
         int nbTerms = 0;
         try (InputStreamReader reader = new InputStreamReader(is, UTF_8);
-             BufferedReader bufReader = new BufferedReader(reader)) {
+                BufferedReader bufReader = new BufferedReader(reader)) {
             String line;
             while ((line = bufReader.readLine()) != null) {
-                if (line.length() == 0) continue;
+                if (line.length() == 0)
+                    continue;
                 line = UnicodeUtil.normaliseText(line);
                 line = StringUtils.normalizeSpace(line);
                 if (!caseSensitive)
@@ -157,14 +171,12 @@ public final class FastMatcher {
         return nbTerms;
     }
 
-
     /**
      * Load a term to the fast matcher, by default the standard delimiters will be ignored
      */
     public int loadTerm(String term, org.grobid.core.analyzers.Analyzer analyzer) {
         return loadTerm(term, analyzer, true);
     }
-
 
     /**
      * Load a term to the fast matcher, by default the loading will be case sensitive
@@ -173,24 +185,27 @@ public final class FastMatcher {
         return loadTerm(term, analyzer, ignoreDelimiters, true);
     }
 
-
     /**
      * Load a term to the fast matcher
      */
-    public int loadTerm(String term, org.grobid.core.analyzers.Analyzer analyzer, boolean ignoreDelimiters, boolean caseSensitive) {
+    public int loadTerm(
+            String term,
+            org.grobid.core.analyzers.Analyzer analyzer,
+            boolean ignoreDelimiters,
+            boolean caseSensitive) {
         int nbTerms = 0;
         if (isBlank(term))
             return 0;
         Map t = terms;
         List<String> tokens = analyzer.tokenize(term, new Language("en", 1.0));
-        for(String token : tokens) {
+        for (String token : tokens) {
             if (token.length() == 0) {
                 continue;
             }
             if (token.equals(" ") || token.equals("\n")) {
                 continue;
             }
-            if ( ignoreDelimiters && (delimiters.indexOf(token) != -1) ) {
+            if (ignoreDelimiters && (delimiters.indexOf(token) != -1)) {
                 continue;
             }
             if (!caseSensitive) {
@@ -254,7 +269,7 @@ public final class FastMatcher {
                 continue;
             }
 
-            if (!caseSensitive) 
+            if (!caseSensitive)
                 token = token.toLowerCase();
 
             // we try to complete opened matching
@@ -352,7 +367,10 @@ public final class FastMatcher {
      * @param caseSensitive: ensure case sensitive matching or not
      * @return the list of offset positions of the matches, an empty list if no match have been found
      */
-    public List<OffsetPosition> matchLayoutToken(List<LayoutToken> tokens, boolean ignoreDelimiters, boolean caseSensitive) {    
+    public List<OffsetPosition> matchLayoutToken(
+            List<LayoutToken> tokens,
+            boolean ignoreDelimiters,
+            boolean caseSensitive) {
         if (CollectionUtils.isEmpty(tokens)) {
             return new ArrayList<OffsetPosition>();
         }
@@ -362,13 +380,13 @@ public final class FastMatcher {
         List<Integer> lastNonSeparatorPos = new ArrayList<>();
         List<Map> currentMatches = new ArrayList<>();
         int currentPos = 0;
-        for(LayoutToken token : tokens) {
+        for (LayoutToken token : tokens) {
             if (token.getText().equals(" ") || token.getText().equals("\n")) {
                 currentPos++;
                 continue;
             }
 
-            if ( ignoreDelimiters && (delimiters.indexOf(token.getText()) != -1)) {
+            if (ignoreDelimiters && (delimiters.indexOf(token.getText()) != -1)) {
                 currentPos++;
                 continue;
             }
@@ -480,7 +498,7 @@ public final class FastMatcher {
                 currentPos++;
                 continue;
             }
-            if (!caseSensitive) 
+            if (!caseSensitive)
                 token = token.toLowerCase();
 
             // we try to complete opened matching
@@ -509,7 +527,7 @@ public final class FastMatcher {
                 i++;
             }
 
-            //TODO: e.g. The Bronx matches 'The Bronx' and 'Bronx' is this correct? 
+            //TODO: e.g. The Bronx matches 'The Bronx' and 'Bronx' is this correct?
 
             // we start new matching starting at the current token
             Map match = (Map) terms.get(token);
@@ -556,7 +574,7 @@ public final class FastMatcher {
         return matchCharacterLayoutToken(tokens, false);
     }
 
-   /**
+    /**
      *
      * Gives the character positions within a tokenized text where matches occur.
      * <p>
@@ -644,7 +662,6 @@ public final class FastMatcher {
 
         return results;
     }
-
 
     /**
      * Identify terms in a piece of text and gives corresponding token positions.

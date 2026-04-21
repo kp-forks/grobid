@@ -1,28 +1,5 @@
 package org.grobid.trainer;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.text.RandomStringGenerator;
-import org.grobid.core.GrobidModel;
-import org.grobid.core.GrobidModels;
-import org.grobid.core.GrobidModels.Flavor;
-import org.grobid.core.engines.tagging.GenericTagger;
-import org.grobid.core.engines.tagging.GrobidCRFEngine;
-import org.grobid.core.engines.tagging.TaggerFactory;
-import org.grobid.core.exceptions.GrobidException;
-import org.grobid.core.factory.GrobidFactory;
-import org.grobid.core.utilities.GrobidProperties;
-import org.grobid.core.utilities.TextUtilities;
-import org.grobid.core.utilities.Utilities;
-import org.grobid.trainer.evaluation.EvaluationUtilities;
-import org.grobid.trainer.evaluation.LabelResult;
-import org.grobid.trainer.evaluation.ModelStats;
-import org.grobid.trainer.evaluation.Stats;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,6 +16,27 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.text.RandomStringGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.grobid.core.GrobidModel;
+import org.grobid.core.GrobidModels;
+import org.grobid.core.engines.tagging.GenericTagger;
+import org.grobid.core.engines.tagging.GrobidCRFEngine;
+import org.grobid.core.engines.tagging.TaggerFactory;
+import org.grobid.core.exceptions.GrobidException;
+import org.grobid.core.factory.GrobidFactory;
+import org.grobid.core.utilities.GrobidProperties;
+import org.grobid.core.utilities.TextUtilities;
+import org.grobid.trainer.evaluation.EvaluationUtilities;
+import org.grobid.trainer.evaluation.LabelResult;
+import org.grobid.trainer.evaluation.ModelStats;
+import org.grobid.trainer.evaluation.Stats;
 
 public abstract class AbstractTrainer implements Trainer {
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractTrainer.class);
@@ -68,8 +66,8 @@ public abstract class AbstractTrainer implements Trainer {
         this.trainDataPath = getTempTrainingDataPath();
         this.evalDataPath = getTempEvaluationDataPath();
         this.randomStringGenerator = new RandomStringGenerator.Builder()
-            .withinRange('a', 'z')
-            .build();
+                .withinRange('a', 'z')
+                .build();
     }
 
     public void setParams(double epsilon, int window, int nbMaxIterations) {
@@ -111,7 +109,7 @@ public abstract class AbstractTrainer implements Trainer {
         if (outputModelPath != null) {
             if (outputModelPath.getAbsolutePath().equals(defaultModelPath.getAbsolutePath())) {
                 throw new GrobidException("Custom output model path must differ from the default model path: "
-                    + defaultModelPath.getAbsolutePath());
+                        + defaultModelPath.getAbsolutePath());
             }
             finalModelPath = outputModelPath;
         } else {
@@ -120,23 +118,40 @@ public abstract class AbstractTrainer implements Trainer {
 
         File dirModelPath = finalModelPath.getParentFile();
         if (!dirModelPath.exists()) {
-            LOGGER.warn("Cannot find the destination directory " + dirModelPath.getAbsolutePath() + " for the model " + model.getModelName() + ". Creating it.");
+            LOGGER.warn(
+                    "Cannot find the destination directory "
+                            + dirModelPath.getAbsolutePath()
+                            + " for the model "
+                            + model.getModelName()
+                            + ". Creating it.");
             dirModelPath.mkdirs();
         }
 
         if (outputModelPath != null) {
             // Write directly to the specified path — no rename dance
-            trainer.train(getTemplatePath(), dataPath, finalModelPath, GrobidProperties.getWapitiNbThreads(), model, incremental);
+            trainer.train(
+                    getTemplatePath(),
+                    dataPath,
+                    finalModelPath,
+                    GrobidProperties.getWapitiNbThreads(),
+                    model,
+                    incremental);
             System.out.println("Model for " + model + " created in " + finalModelPath.getAbsolutePath());
         } else {
             // Default atomic rename: write to .new, then rename
             final File tempModelPath = new File(finalModelPath.getAbsolutePath() + NEW_MODEL_EXT);
-            trainer.train(getTemplatePath(), dataPath, tempModelPath, GrobidProperties.getWapitiNbThreads(), model, incremental);
+            trainer.train(
+                    getTemplatePath(),
+                    dataPath,
+                    tempModelPath,
+                    GrobidProperties.getWapitiNbThreads(),
+                    model,
+                    incremental);
             // if we are here, that means that training succeeded
             // rename model for CRF sequence labellers (not with DeLFT deep learning models)
-            if (GrobidProperties.getGrobidEngine(this.model) != GrobidCRFEngine.DELFT){
+            if (GrobidProperties.getGrobidEngine(this.model) != GrobidCRFEngine.DELFT) {
                 renameModels(finalModelPath, tempModelPath);
-                System.out.println("Model for " + model + " replaced in " + finalModelPath.getAbsolutePath());   
+                System.out.println("Model for " + model + " replaced in " + finalModelPath.getAbsolutePath());
             }
         }
     }
@@ -162,7 +177,8 @@ public abstract class AbstractTrainer implements Trainer {
     @Override
     public String evaluate(boolean includeRawResults) {
         createCRFPPData(getEvalCorpusPath(), evalDataPath);
-        return EvaluationUtilities.evaluateStandard(evalDataPath.getAbsolutePath(), getTagger()).toString(includeRawResults);
+        return EvaluationUtilities.evaluateStandard(evalDataPath.getAbsolutePath(), getTagger())
+                .toString(includeRawResults);
     }
 
     @Override
@@ -191,7 +207,12 @@ public abstract class AbstractTrainer implements Trainer {
 
         File dirModelPath = new File(GrobidProperties.getModelPath(model).getAbsolutePath()).getParentFile();
         if (!dirModelPath.exists()) {
-            LOGGER.warn("Cannot find the destination directory " + dirModelPath.getAbsolutePath() + " for the model " + model.getModelName() + ". Creating it.");
+            LOGGER.warn(
+                    "Cannot find the destination directory "
+                            + dirModelPath.getAbsolutePath()
+                            + " for the model "
+                            + model.getModelName()
+                            + ". Creating it.");
             dirModelPath.mkdir();
             //throw new GrobidException("Cannot find the destination directory " + dirModelPath.getAbsolutePath() + " for the model " + model.toString());
         }
@@ -199,7 +220,13 @@ public abstract class AbstractTrainer implements Trainer {
         final File tempModelPath = new File(GrobidProperties.getModelPath(model).getAbsolutePath() + NEW_MODEL_EXT);
         final File oldModelPath = GrobidProperties.getModelPath(model);
 
-        trainer.train(getTemplatePath(), dataPath, tempModelPath, GrobidProperties.getWapitiNbThreads(), model, incremental);
+        trainer.train(
+                getTemplatePath(),
+                dataPath,
+                tempModelPath,
+                GrobidProperties.getWapitiNbThreads(),
+                model,
+                incremental);
 
         // if we are here, that means that training succeeded
         renameModels(oldModelPath, tempModelPath);
@@ -257,8 +284,14 @@ public abstract class AbstractTrainer implements Trainer {
             sb.append("====================== Fold " + counter.get() + " ====================== ").append("\n");
             System.out.println("====================== Fold " + counter.get() + " ====================== ");
 
-            final File tempModelPath = new File(tmpDirectory + File.separator + getModel().getModelName()
-                + "_nfold_" + counter.getAndIncrement() + "_" + randomString + ".wapiti");
+            final File tempModelPath = new File(tmpDirectory
+                    + File.separator
+                    + getModel().getModelName()
+                    + "_nfold_"
+                    + counter.getAndIncrement()
+                    + "_"
+                    + randomString
+                    + ".wapiti");
             sb.append("Saving model in " + tempModelPath).append("\n");
 
             // Collecting generated paths to be deleted at the end of the process
@@ -267,7 +300,13 @@ public abstract class AbstractTrainer implements Trainer {
             tempFilePaths.add(fold.getRight());
 
             sb.append("Training input data: " + fold.getLeft()).append("\n");
-            trainer.train(getTemplatePath(), new File(fold.getLeft()), tempModelPath, GrobidProperties.getWapitiNbThreads(), model, false);
+            trainer.train(
+                    getTemplatePath(),
+                    new File(fold.getLeft()),
+                    tempModelPath,
+                    GrobidProperties.getWapitiNbThreads(),
+                    model,
+                    false);
             sb.append("Evaluation input data: " + fold.getRight()).append("\n");
 
             //TODO: find a better solution!!
@@ -293,7 +332,8 @@ public abstract class AbstractTrainer implements Trainer {
                 }
             };
 
-            ModelStats modelStats = EvaluationUtilities.evaluateStandard(fold.getRight(), TaggerFactory.getTagger(tmpModel));
+            ModelStats modelStats = EvaluationUtilities
+                    .evaluateStandard(fold.getRight(), TaggerFactory.getTagger(tmpModel));
 
             sb.append(modelStats.toString(includeRawResults));
             sb.append("\n");
@@ -301,7 +341,6 @@ public abstract class AbstractTrainer implements Trainer {
 
             return modelStats;
         }).collect(Collectors.toList());
-
 
         sb.append("\n").append("Summary results: ").append("\n");
 
@@ -321,16 +360,18 @@ public abstract class AbstractTrainer implements Trainer {
         Optional<ModelStats> worstModel = evaluationResults.stream().min(f1ScoreComparator);
         sb.append("Worst fold").append("\n");
         ModelStats worstModelStats = worstModel.orElseGet(() -> {
-            throw new GrobidException("Something wrong when computing evaluations " +
-                "- worst model metrics not found. ");
+            throw new GrobidException("Something wrong when computing evaluations "
+                    +
+                    "- worst model metrics not found. ");
         });
         sb.append(worstModelStats.toString()).append("\n");
 
         sb.append("Best fold:").append("\n");
         Optional<ModelStats> bestModel = evaluationResults.stream().max(f1ScoreComparator);
         ModelStats bestModelStats = bestModel.orElseGet(() -> {
-            throw new GrobidException("Something wrong when computing evaluations " +
-                "- best model metrics not found. ");
+            throw new GrobidException("Something wrong when computing evaluations "
+                    +
+                    "- best model metrics not found. ");
         });
         sb.append(bestModelStats.toString()).append("\n").append("\n");
 
@@ -346,11 +387,16 @@ public abstract class AbstractTrainer implements Trainer {
             for (Map.Entry<String, LabelResult> entry : ms.getFieldStats().getLabelsResults().entrySet()) {
                 String key = entry.getKey();
                 if (averagesLabelStats.containsKey(key)) {
-                    averagesLabelStats.get(key).setAccuracy(averagesLabelStats.get(key).getAccuracy() + entry.getValue().getAccuracy());
-                    averagesLabelStats.get(key).setF1Score(averagesLabelStats.get(key).getF1Score() + entry.getValue().getF1Score());
-                    averagesLabelStats.get(key).setRecall(averagesLabelStats.get(key).getRecall() + entry.getValue().getRecall());
-                    averagesLabelStats.get(key).setPrecision(averagesLabelStats.get(key).getPrecision() + entry.getValue().getPrecision());
-                    averagesLabelStats.get(key).setSupport(averagesLabelStats.get(key).getSupport() + entry.getValue().getSupport());
+                    averagesLabelStats.get(key)
+                            .setAccuracy(averagesLabelStats.get(key).getAccuracy() + entry.getValue().getAccuracy());
+                    averagesLabelStats.get(key)
+                            .setF1Score(averagesLabelStats.get(key).getF1Score() + entry.getValue().getF1Score());
+                    averagesLabelStats.get(key)
+                            .setRecall(averagesLabelStats.get(key).getRecall() + entry.getValue().getRecall());
+                    averagesLabelStats.get(key)
+                            .setPrecision(averagesLabelStats.get(key).getPrecision() + entry.getValue().getPrecision());
+                    averagesLabelStats.get(key)
+                            .setSupport(averagesLabelStats.get(key).getSupport() + entry.getValue().getSupport());
                 } else {
                     averagesLabelStats.put(key, new LabelResult(key));
                     averagesLabelStats.get(key).setAccuracy(entry.getValue().getAccuracy());
@@ -362,13 +408,15 @@ public abstract class AbstractTrainer implements Trainer {
             }
         }
 
-        sb.append(String.format("\n%-20s %-12s %-12s %-12s %-12s %-7s\n\n",
-            "label",
-            "accuracy",
-            "precision",
-            "recall",
-            "f1",
-            "support"));
+        sb.append(
+                String.format(
+                        "\n%-20s %-12s %-12s %-12s %-12s %-7s\n\n",
+                        "label",
+                        "accuracy",
+                        "precision",
+                        "recall",
+                        "f1",
+                        "support"));
 
         for (String label : averagesLabelStats.keySet()) {
             LabelResult labelResult = averagesLabelStats.get(label);
@@ -388,10 +436,18 @@ public abstract class AbstractTrainer implements Trainer {
             sb.append(labelResult.toString());
         }
 
-        OptionalDouble averageF1 = evaluationResults.stream().mapToDouble(e -> e.getFieldStats().getMicroAverageF1()).average();
-        OptionalDouble averagePrecision = evaluationResults.stream().mapToDouble(e -> e.getFieldStats().getMicroAveragePrecision()).average();
-        OptionalDouble averageRecall = evaluationResults.stream().mapToDouble(e -> e.getFieldStats().getMicroAverageRecall()).average();
-        OptionalDouble averageAccuracy = evaluationResults.stream().mapToDouble(e -> e.getFieldStats().getMicroAverageAccuracy()).average();
+        OptionalDouble averageF1 = evaluationResults.stream()
+                .mapToDouble(e -> e.getFieldStats().getMicroAverageF1())
+                .average();
+        OptionalDouble averagePrecision = evaluationResults.stream()
+                .mapToDouble(e -> e.getFieldStats().getMicroAveragePrecision())
+                .average();
+        OptionalDouble averageRecall = evaluationResults.stream()
+                .mapToDouble(e -> e.getFieldStats().getMicroAverageRecall())
+                .average();
+        OptionalDouble averageAccuracy = evaluationResults.stream()
+                .mapToDouble(e -> e.getFieldStats().getMicroAverageAccuracy())
+                .average();
 
         double avgAccuracy = averageAccuracy.orElseGet(() -> {
             throw new GrobidException("Missing average accuracy. Something went wrong. Please check. ");
@@ -411,31 +467,46 @@ public abstract class AbstractTrainer implements Trainer {
 
         sb.append("\n");
 
-        sb.append(String.format("%-20s %-12s %-12s %-12s %-7s\n",
-            "all ",
-            TextUtilities.formatTwoDecimals(avgAccuracy * 100),
-            TextUtilities.formatTwoDecimals(avgPrecision * 100),
-            TextUtilities.formatTwoDecimals(avgRecall * 100),
-            TextUtilities.formatTwoDecimals(avgF1 * 100))
-//            String.valueOf(supportSum))
+        sb.append(
+                String.format(
+                        "%-20s %-12s %-12s %-12s %-7s\n",
+                        "all ",
+                        TextUtilities.formatTwoDecimals(avgAccuracy * 100),
+                        TextUtilities.formatTwoDecimals(avgPrecision * 100),
+                        TextUtilities.formatTwoDecimals(avgRecall * 100),
+                        TextUtilities.formatTwoDecimals(avgF1 * 100))
+        //            String.valueOf(supportSum))
         );
 
         sb.append("\n===== Instance-level results =====\n\n");
 
         double averageTotalInstances = (double) totalInstances / numFolds;
         double averageCorrectInstances = (double) correctInstances / numFolds;
-        sb.append(String.format("%-27s %s\n", "Total expected instances:", TextUtilities.formatTwoDecimals(averageTotalInstances)));
-        sb.append(String.format("%-27s %s\n", "Correct instances:", TextUtilities.formatTwoDecimals(averageCorrectInstances)));
-        sb.append(String.format("%-27s %s\n",
-            "Instance-level recall:",
-            TextUtilities.formatTwoDecimals(averageCorrectInstances / averageTotalInstances * 100)));
+        sb.append(
+                String.format(
+                        "%-27s %s\n",
+                        "Total expected instances:",
+                        TextUtilities.formatTwoDecimals(averageTotalInstances)));
+        sb.append(
+                String.format(
+                        "%-27s %s\n",
+                        "Correct instances:",
+                        TextUtilities.formatTwoDecimals(averageCorrectInstances)));
+        sb.append(
+                String.format(
+                        "%-27s %s\n",
+                        "Instance-level recall:",
+                        TextUtilities.formatTwoDecimals(averageCorrectInstances / averageTotalInstances * 100)));
 
         // Cleanup
         tempFilePaths.stream().forEach(f -> {
             try {
                 Files.delete(Paths.get(f));
             } catch (IOException e) {
-                LOGGER.warn("Error while performing the cleanup after n-fold cross-validation. Cannot delete the file: " + f, e);
+                LOGGER.warn(
+                        "Error while performing the cleanup after n-fold cross-validation. Cannot delete the file: "
+                                + f,
+                        e);
             }
         });
 
@@ -449,7 +520,8 @@ public abstract class AbstractTrainer implements Trainer {
         int trainingSize = CollectionUtils.size(trainingData);
         int foldSize = Math.floorDiv(trainingSize, numberFolds);
         if (foldSize == 0) {
-            throw new IllegalArgumentException("There aren't enough training data for n-fold evaluation with fold of size " + numberFolds);
+            throw new IllegalArgumentException(
+                    "There aren't enough training data for n-fold evaluation with fold of size " + numberFolds);
         }
 
         return IntStream.range(0, numberFolds).mapToObj(foldIndex -> {
@@ -553,16 +625,21 @@ public abstract class AbstractTrainer implements Trainer {
     protected GenericTagger getTagger() {
         if (tagger == null) {
             tagger = (evaluationModelPath != null)
-                ? TaggerFactory.getTaggerFromPath(evaluationModelPath, GrobidProperties.getGrobidEngine(model))
-                : TaggerFactory.getTagger(model);
+                    ? TaggerFactory.getTaggerFromPath(evaluationModelPath, GrobidProperties.getGrobidEngine(model))
+                    : TaggerFactory.getTagger(model);
         }
 
         return tagger;
     }
 
     protected static File getFilePath2Resources() {
-        File theFile = new File(GrobidProperties.getGrobidHome().getAbsoluteFile() + File.separator + ".." + File.separator
-            + "grobid-trainer" + File.separator + "resources");
+        File theFile = new File(GrobidProperties.getGrobidHome().getAbsoluteFile()
+                + File.separator
+                + ".."
+                + File.separator
+                + "grobid-trainer"
+                + File.separator
+                + "resources");
         if (!theFile.exists()) {
             theFile = new File("resources");
         }
@@ -586,8 +663,13 @@ public abstract class AbstractTrainer implements Trainer {
     }
 
     public static File getEvalCorpusBasePath() {
-        final String path2Evelutation = getFilePath2Resources().getAbsolutePath() + File.separator + "dataset" + File.separator + "patent"
-            + File.separator + "evaluation";
+        final String path2Evelutation = getFilePath2Resources().getAbsolutePath()
+                + File.separator
+                + "dataset"
+                + File.separator
+                + "patent"
+                + File.separator
+                + "evaluation";
         return new File(path2Evelutation);
     }
 
@@ -644,7 +726,11 @@ public abstract class AbstractTrainer implements Trainer {
             throw new GrobidException("An exception occurred while evaluating Grobid.", e);
         }
         long end = System.currentTimeMillis();
-        report += "\n\nSplit, training and evaluation for " + trainer.getModel() + " model is realized in " + (end - start) + " ms";
+        report += "\n\nSplit, training and evaluation for "
+                + trainer.getModel()
+                + " model is realized in "
+                + (end - start)
+                + " ms";
 
         return report;
     }
@@ -653,7 +739,11 @@ public abstract class AbstractTrainer implements Trainer {
         runNFoldEvaluation(trainer, numFolds, outputFile, false);
     }
 
-    public static void runNFoldEvaluation(final Trainer trainer, int numFolds, Path outputFile, boolean includeRawResults) {
+    public static void runNFoldEvaluation(
+            final Trainer trainer,
+            int numFolds,
+            Path outputFile,
+            boolean includeRawResults) {
 
         String report = runNFoldEvaluation(trainer, numFolds, includeRawResults);
 
@@ -718,15 +808,20 @@ public abstract class AbstractTrainer implements Trainer {
     /**
      * Shared main() logic for flavor-aware trainers.
      */
-    public static void trainAndEvaluate(String[] args,
+    public static void trainAndEvaluate(
+            String[] args,
             Supplier<? extends Trainer> defaultFactory,
             Function<GrobidModels.Flavor, ? extends Trainer> flavorFactory) {
         GrobidModels.Flavor theFlavor = null;
         if (args.length > 0) {
             theFlavor = GrobidModels.Flavor.fromLabel(args[0]);
             if (theFlavor == null) {
-                System.out.println("Warning, the flavor is not recognized, " +
-                    "must be one of " + GrobidModels.Flavor.getLabels() + ", defaulting training with no flavor...");
+                System.out.println(
+                        "Warning, the flavor is not recognized, "
+                                +
+                                "must be one of "
+                                + GrobidModels.Flavor.getLabels()
+                                + ", defaulting training with no flavor...");
             }
         }
         GrobidProperties.getInstance();
