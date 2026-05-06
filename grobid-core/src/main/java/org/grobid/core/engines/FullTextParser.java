@@ -704,7 +704,7 @@ public class FullTextParser extends AbstractParser {
 
 
     /**
-     * Machine-learning recognition of full text structures limted to header and funding information.
+     * Machine-learning recognition of full text structures limited to header and funding information.
      * This requires however to look at the complete document, but some parts will be skipped
      *
      * @param documentSource input
@@ -913,7 +913,7 @@ public class FullTextParser extends AbstractParser {
         if (bibDataSets != null) {
             try {
                 referenceMarkerMatcher = doc.getReferenceMarkerMatcher();
-                // we look at the exising extracted labels in the bibliographical section (if available and if any) and set
+                // we look at the existing extracted labels in the bibliographical section (if available and if any) and set
                 // the value based on the majority of labels
                 int nbNumbType = 0;
                 int nbAuthorType = 0;
@@ -1427,7 +1427,7 @@ public class FullTextParser extends AbstractParser {
         DocumentSource documentSource = null;
         try {
             if (!inputFile.exists()) {
-                throw new GrobidResourceException("Cannot train for fulltext, becuase file '" +
+                throw new GrobidResourceException("Cannot train for fulltext, because file '" +
                     inputFile.getAbsolutePath() + "' does not exists.");
             }
             String pdfFileName = inputFile.getName();
@@ -1466,7 +1466,7 @@ public class FullTextParser extends AbstractParser {
                 String rese = parsers.getSegmentationParser(flavor).label(fulltext);
                 StringBuffer bufferFulltext = parsers.getSegmentationParser(flavor).trainingExtraction(rese, tokenizations, doc);
 
-                // write the TEI file to reflect the extact layout of the text as extracted from the pdf
+                // write the TEI file to reflect the exact layout of the text as extracted from the pdf
                 writer = new OutputStreamWriter(new FileOutputStream(new File(pathTEI +
                     File.separator +
                     pdfFileName.replaceAll("(?i)\\.pdf$", ".training.segmentation.tei.xml")), false), StandardCharsets.UTF_8);
@@ -2083,7 +2083,7 @@ public class FullTextParser extends AbstractParser {
             return buffer;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new GrobidException("An exception occured while running Grobid.", e);
+            throw new GrobidException("An exception occurred while running Grobid.", e);
         }
     }
 
