@@ -126,6 +126,14 @@ public class CitationParser extends AbstractParser {
      * of batch processing when a DeLFT deep learning model is used
      */
     public List<BiblioItem> processingLayoutTokenMultiple(List<List<LayoutToken>> tokenList, int consolidate) {
+        warnIfDebugUncaptured("CitationParser.processingLayoutTokenMultiple(List, int)");
+        return processingLayoutTokenMultiple(tokenList, consolidate, null);
+    }
+
+    public List<BiblioItem> processingLayoutTokenMultiple(
+            List<List<LayoutToken>> tokenList,
+            int consolidate,
+            GrobidAnalysisConfig config) {
         if (tokenList == null || tokenList.size() == 0)
             return null;
         List<BiblioItem> results = new ArrayList<>();
@@ -175,7 +183,7 @@ public class CitationParser extends AbstractParser {
 
         String allRes = null;
         try {
-            allRes = label(featuredInput.toString());
+            allRes = labelAndCapture(featuredInput.toString(), config);
         } catch (Exception e) {
             LOGGER.error("An exception occurred while labeling a citation.", e);
             throw new GrobidException(
@@ -201,7 +209,8 @@ public class CitationParser extends AbstractParser {
                     resCitation.setOriginalAuthors(resCitation.getAuthors());
                     try {
                         resCitation
-                                .setFullAuthors(parsers.getAuthorParser().processingCitation(resCitation.getAuthors()));
+                                .setFullAuthors(
+                                        parsers.getAuthorParser().processingCitation(resCitation.getAuthors(), config));
                     } catch (Exception e) {
                         LOGGER.error("An exception occurred when processing author names of a citation.", e);
                     }
@@ -209,7 +218,8 @@ public class CitationParser extends AbstractParser {
                         List<Date> dates = parsers.getDateParser()
                                 .process(
                                         resCitation
-                                                .getPublicationDate());
+                                                .getPublicationDate(),
+                                        config);
                         if (dates != null) {
                             Date bestDate = null;
                             if (dates.size() > 0) {
@@ -248,7 +258,8 @@ public class CitationParser extends AbstractParser {
                     resCitation.setOriginalEditors(resCitation.getEditors());
                     try {
                         resCitation
-                                .setFullEditors(parsers.getAuthorParser().processingCitation(resCitation.getEditors()));
+                                .setFullEditors(
+                                        parsers.getAuthorParser().processingCitation(resCitation.getEditors(), config));
                     } catch (Exception e) {
                         LOGGER.error("An exception occurred when processing editor names of a citation.", e);
                     }
@@ -311,6 +322,14 @@ public class CitationParser extends AbstractParser {
             Document doc,
             ReferenceSegmenter referenceSegmenter,
             int consolidate) {
+        return processingReferenceSection(doc, referenceSegmenter, consolidate, null);
+    }
+
+    public List<BibDataSet> processingReferenceSection(
+            Document doc,
+            ReferenceSegmenter referenceSegmenter,
+            int consolidate,
+            GrobidAnalysisConfig config) {
         List<BibDataSet> results = new ArrayList<>();
 
         String referencesStr = doc.getDocumentPartText(SegmentationLabels.REFERENCES);
@@ -322,7 +341,9 @@ public class CitationParser extends AbstractParser {
 
         cntManager.i(CitationParserCounters.NOT_EMPTY_REFERENCES_BLOCKS);
 
-        List<LabeledReferenceResult> references = referenceSegmenter.extract(doc);
+        List<LabeledReferenceResult> references = (referenceSegmenter instanceof ReferenceSegmenterParser)
+                ? ((ReferenceSegmenterParser) referenceSegmenter).extract(doc, config)
+                : referenceSegmenter.extract(doc);
 
         if (references == null) {
             cntManager.i(CitationParserCounters.NULL_SEGMENTED_REFERENCES_LIST);
@@ -357,7 +378,7 @@ public class CitationParser extends AbstractParser {
                         .removeLeadingAndTrailingCharsLayoutTokens(localTokens, "[({.,])}: \n", " \n");
                 allRefBlocks.add(localTokens);
             }
-            List<BiblioItem> bibList = processingLayoutTokenMultiple(allRefBlocks, 0);
+            List<BiblioItem> bibList = processingLayoutTokenMultiple(allRefBlocks, 0, config);
 
             if (bibList != null && bibList.size() > 0) {
                 int i = 0;
@@ -469,22 +490,43 @@ public class CitationParser extends AbstractParser {
             String md5Str,
             ReferenceSegmenter referenceSegmenter,
             int consolidate) {
+        return processingReferenceSection(input, md5Str, referenceSegmenter, consolidate, null);
+    }
+
+    public List<BibDataSet> processingReferenceSection(
+            File input,
+            String md5Str,
+            ReferenceSegmenter referenceSegmenter,
+            int consolidate,
+            GrobidAnalysisConfig config) {
         DocumentSource documentSource = DocumentSource.fromPdf(input);
         documentSource.setMD5(md5Str);
-        return processingReferenceSection(documentSource, referenceSegmenter, consolidate);
+        return processingReferenceSection(documentSource, referenceSegmenter, consolidate, config);
     }
 
     public List<BibDataSet> processingReferenceSection(
             DocumentSource documentSource,
             ReferenceSegmenter referenceSegmenter,
             int consolidate) {
+        return processingReferenceSection(documentSource, referenceSegmenter, consolidate, null);
+    }
+
+    public List<BibDataSet> processingReferenceSection(
+            DocumentSource documentSource,
+            ReferenceSegmenter referenceSegmenter,
+            int consolidate,
+            GrobidAnalysisConfig debugConfig) {
         List<BibDataSet> results;
         try {
-            Document doc = parsers.getSegmentationParser()
-                    .processing(
-                            documentSource,
-                            GrobidAnalysisConfig.builder().consolidateCitations(consolidate).build());
-            results = processingReferenceSection(doc, referenceSegmenter, consolidate);
+            // Build a segmentation config that carries any debug collector forward so the
+            // segmentation model's labelling is captured even on the references-only endpoint.
+            GrobidAnalysisConfig.GrobidAnalysisConfigBuilder builder = GrobidAnalysisConfig.builder()
+                    .consolidateCitations(consolidate);
+            if (debugConfig != null) {
+                builder.debugLabelingCollector(debugConfig.getDebugLabelingCollector());
+            }
+            Document doc = parsers.getSegmentationParser().processing(documentSource, builder.build());
+            results = processingReferenceSection(doc, referenceSegmenter, consolidate, debugConfig);
         } catch (GrobidException e) {
             LOGGER.error("An exception occurred while running Grobid.", e);
             throw e;

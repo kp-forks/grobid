@@ -16,6 +16,7 @@ import org.grobid.core.engines.citations.CalloutAnalyzer;
 import org.grobid.core.engines.citations.CalloutAnalyzer.MarkerType;
 import org.grobid.core.engines.citations.LabeledReferenceResult;
 import org.grobid.core.engines.citations.ReferenceSegmenter;
+import org.grobid.core.engines.config.DebugCaptureContext;
 import org.grobid.core.engines.config.GrobidAnalysisConfig;
 import org.grobid.core.engines.counters.CitationParserCounters;
 import org.grobid.core.engines.label.SegmentationLabels;
@@ -228,7 +229,7 @@ public class FullTextParser extends AbstractParser {
             // consolidation, if selected, is not done individually for each citation but 
             // in a second stage for all citations which is much faster
             List<BibDataSet> resCitations = parsers.getCitationParser().
-                processingReferenceSection(doc, parsers.getReferenceSegmenterParser(), 0);
+                processingReferenceSection(doc, parsers.getReferenceSegmenterParser(), 0, config);
 
             // consolidate the set
             if (config.getConsolidateCitations() != 0 && resCitations != null) {
@@ -269,12 +270,12 @@ public class FullTextParser extends AbstractParser {
                 //tokenizationsBody = featSeg.getB().getTokenization();
                 //layoutTokensBody = featSeg.getB().getLayoutTokens();
 
-                bodyResults = label(bodyText);
+                bodyResults = labelAndCapture(bodyText, config);
                 //Correct subsequent I-<figure> or I-<table>
                 bodyResults = LabelUtils.postProcessFulltextFixInvalidTableOrFigure(bodyResults);
 
                 // we apply now the figure and table models based on the fulltext labeled output
-                bodyFigures = processFigures(bodyResults, bodyTokenization.getTokenization());
+                bodyFigures = processFigures(bodyResults, bodyTokenization.getTokenization(), 0, config);
                 doc.setFigures(bodyFigures);
 
                 bodyResults = fixFiguresLabellingResults(doc, bodyResults);
@@ -304,7 +305,7 @@ public class FullTextParser extends AbstractParser {
                 doc.setFigures(bodyFigures);
 
                 // Tables
-                bodyTables = processTables(bodyResults, bodyTokenization.getTokenization(), doc);
+                bodyTables = processTables(bodyResults, bodyTokenization.getTokenization(), doc, 0, config);
 
                 //We deal with tables considered bad by reverting them as <paragraph>, to reduce the risk them to be
                 // dropped later on.
@@ -346,10 +347,10 @@ public class FullTextParser extends AbstractParser {
                 // document segmentation
                 String annexFeatures = featSeg.getLeft();
                 annexTokenization = featSeg.getRight().getTokenization();
-                annexResults = label(annexFeatures);
+                annexResults = labelAndCapture(annexFeatures, config);
                 //System.out.println(rese);
 
-                annexFigures = processFigures(annexResults, annexTokenization, CollectionUtils.size(bodyFigures));
+                annexFigures = processFigures(annexResults, annexTokenization, CollectionUtils.size(bodyFigures), config);
 
                 long numberFiguresInAnnex = Arrays.stream(annexResults.split("\n"))
                     .filter(r -> r.endsWith("I-" + FIGURE_LABEL))
@@ -373,7 +374,7 @@ public class FullTextParser extends AbstractParser {
 
                 doc.setAnnexFigures(annexFigures);
 
-                annexTables = processTables(annexResults, annexTokenization, doc, CollectionUtils.size(bodyTables));
+                annexTables = processTables(annexResults, annexTokenization, doc, CollectionUtils.size(bodyTables), config);
 
                 long numberTablesInAnnex = Arrays.stream(annexResults.split("\n"))
                     .filter(r -> r.endsWith("I-" + TaggingLabels.TABLE_LABEL))
@@ -2335,10 +2336,20 @@ public class FullTextParser extends AbstractParser {
      * Process figures identified by the full text model
      */
     protected List<Figure> processFigures(String rese, List<LayoutToken> layoutTokens) {
-        return processFigures(rese, layoutTokens,0);
+        DebugCaptureContext.warnIfActive(GrobidModels.FIGURE, "FullTextParser.processFigures(String, List)");
+        return processFigures(rese, layoutTokens, 0, null);
     }
 
     protected List<Figure> processFigures(String rese, List<LayoutToken> layoutTokens, int startFigureID) {
+        DebugCaptureContext.warnIfActive(GrobidModels.FIGURE, "FullTextParser.processFigures(String, List, int)");
+        return processFigures(rese, layoutTokens, startFigureID, null);
+    }
+
+    protected List<Figure> processFigures(
+            String rese,
+            List<LayoutToken> layoutTokens,
+            int startFigureID,
+            GrobidAnalysisConfig config) {
         List<Figure> results = new ArrayList<>();
 
         int figureId = startFigureID;
@@ -2350,7 +2361,8 @@ public class FullTextParser extends AbstractParser {
             List<LayoutToken> tokenizationFigure = cluster.concatTokens();
             Figure result = this.parsers.getFigureParser().processing(
                 tokenizationFigure,
-                cluster.getFeatureBlock()
+                cluster.getFeatureBlock(),
+                config
             );
             SortedSet<Integer> blockPtrs = new TreeSet<>();
             for (LayoutToken lt : tokenizationFigure) {
@@ -2516,13 +2528,23 @@ public class FullTextParser extends AbstractParser {
         String rese,
         List<LayoutToken> tokenizations,
         Document doc) {
-        return processTables(rese, tokenizations, doc, 0);
+        DebugCaptureContext.warnIfActive(GrobidModels.TABLE, "FullTextParser.processTables(String, List, Document)");
+        return processTables(rese, tokenizations, doc, 0, null);
     }
 
     protected List<Table> processTables(String rese,
                                         List<LayoutToken> tokenizations,
                                         Document doc,
                                         int startTableID) {
+        DebugCaptureContext.warnIfActive(GrobidModels.TABLE, "FullTextParser.processTables(String, List, Document, int)");
+        return processTables(rese, tokenizations, doc, startTableID, null);
+    }
+
+    protected List<Table> processTables(String rese,
+                                        List<LayoutToken> tokenizations,
+                                        Document doc,
+                                        int startTableID,
+                                        GrobidAnalysisConfig config) {
         List<Table> results = new ArrayList<>();
         TaggingTokenClusteror clusteror = new TaggingTokenClusteror(FULLTEXT, rese, tokenizations, true);
 
@@ -2532,7 +2554,8 @@ public class FullTextParser extends AbstractParser {
             List<LayoutToken> tokenizationTable = cluster.concatTokens();
             List<Table> localResults = parsers.getTableParser().processing(
                 tokenizationTable,
-                cluster.getFeatureBlock()
+                cluster.getFeatureBlock(),
+                config
             );
 
             for (Table result : localResults) {
