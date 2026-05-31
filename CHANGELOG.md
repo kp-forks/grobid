@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Changed
+- Lexicon: introduced `Lexicon.builder()` to optionally pre-load chosen gazetteers *eagerly* (`.withDefaults()`, `.withJournals()`, `.withFunders()`, `.withOrganisations()`, etc.). Loading stays **lazy by default**: any gazetteer not named in the builder loads transparently on first lookup, so a `Lexicon` from any entry point is always fully functional and never throws for a missing gazetteer — `withX()` only controls *when* a gazetteer loads, not whether a lookup succeeds. `withDefaults()` eagerly loads the original constructor's set (wordforms, people, countries). `Lexicon.getInstance()` is now `@Deprecated` (prefer the builder) but its behavior is unchanged: eager wordforms/people/countries, everything else lazy.
+- Lexicon: added 4 missing ISO 3166-1 country codes (BQ, CW, SS, SX) and migrated AN (Netherlands Antilles) to its ISO 3166-3 transitional form ANHH.
+
 ## [0.9.0] - 2026-04-07
 
 ### Added
